@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsNumber, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsDateString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateTraceDto {
   @IsString()
@@ -9,7 +15,11 @@ export class CreateTraceDto {
   sessionId?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
+  appId?: string;
+
+  @IsOptional()
+  @IsUUID()
   userId?: string;
 
   @IsOptional()

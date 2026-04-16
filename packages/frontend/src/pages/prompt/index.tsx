@@ -28,7 +28,7 @@ import {
   setCurrentPrompt,
 } from '../../store/promptSlice';
 import CreatePromptModal from './components/CreatePromptModal';
-import styles from './Prompt.module.css';
+import styles from './Prompt.module.scss';
 
 const { Title, Text } = Typography;
 

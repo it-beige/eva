@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Row, Col, Card, Select, Statistic, Space, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Row, Col, Card, Select, Statistic, Space } from 'antd';
 import {
   TrophyOutlined,
   AppstoreOutlined,
@@ -9,58 +9,45 @@ import {
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import LeaderboardTable from './components/LeaderboardTable';
 import LeaderboardChart from './components/LeaderboardChart';
-import {
-  fetchLeaderboard,
-  fetchLeaderboardSummary,
-  setPage,
-  setPageSize,
-  setEvalSetFilter,
-  setMetricFilter,
-} from '../../store/leaderboardSlice';
 import { fetchEvalSets } from '../../store/evalSetSlice';
 import { fetchEvalMetrics } from '../../store/evalMetricSlice';
+import {
+  useGetLeaderboardQuery,
+  useGetLeaderboardSummaryQuery,
+} from '../../services/leaderboardQueries';
 
 const { Option } = Select;
 
 const LeaderboardPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const {
-    items,
-    summary,
-    loading,
-    summaryLoading,
-    total,
+  const { evalSets } = useAppSelector((state) => state.evalSet);
+  const { items: metrics } = useAppSelector((state) => state.evalMetric);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [evalSetId, setEvalSetId] = useState<string | undefined>();
+  const [metricId, setMetricId] = useState<string | undefined>();
+  const { data: leaderboardData, isFetching: loading } = useGetLeaderboardQuery({
     page,
     pageSize,
-    filters,
-  } = useAppSelector((state) => state.leaderboard);
-  const { evalSets } = useAppSelector((state) => state.evalSet);
-  const metricsState = useAppSelector((state) => state.evalMetric);
-  const metrics = (metricsState as any).items || (metricsState as any).metrics || [];
+    evalSetId,
+    metricId,
+    sortBy: 'score',
+    order: 'desc',
+  });
+  const { data: summary, isFetching: summaryLoading } =
+    useGetLeaderboardSummaryQuery();
+  const items = leaderboardData?.items ?? [];
+  const total = leaderboardData?.total ?? 0;
 
   useEffect(() => {
     dispatch(fetchEvalSets({ page: 1, pageSize: 100 }));
     dispatch(fetchEvalMetrics({ page: 1, pageSize: 100 }));
-    dispatch(fetchLeaderboardSummary());
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(
-      fetchLeaderboard({
-        page,
-        pageSize,
-        evalSetId: filters.evalSetId,
-        metricId: filters.metricId,
-        sortBy: filters.sortBy,
-        order: filters.order,
-      })
-    );
-  }, [dispatch, page, pageSize, filters]);
-
   const handlePageChange = (newPage: number, newPageSize: number) => {
-    dispatch(setPage(newPage));
+    setPage(newPage);
     if (newPageSize !== pageSize) {
-      dispatch(setPageSize(newPageSize));
+      setPageSize(newPageSize);
     }
   };
 
@@ -109,7 +96,7 @@ const LeaderboardPage: React.FC = () => {
               value={summary?.topApp?.name || '-'}
               prefix={<TrophyOutlined />}
               loading={summaryLoading}
-              valueStyle={{ fontSize: '16px' }}
+              styles={{ content: { fontSize: '16px' } }}
             />
             {summary?.topApp && (
               <div className="text-green-500 text-sm mt-1">
@@ -128,8 +115,11 @@ const LeaderboardPage: React.FC = () => {
             placeholder="选择评测集"
             allowClear
             style={{ width: 200 }}
-            value={filters.evalSetId}
-            onChange={(value) => dispatch(setEvalSetFilter(value))}
+            value={evalSetId}
+            onChange={(value) => {
+              setEvalSetId(value);
+              setPage(1);
+            }}
           >
             {evalSets.map((es) => (
               <Option key={es.id} value={es.id}>
@@ -141,8 +131,11 @@ const LeaderboardPage: React.FC = () => {
             placeholder="选择指标"
             allowClear
             style={{ width: 150 }}
-            value={filters.metricId}
-            onChange={(value) => dispatch(setMetricFilter(value))}
+            value={metricId}
+            onChange={(value) => {
+              setMetricId(value);
+              setPage(1);
+            }}
           >
             {metrics.map((m) => (
               <Option key={m.id} value={m.id}>

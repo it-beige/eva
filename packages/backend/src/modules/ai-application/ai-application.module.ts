@@ -4,9 +4,10 @@ import { AIApplicationController } from './ai-application.controller';
 import { AIApplicationService } from './ai-application.service';
 import { AIApplication } from '../../database/entities/ai-application.entity';
 import { AppVersion } from '../../database/entities/app-version.entity';
+import { Project } from '../../database/entities/project.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AIApplication, AppVersion])],
+  imports: [TypeOrmModule.forFeature([AIApplication, AppVersion, Project])],
   controllers: [AIApplicationController],
   providers: [AIApplicationService],
   exports: [AIApplicationService],

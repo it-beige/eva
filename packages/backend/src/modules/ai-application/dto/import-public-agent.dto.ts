@@ -1,6 +1,7 @@
-import { IsString, IsUUID, MaxLength } from 'class-validator';
+import type { ImportPublicAgentRequest } from '@eva/shared';
+import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 
-export class ImportPublicAgentDto {
+export class ImportPublicAgentDto implements ImportPublicAgentRequest {
   @IsString()
   @MaxLength(255)
   name: string;
@@ -10,5 +11,6 @@ export class ImportPublicAgentDto {
   gitRepoUrl: string;
 
   @IsUUID()
-  projectId: string;
+  @IsOptional()
+  projectId?: string;
 }

@@ -4,11 +4,14 @@
   "private": true,
   "description": "Eva AI Evaluation Platform",
   "scripts": {
-    "dev:frontend": "pnpm --filter @eva/frontend dev",
-    "dev:backend": "pnpm --filter @eva/backend start:dev",
+    "build:shared": "pnpm --filter @eva/shared build",
+    "dev:frontend": "pnpm run build:shared && pnpm --filter @eva/frontend dev",
+    "dev:backend": "pnpm run build:shared && pnpm --filter @eva/backend start:dev",
     "dev": "pnpm run dev:frontend & pnpm run dev:backend",
     "build": "pnpm -r build",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "db:migrate": "pnpm --filter @eva/backend migration:run",
+    "db:revert": "pnpm --filter @eva/backend migration:revert"
   },
   "devDependencies": {
     "typescript": "^5.4.0"

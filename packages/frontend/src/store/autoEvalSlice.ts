@@ -133,7 +133,7 @@ export const createAutoEval = createAsyncThunk(
   async (data: CreateAutoEvalData, { dispatch }) => {
     const response = await autoEvalApi.create(data);
     // 创建成功后刷新列表
-    dispatch(fetchAutoEvals());
+    dispatch(fetchAutoEvals({}));
     return response;
   },
 );
@@ -147,7 +147,7 @@ export const updateAutoEval = createAsyncThunk(
   ) => {
     const response = await autoEvalApi.update(id, data);
     // 更新成功后刷新列表
-    dispatch(fetchAutoEvals());
+    dispatch(fetchAutoEvals({}));
     return response;
   },
 );
@@ -158,7 +158,7 @@ export const deleteAutoEval = createAsyncThunk(
   async (id: string, { dispatch }) => {
     await autoEvalApi.delete(id);
     // 删除成功后刷新列表
-    dispatch(fetchAutoEvals());
+    dispatch(fetchAutoEvals({}));
     return id;
   },
 );
@@ -169,7 +169,7 @@ export const deleteAutoEvals = createAsyncThunk(
   async (ids: string[], { dispatch }) => {
     await autoEvalApi.deleteMany(ids);
     // 删除成功后刷新列表
-    dispatch(fetchAutoEvals());
+    dispatch(fetchAutoEvals({}));
     return ids;
   },
 );

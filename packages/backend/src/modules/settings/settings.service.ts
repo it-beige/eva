@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
+import { BusinessErrorCode } from '@eva/shared';
 import {
   UpdateProjectDto,
   ProjectSettings,
@@ -11,6 +15,7 @@ import {
   ApiToken,
 } from './dto/manage-member.dto';
 import { randomBytes } from 'crypto';
+import { BusinessException } from '../../common/errors/business.exception';
 
 @Injectable()
 export class SettingsService {
@@ -102,7 +107,11 @@ export class SettingsService {
   async addMember(dto: AddMemberDto): Promise<Member> {
     const existingMember = this.members.find((m) => m.email === dto.email);
     if (existingMember) {
-      throw new Error('Member with this email already exists');
+      throw new BusinessException(
+        BusinessErrorCode.MEMBER_ALREADY_EXISTS,
+        '该邮箱成员已存在',
+        HttpStatus.CONFLICT,
+      );
     }
 
     const newMember: Member = {
@@ -123,7 +132,11 @@ export class SettingsService {
   async updateMember(id: string, dto: UpdateMemberDto): Promise<Member> {
     const member = this.members.find((m) => m.id === id);
     if (!member) {
-      throw new NotFoundException(`Member with id "${id}" not found`);
+      throw new BusinessException(
+        BusinessErrorCode.MEMBER_NOT_FOUND,
+        `成员 ${id} 不存在`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     member.role = dto.role;
@@ -136,12 +149,20 @@ export class SettingsService {
   async removeMember(id: string): Promise<void> {
     const index = this.members.findIndex((m) => m.id === id);
     if (index === -1) {
-      throw new NotFoundException(`Member with id "${id}" not found`);
+      throw new BusinessException(
+        BusinessErrorCode.MEMBER_NOT_FOUND,
+        `成员 ${id} 不存在`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     // 不能删除 owner
     if (this.members[index].role === 'owner') {
-      throw new Error('Cannot remove owner');
+      throw new BusinessException(
+        BusinessErrorCode.OWNER_CANNOT_BE_REMOVED,
+        '不能删除 owner 角色成员',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     this.members.splice(index, 1);
@@ -183,7 +204,11 @@ export class SettingsService {
   async deleteToken(id: string): Promise<void> {
     const index = this.tokens.findIndex((t) => t.id === id);
     if (index === -1) {
-      throw new NotFoundException(`Token with id "${id}" not found`);
+      throw new BusinessException(
+        BusinessErrorCode.TOKEN_NOT_FOUND,
+        `Token ${id} 不存在`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     this.tokens.splice(index, 1);

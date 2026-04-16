@@ -1,0 +1,28 @@
+.shortIdBadge :global(.ant-badge-count) {
+  background: #f0f0f0;
+  color: var(--eva-text-secondary);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.codeBadge :global(.ant-badge-count) {
+  background: #e6f7ff;
+  color: #1890ff;
+  font-size: 11px;
+}
+
+.toolbar {
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  width: 240px;
+}
+
+.evalSetSelect {
+  width: 180px;
+}
+
+.statusSelect {
+  width: 160px;
+}

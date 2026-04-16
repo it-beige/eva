@@ -136,7 +136,7 @@ eva/
 
 - **产出文件**:
   - `packages/frontend/src/layouts/MainLayout.tsx`
-  - `packages/frontend/src/layouts/MainLayout.module.css`
+  - `packages/frontend/src/layouts/MainLayout.module.scss`
   - `packages/frontend/src/layouts/ObservabilityLayout.tsx`
   - `packages/frontend/src/app/router.tsx`
   - `packages/frontend/src/app/store.ts`

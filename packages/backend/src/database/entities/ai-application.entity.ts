@@ -10,6 +10,9 @@ import {
 } from 'typeorm';
 import { Project } from './project.entity';
 import { AppVersion } from './app-version.entity';
+import { EvalTask } from './eval-task.entity';
+import { LeaderboardEntry } from './leaderboard-entry.entity';
+import { TraceLog } from './trace-log.entity';
 
 @Entity('ai_applications')
 export class AIApplication {
@@ -46,4 +49,13 @@ export class AIApplication {
 
   @OneToMany(() => AppVersion, (version) => version.application)
   versions: AppVersion[];
+
+  @OneToMany(() => EvalTask, (task) => task.application)
+  tasks: EvalTask[];
+
+  @OneToMany(() => LeaderboardEntry, (entry) => entry.application)
+  leaderboardEntries: LeaderboardEntry[];
+
+  @OneToMany(() => TraceLog, (traceLog) => traceLog.application)
+  traceLogs: TraceLog[];
 }

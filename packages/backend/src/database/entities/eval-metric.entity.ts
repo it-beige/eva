@@ -6,6 +6,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { MetricType, MetricScope } from '@eva/shared';
+import { OneToMany } from 'typeorm';
+import { LeaderboardEntry } from './leaderboard-entry.entity';
 
 @Entity('eval_metrics')
 export class EvalMetric {
@@ -50,4 +52,7 @@ export class EvalMetric {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => LeaderboardEntry, (entry) => entry.metric)
+  leaderboardEntries: LeaderboardEntry[];
 }

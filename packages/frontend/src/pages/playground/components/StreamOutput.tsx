@@ -33,7 +33,7 @@ const StreamOutput: React.FC<StreamOutputProps> = ({
     <Card
       title="输出结果"
       className="h-full"
-      bodyStyle={{ padding: 0, height: 'calc(100% - 56px)' }}
+      styles={{ body: { padding: 0, height: 'calc(100% - 56px)' } }}
     >
       <div className="flex flex-col h-full">
         {/* 输出内容区域 */}

@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { PlaygroundService } from './playground.service';
 import { RunPlaygroundDto, PlaygroundStreamEvent, PlaygroundResult } from './dto/run-playground.dto';
 
-@Controller('api/playground')
+@Controller('playground')
 export class PlaygroundController {
   constructor(private readonly playgroundService: PlaygroundService) {}
 

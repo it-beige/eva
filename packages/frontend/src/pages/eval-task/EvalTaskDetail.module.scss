@@ -1,0 +1,76 @@
+.page {
+  padding: 24px;
+}
+
+.loadingState {
+  padding: 24px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.titleRow {
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  margin: 0 !important;
+}
+
+.shortIdBadge :global(.ant-badge-count) {
+  background: #f0f0f0;
+  color: var(--eva-text-secondary);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.sectionCard {
+  margin-bottom: 24px;
+}
+
+.progressBlock {
+  margin-top: 16px;
+}
+
+.logPanel {
+  padding: 16px;
+  max-height: 400px;
+  overflow: auto;
+  border-radius: 8px;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.logLine {
+  margin-bottom: 4px;
+}
+
+.emptyLog {
+  color: #8a8a8a !important;
+}
+
+.actionStack {
+  width: 100%;
+}
+
+.configPre {
+  margin: 0;
+  padding: 8px;
+  max-height: 200px;
+  overflow: auto;
+  border-radius: 4px;
+  background: var(--eva-bg-subtle);
+  font-size: 12px;
+}
+
+@media (max-width: 992px) {
+  .page,
+  .loadingState {
+    padding: 20px 16px;
+  }
+}

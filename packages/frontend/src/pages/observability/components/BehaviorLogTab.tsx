@@ -1,6 +1,7 @@
 import { Table, Tag, Typography } from 'antd';
 import { useAppSelector } from '../../../hooks/useRedux';
 import dayjs from 'dayjs';
+import styles from './BehaviorLogTab.module.scss';
 
 const { Text } = Typography;
 
@@ -130,8 +131,8 @@ const BehaviorLogTab = () => {
       scroll={{ x: 1400 }}
       locale={{
         emptyText: (
-          <div style={{ padding: '40px 0', textAlign: 'center' }}>
-            <div style={{ color: '#999', fontSize: 14 }}>暂无行为日志数据</div>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyText}>暂无行为日志数据</div>
           </div>
         ),
       }}

@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { Modal, Form, Input } from 'antd';
-import {
-  AIApplication,
+import type {
+  ApplicationResponse,
   CreateApplicationRequest,
   UpdateApplicationRequest,
-} from '../../../services/aiApplicationApi';
+} from '@eva/shared';
 
 const { TextArea } = Input;
 
@@ -12,8 +12,8 @@ interface CreateAppModalProps {
   visible: boolean;
   onCancel: () => void;
   onSubmit: (values: CreateApplicationRequest | UpdateApplicationRequest) => void;
-  editingApp: AIApplication | null;
-  projectId: string;
+  editingApp: ApplicationResponse | null;
+  projectId?: string;
   loading: boolean;
 }
 
@@ -48,7 +48,7 @@ const CreateAppModal: React.FC<CreateAppModalProps> = ({
       const values = await form.validateFields();
       const submitData = {
         ...values,
-        projectId,
+        ...(projectId ? { projectId } : {}),
       };
       onSubmit(submitData);
     } catch (error) {

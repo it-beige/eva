@@ -1,32 +1,12 @@
 import api from './api';
-import { EvalTask, EvalTaskStatus, EvalType, PaginatedResponse } from '@eva/shared';
+import type {
+  CreateEvalTaskRequest,
+  EvalTaskResponse as EvalTaskWithEvalSet,
+  EvalTaskStatus,
+  PaginatedResponse,
+} from '@eva/shared';
 
-export interface EvalSetInfo {
-  id: string;
-  name: string;
-  type: string;
-}
-
-export interface EvalTaskWithEvalSet extends EvalTask {
-  evalSet?: EvalSetInfo | null;
-}
-
-export interface CreateEvalTaskRequest {
-  name: string;
-  evalType: EvalType;
-  evalMode?: string;
-  maxConcurrency?: number;
-  evalSetId?: string;
-  evalItemId?: string;
-  appId?: string;
-  appVersion?: string;
-  config?: Record<string, unknown>;
-  audioConfig?: {
-    datasetId: string;
-    configFileId: string;
-    configInfo: string;
-  };
-}
+export type { CreateEvalTaskRequest, EvalTaskWithEvalSet };
 
 export interface QueryEvalTasksParams {
   page?: number;
@@ -65,19 +45,19 @@ export const evalTaskApi = {
 
   // 创建评测任务
   createEvalTask: async (data: CreateEvalTaskRequest) => {
-    const response = await api.post<EvalTask>('/eval-tasks', data);
+    const response = await api.post<EvalTaskWithEvalSet>('/eval-tasks', data);
     return response.data;
   },
 
   // 复制评测任务
   copyEvalTask: async (id: string) => {
-    const response = await api.post<EvalTask>(`/eval-tasks/${id}/copy`);
+    const response = await api.post<EvalTaskWithEvalSet>(`/eval-tasks/${id}/copy`);
     return response.data;
   },
 
   // 中止评测任务
   abortEvalTask: async (id: string) => {
-    const response = await api.post<EvalTask>(`/eval-tasks/${id}/abort`);
+    const response = await api.post<EvalTaskWithEvalSet>(`/eval-tasks/${id}/abort`);
     return response.data;
   },
 

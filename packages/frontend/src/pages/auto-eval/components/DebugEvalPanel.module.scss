@@ -1,0 +1,19 @@
+.preview {
+  max-height: 100px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.metricLine {
+  margin-bottom: 4px;
+}
+
+.actions {
+  margin-bottom: 16px;
+  text-align: right;
+}
+
+.empty {
+  margin-top: 40px;
+}

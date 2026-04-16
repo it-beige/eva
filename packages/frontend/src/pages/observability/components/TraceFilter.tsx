@@ -5,8 +5,10 @@ import dayjs from 'dayjs';
 import { TRACE_STATUS_OPTIONS, TIME_RANGE_OPTIONS } from '../../../types/observability';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useRedux';
 import { setFilters, resetFilters } from '../../../store/observabilitySlice';
+import styles from './TraceFilter.module.scss';
 
 const { RangePicker } = DatePicker;
+type DateRangeValue = [any, any];
 
 interface TraceFilterProps {
   onSearch: () => void;
@@ -25,7 +27,7 @@ const TraceFilter = ({ onSearch }: TraceFilterProps) => {
     outputKeyword: filters.outputKeyword || '',
   });
 
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([
+  const [dateRange, setDateRange] = useState<DateRangeValue>([
     filters.startTime ? dayjs(filters.startTime) : dayjs().startOf('day'),
     filters.endTime ? dayjs(filters.endTime) : dayjs().endOf('day'),
   ]);
@@ -33,8 +35,8 @@ const TraceFilter = ({ onSearch }: TraceFilterProps) => {
   const handleTimeRangeChange = useCallback((value: string) => {
     setLocalFilters((prev) => ({ ...prev, timeRange: value }));
     
-    let start: dayjs.Dayjs;
-    let end: dayjs.Dayjs;
+    let start;
+    let end;
     
     switch (value) {
       case 'today':
@@ -63,7 +65,7 @@ const TraceFilter = ({ onSearch }: TraceFilterProps) => {
     setDateRange([start, end]);
   }, []);
 
-  const handleDateRangeChange = useCallback((dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null) => {
+  const handleDateRangeChange = useCallback((dates: any) => {
     if (dates && dates[0] && dates[1]) {
       setDateRange(dates);
       setLocalFilters((prev) => ({ ...prev, timeRange: '' }));
@@ -96,52 +98,51 @@ const TraceFilter = ({ onSearch }: TraceFilterProps) => {
   }, [dispatch, onSearch]);
 
   return (
-    <div style={{ padding: '16px 0', background: '#fff' }}>
+    <div className={styles.container}>
       <Row gutter={[16, 16]} align="middle">
-        {/* 第一行 */}
         <Col flex="auto">
           <Space size="middle" wrap>
             <Space>
-              <span style={{ color: '#666' }}>时间范围:</span>
+              <span className={styles.fieldLabel}>时间范围:</span>
               <Select
                 value={localFilters.timeRange}
                 onChange={handleTimeRangeChange}
                 options={TIME_RANGE_OPTIONS}
-                style={{ width: 100 }}
+                className={styles.timeRangeSelect}
                 placeholder="选择时间"
               />
               <RangePicker
-                value={dateRange}
+                value={dateRange as any}
                 onChange={handleDateRangeChange}
                 showTime={{ format: 'HH:mm' }}
                 format="YYYY-MM-DD HH:mm"
-                style={{ width: 320 }}
+                className={styles.rangePicker}
               />
             </Space>
             
             <Space>
-              <span style={{ color: '#666' }}>ID搜索:</span>
+              <span className={styles.fieldLabel}>ID搜索:</span>
               <Input
                 value={localFilters.idSearch}
                 onChange={(e) => setLocalFilters((prev) => ({ ...prev, idSearch: e.target.value }))}
                 placeholder="支持TraceId、会话ID、节点ID、messageId的搜索"
-                style={{ width: 280 }}
+                className={styles.idSearchInput}
                 allowClear
               />
             </Space>
 
             <Space>
-              <span style={{ color: '#666' }}>状态:</span>
+              <span className={styles.fieldLabel}>状态:</span>
               <Select
                 value={localFilters.status}
                 onChange={(value) => setLocalFilters((prev) => ({ ...prev, status: value }))}
                 options={TRACE_STATUS_OPTIONS}
-                style={{ width: 120 }}
+                className={styles.statusSelect}
               />
             </Space>
 
             <Space>
-              <span style={{ color: '#666' }}>输入/输出:</span>
+              <span className={styles.fieldLabel}>输入/输出:</span>
               <Input
                 value={localFilters.inputKeyword || localFilters.outputKeyword}
                 onChange={(e) => {
@@ -153,7 +154,7 @@ const TraceFilter = ({ onSearch }: TraceFilterProps) => {
                   }));
                 }}
                 placeholder="请输入输入/输出关键词"
-                style={{ width: 200 }}
+                className={styles.keywordInput}
                 allowClear
               />
             </Space>
@@ -161,17 +162,16 @@ const TraceFilter = ({ onSearch }: TraceFilterProps) => {
         </Col>
       </Row>
 
-      <Row gutter={[16, 16]} align="middle" style={{ marginTop: 12 }}>
-        {/* 第二行 */}
+      <Row gutter={[16, 16]} align="middle" className={styles.actionsRow}>
         <Col flex="auto">
           <Space size="middle">
             <Space>
-              <span style={{ color: '#666' }}>用户ID:</span>
+              <span className={styles.fieldLabel}>用户ID:</span>
               <Input
                 value={localFilters.userId}
                 onChange={(e) => setLocalFilters((prev) => ({ ...prev, userId: e.target.value }))}
                 placeholder="请输入用户ID"
-                style={{ width: 200 }}
+                className={styles.userIdInput}
                 allowClear
               />
             </Space>

@@ -1,0 +1,253 @@
+.layout {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: 60px;
+  padding: 0 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--eva-border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.logoSection {
+  min-width: 128px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoIcon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #5f7cff 0%, #42d3ff 100%);
+}
+
+.logoIcon::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 5px;
+  width: 12px;
+  height: 16px;
+  border: 4px solid #fff;
+  border-top: 0;
+  border-left: 0;
+  transform: rotate(34deg);
+  border-radius: 2px;
+}
+
+.logoIcon::after {
+  content: '+';
+  position: absolute;
+  right: -4px;
+  top: 1px;
+  color: #7c87ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.logoName {
+  color: #232834;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.navTabs {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex: 1;
+}
+
+.navTab {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #404859;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 60px;
+  cursor: pointer;
+  position: relative;
+}
+
+.navTabActive {
+  color: var(--eva-primary);
+}
+
+.navTabActive::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--eva-primary);
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #5b6575;
+  font-size: 13px;
+}
+
+.headerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #5b6575 !important;
+}
+
+.avatarButton {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--eva-border-strong);
+  background: linear-gradient(180deg, #fff 0%, #f4f6fb 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #b7bfcc;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.shellBody {
+  display: flex;
+  min-height: calc(100vh - 60px);
+  background: #fff;
+}
+
+.sider {
+  background: #fff !important;
+  border-right: 1px solid var(--eva-border);
+}
+
+.siderInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+}
+
+.siderHeader {
+  position: relative;
+  padding: 14px 10px 10px;
+}
+
+.projectSelector {
+  flex: 1;
+}
+
+.collapseBtn {
+  position: absolute !important;
+  right: -14px;
+  top: 42px;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--eva-border) !important;
+  background: #fff !important;
+  color: #b7bfcc !important;
+  box-shadow: 0 4px 12px rgba(118, 128, 153, 0.12);
+  z-index: 5;
+}
+
+.menuWrapper {
+  flex: 1;
+  padding: 8px 10px 18px;
+  border: none !important;
+  background: transparent !important;
+}
+
+.menuWrapper :global(.ant-menu-item),
+.menuWrapper :global(.ant-menu-submenu-title) {
+  margin-inline: 0 !important;
+  width: 100% !important;
+  height: 42px !important;
+  line-height: 42px !important;
+  border-radius: 8px !important;
+  color: #3f4655;
+  padding-inline: 16px !important;
+}
+
+.menuWrapper :global(.ant-menu-item .ant-menu-title-content) {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.menuWrapper :global(.ant-menu-item .ant-menu-item-icon),
+.menuWrapper :global(.ant-menu-submenu-title .ant-menu-item-icon) {
+  color: #6b7384;
+}
+
+.menuWrapper :global(.ant-menu-item-selected) {
+  background: var(--eva-primary-soft) !important;
+  color: var(--eva-primary) !important;
+}
+
+.menuWrapper :global(.ant-menu-item-selected .ant-menu-item-icon) {
+  color: var(--eva-primary) !important;
+}
+
+.menuWrapper :global(.ant-menu-item:hover) {
+  background: #f7f9fe !important;
+  color: #2f3542 !important;
+}
+
+.menuGroupTitle {
+  padding: 18px 18px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a3acbc;
+}
+
+.content {
+  min-width: 0;
+  padding: 0 !important;
+  background: #fff !important;
+}
+
+.contentWrapper {
+  min-height: 100%;
+  padding: 0;
+  background: var(--eva-bg-panel);
+}
+
+.contentInner {
+  min-height: calc(100vh - 60px);
+  padding: 0 22px 22px;
+}
+
+.assistantFab {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 3px solid #6673ff;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6673ff;
+  box-shadow: 0 8px 18px rgba(90, 99, 255, 0.16);
+  z-index: 30;
+}

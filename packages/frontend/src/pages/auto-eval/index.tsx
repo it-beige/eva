@@ -40,6 +40,7 @@ import {
 import { AutoEvalStatus } from '@eva/shared';
 import type { AutoEval } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
+import styles from './AutoEvalListPage.module.scss';
 
 const { Title, Text } = Typography;
 
@@ -66,7 +67,7 @@ const AutoEvalListPage = () => {
 
   // 加载数据
   useEffect(() => {
-    dispatch(fetchAutoEvals());
+    dispatch(fetchAutoEvals({}));
   }, [dispatch, page, pageSize, keyword]);
 
   // 搜索防抖
@@ -197,11 +198,11 @@ const AutoEvalListPage = () => {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div className={styles.page}>
       {/* 标题区域 */}
-      <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
+      <Row justify="space-between" align="middle" className={styles.header}>
         <Col>
-          <Title level={4} style={{ margin: 0 }}>
+          <Title level={4} className={styles.title}>
             自动化评测
           </Title>
           <Text type="secondary">
@@ -216,7 +217,7 @@ const AutoEvalListPage = () => {
       </Row>
 
       {/* 搜索和操作栏 */}
-      <Card style={{ marginBottom: 24 }}>
+      <Card className={styles.searchCard}>
         <Row justify="space-between" align="middle">
           <Col>
             <Space>
@@ -226,7 +227,7 @@ const AutoEvalListPage = () => {
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 onPressEnter={handleSearch}
-                style={{ width: 280 }}
+                className={styles.searchInput}
                 allowClear
               />
               <Button icon={<FilterOutlined />}>筛选 (0)</Button>
@@ -270,7 +271,7 @@ const AutoEvalListPage = () => {
         />
 
         {/* 分页 */}
-        <Row justify="end" style={{ marginTop: 16 }}>
+        <Row justify="end" className={styles.paginationRow}>
           <Pagination
             current={page}
             pageSize={pageSize}

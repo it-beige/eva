@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  UseGuards,
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
@@ -17,8 +18,10 @@ import { QueryPromptDto } from './dto/query-prompt.dto';
 import { Prompt } from '../../database/entities/prompt.entity';
 import { PromptVersion } from '../../database/entities/prompt-version.entity';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('api/prompts')
+@Controller('prompts')
+@UseGuards(JwtAuthGuard)
 export class PromptController {
   constructor(private readonly promptService: PromptService) {}
 

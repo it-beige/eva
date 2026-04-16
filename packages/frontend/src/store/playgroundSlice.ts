@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import {
   playgroundApi,
   RunPlaygroundRequest,
-  PlaygroundResult,
   PlaygroundStreamEvent,
 } from '../services/playgroundApi';
 
@@ -57,6 +56,7 @@ export const runPlaygroundStream = createAsyncThunk(
   ) => {
     try {
       await playgroundApi.runStreamSSE(request, onEvent);
+      return undefined;
     } catch (error: any) {
       return rejectWithValue(error.message || '流式执行失败');
     }

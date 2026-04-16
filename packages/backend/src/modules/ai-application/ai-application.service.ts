@@ -4,9 +4,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { DataSource, Repository, Like } from 'typeorm';
 import { AIApplication } from '../../database/entities/ai-application.entity';
 import { AppVersion } from '../../database/entities/app-version.entity';
+import { Project } from '../../database/entities/project.entity';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { QueryApplicationDto } from './dto/query-application.dto';
@@ -21,7 +22,26 @@ export class AIApplicationService {
     private readonly appRepository: Repository<AIApplication>,
     @InjectRepository(AppVersion)
     private readonly versionRepository: Repository<AppVersion>,
+    @InjectRepository(Project)
+    private readonly projectRepository: Repository<Project>,
+    private readonly dataSource: DataSource,
   ) {}
+
+  private async resolveProjectId(projectId?: string): Promise<string> {
+    if (projectId) {
+      return projectId;
+    }
+
+    const project = await this.projectRepository.findOne({
+      order: { createdAt: 'ASC' },
+    });
+
+    if (!project) {
+      throw new BadRequestException('未找到可用项目，请先创建项目');
+    }
+
+    return project.id;
+  }
 
   async findAll(
     query: QueryApplicationDto,
@@ -64,12 +84,14 @@ export class AIApplicationService {
   }
 
   async create(dto: CreateApplicationDto): Promise<AIApplication> {
+    const projectId = await this.resolveProjectId(dto.projectId);
+
     const app = this.appRepository.create({
       name: dto.name,
       description: dto.description || null,
       icon: dto.icon || null,
       gitRepoUrl: dto.gitRepoUrl || null,
-      projectId: dto.projectId,
+      projectId,
       latestVersion: null,
     });
 
@@ -115,29 +137,40 @@ export class AIApplicationService {
     appId: string,
     dto: CreateVersionDto,
   ): Promise<AppVersion> {
-    const app = await this.findOne(appId);
+    return this.dataSource.transaction(async (manager) => {
+      const appRepository = manager.getRepository(AIApplication);
+      const versionRepository = manager.getRepository(AppVersion);
+      const app = await appRepository.findOne({
+        where: { id: appId },
+      });
 
-    const version = this.versionRepository.create({
-      appId,
-      version: dto.version,
-      config: dto.config || null,
+      if (!app) {
+        throw new NotFoundException(`AI应用不存在: ${appId}`);
+      }
+
+      const version = versionRepository.create({
+        appId,
+        version: dto.version,
+        config: dto.config || null,
+      });
+
+      const savedVersion = await versionRepository.save(version);
+
+      app.latestVersion = dto.version;
+      await appRepository.save(app);
+
+      return savedVersion;
     });
-
-    const savedVersion = await this.versionRepository.save(version);
-
-    // Update the latest version of the application
-    app.latestVersion = dto.version;
-    await this.appRepository.save(app);
-
-    return savedVersion;
   }
 
   async importPublicAgent(dto: ImportPublicAgentDto): Promise<AIApplication> {
+    const projectId = await this.resolveProjectId(dto.projectId);
+
     // Check if an application with the same name already exists in the project
     const existingApp = await this.appRepository.findOne({
       where: {
         name: dto.name,
-        projectId: dto.projectId,
+        projectId,
       },
     });
 
@@ -152,7 +185,7 @@ export class AIApplicationService {
       description: '引用的公共Code Agent',
       icon: null,
       gitRepoUrl: dto.gitRepoUrl,
-      projectId: dto.projectId,
+      projectId,
       latestVersion: null,
     });
 

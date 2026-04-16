@@ -38,7 +38,6 @@ import type { ColumnsType } from 'antd/es/table';
 import type { MenuProps } from 'antd';
 
 const { Title, Paragraph } = Typography;
-const { TabPane } = Tabs;
 
 const EvalMetricListPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -261,10 +260,11 @@ const EvalMetricListPage: React.FC = () => {
         activeKey={currentScope}
         onChange={handleTabChange}
         style={{ marginBottom: 16 }}
-      >
-        <TabPane tab="个人指标" key={MetricScope.PERSONAL} />
-        <TabPane tab="公共指标" key={MetricScope.PUBLIC} />
-      </Tabs>
+        items={[
+          { key: MetricScope.PERSONAL, label: '个人指标' },
+          { key: MetricScope.PUBLIC, label: '公共指标' },
+        ]}
+      />
 
       {/* 操作栏 */}
       <div

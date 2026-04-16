@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Radio, Space, Typography, Empty } from 'antd';
 import { PromptVersion } from '../../../services/promptApi';
-import styles from '../Prompt.module.css';
+import styles from '../Prompt.module.scss';
 
 const { Text } = Typography;
 
@@ -25,44 +25,6 @@ const VersionCompare = ({ versions }: VersionCompareProps) => {
 
   const leftContent = versions.find((v) => v.id === leftVersion)?.content || '';
   const rightContent = versions.find((v) => v.id === rightVersion)?.content || '';
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const renderDiff = (oldText: string, newText: string) => {
-    const oldLines = oldText.split('\n');
-    const newLines = newText.split('\n');
-    const maxLines = Math.max(oldLines.length, newLines.length);
-    const result: JSX.Element[] = [];
-
-    for (let i = 0; i < maxLines; i++) {
-      const oldLine = oldLines[i] || '';
-      const newLine = newLines[i] || '';
-
-      if (oldLine === newLine) {
-        result.push(
-          <div key={i} className={styles.diffLine}>
-            <span>{oldLine || ' '}</span>
-          </div>
-        );
-      } else {
-        if (oldLine) {
-          result.push(
-            <div key={`old-${i}`} className={styles.diffRemoved}>
-              <span>- {oldLine}</span>
-            </div>
-          );
-        }
-        if (newLine) {
-          result.push(
-            <div key={`new-${i}`} className={styles.diffAdded}>
-              <span>+ {newLine}</span>
-            </div>
-          );
-        }
-      }
-    }
-
-    return result;
-  };
 
   if (versions.length === 0) {
     return <Empty description="暂无版本" />;

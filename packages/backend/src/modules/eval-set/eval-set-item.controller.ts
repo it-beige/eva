@@ -16,7 +16,7 @@ import { UpdateEvalSetItemDto } from './dto/update-eval-set-item.dto';
 import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto/pagination.dto';
 import { EvalSetItem } from '../../database/entities';
 
-@Controller('api/eval-sets/:evalSetId/items')
+@Controller('eval-sets/:evalSetId/items')
 export class EvalSetItemController {
   constructor(private readonly evalSetItemService: EvalSetItemService) {}
 

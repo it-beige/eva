@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import {
   Button,
   Table,
   Empty,
   Spin,
   message,
-  Typography,
   Tag,
 } from 'antd';
 import { PlayCircleOutlined } from '@ant-design/icons';
@@ -13,8 +11,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/useRedux';
 import { debugEval } from '../../../store/autoEvalSlice';
 import type { FilterRules } from '../../../services/autoEvalApi';
 import type { ColumnsType } from 'antd/es/table';
-
-const { Text } = Typography;
+import styles from './DebugEvalPanel.module.scss';
 
 interface DebugEvalPanelProps {
   filterRules?: FilterRules;
@@ -60,14 +57,7 @@ const DebugEvalPanel = ({ filterRules, sampleRate, dateRange }: DebugEvalPanelPr
       ellipsis: true,
       width: '40%',
       render: (text: string) => (
-        <div
-          style={{
-            maxHeight: 100,
-            overflow: 'auto',
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-all',
-          }}
-        >
+        <div className={styles.preview}>
           {text || '-'}
         </div>
       ),
@@ -79,14 +69,7 @@ const DebugEvalPanel = ({ filterRules, sampleRate, dateRange }: DebugEvalPanelPr
       ellipsis: true,
       width: '40%',
       render: (text: string) => (
-        <div
-          style={{
-            maxHeight: 100,
-            overflow: 'auto',
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-all',
-          }}
-        >
+        <div className={styles.preview}>
           {text || '-'}
         </div>
       ),
@@ -98,7 +81,7 @@ const DebugEvalPanel = ({ filterRules, sampleRate, dateRange }: DebugEvalPanelPr
       render: (_, record) => (
         <div>
           {record.metrics?.map((metric) => (
-            <div key={metric.metricId} style={{ marginBottom: 4 }}>
+            <div key={metric.metricId} className={styles.metricLine}>
               <Tag color={metric.score >= 0.8 ? 'success' : metric.score >= 0.6 ? 'warning' : 'error'}>
                 {metric.metricName}: {(metric.score * 100).toFixed(1)}%
               </Tag>
@@ -112,7 +95,7 @@ const DebugEvalPanel = ({ filterRules, sampleRate, dateRange }: DebugEvalPanelPr
   return (
     <div>
       {/* 调试按钮 */}
-      <div style={{ marginBottom: 16, textAlign: 'right' }}>
+      <div className={styles.actions}>
         <Button
           type="primary"
           icon={<PlayCircleOutlined />}
@@ -138,7 +121,7 @@ const DebugEvalPanel = ({ filterRules, sampleRate, dateRange }: DebugEvalPanelPr
           <Empty
             description="No data"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
-            style={{ marginTop: 40 }}
+            className={styles.empty}
           />
         )}
       </Spin>

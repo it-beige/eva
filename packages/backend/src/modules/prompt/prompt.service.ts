@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { DataSource, Repository, Like } from 'typeorm';
 import { Prompt } from '../../database/entities/prompt.entity';
 import { PromptVersion } from '../../database/entities/prompt-version.entity';
 import { CreatePromptDto } from './dto/create-prompt.dto';
@@ -15,6 +15,7 @@ export class PromptService {
     private readonly promptRepository: Repository<Prompt>,
     @InjectRepository(PromptVersion)
     private readonly promptVersionRepository: Repository<PromptVersion>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async findAll(query: QueryPromptDto): Promise<PaginatedResponseDto<Prompt>> {
@@ -50,59 +51,61 @@ export class PromptService {
   }
 
   async create(createPromptDto: CreatePromptDto): Promise<Prompt> {
-    const prompt = this.promptRepository.create({
-      ...createPromptDto,
-      version: 1,
+    return this.dataSource.transaction(async (manager) => {
+      const promptRepository = manager.getRepository(Prompt);
+      const promptVersionRepository = manager.getRepository(PromptVersion);
+      const prompt = promptRepository.create({
+        ...createPromptDto,
+        version: 1,
+      });
+
+      const savedPrompt = await promptRepository.save(prompt);
+      const promptVersion = promptVersionRepository.create({
+        promptId: savedPrompt.id,
+        version: 1,
+        content: savedPrompt.content,
+      });
+
+      await promptVersionRepository.save(promptVersion);
+
+      return savedPrompt;
     });
-
-    const savedPrompt = await this.promptRepository.save(prompt);
-
-    // 创建第一个版本
-    const promptVersion = this.promptVersionRepository.create({
-      promptId: savedPrompt.id,
-      version: 1,
-      content: savedPrompt.content,
-    });
-
-    await this.promptVersionRepository.save(promptVersion);
-
-    return savedPrompt;
   }
 
   async update(id: string, updatePromptDto: UpdatePromptDto): Promise<Prompt> {
-    const prompt = await this.promptRepository.findOne({
-      where: { id },
+    return this.dataSource.transaction(async (manager) => {
+      const promptRepository = manager.getRepository(Prompt);
+      const promptVersionRepository = manager.getRepository(PromptVersion);
+      const prompt = await promptRepository.findOne({
+        where: { id },
+      });
+
+      if (!prompt) {
+        throw new NotFoundException(`Prompt with id "${id}" not found`);
+      }
+
+      const newVersion = prompt.version + 1;
+
+      prompt.content = updatePromptDto.content;
+      prompt.version = newVersion;
+      if (updatePromptDto.metadata !== undefined) {
+        prompt.metadata = updatePromptDto.metadata;
+      }
+      if (updatePromptDto.description !== undefined) {
+        prompt.description = updatePromptDto.description;
+      }
+
+      const updatedPrompt = await promptRepository.save(prompt);
+      const promptVersion = promptVersionRepository.create({
+        promptId: updatedPrompt.id,
+        version: newVersion,
+        content: updatePromptDto.content,
+      });
+
+      await promptVersionRepository.save(promptVersion);
+
+      return updatedPrompt;
     });
-
-    if (!prompt) {
-      throw new NotFoundException(`Prompt with id "${id}" not found`);
-    }
-
-    // 递增版本号
-    const newVersion = prompt.version + 1;
-
-    // 更新 Prompt
-    prompt.content = updatePromptDto.content;
-    prompt.version = newVersion;
-    if (updatePromptDto.metadata !== undefined) {
-      prompt.metadata = updatePromptDto.metadata;
-    }
-    if (updatePromptDto.description !== undefined) {
-      prompt.description = updatePromptDto.description;
-    }
-
-    const updatedPrompt = await this.promptRepository.save(prompt);
-
-    // 创建新版本记录
-    const promptVersion = this.promptVersionRepository.create({
-      promptId: updatedPrompt.id,
-      version: newVersion,
-      content: updatePromptDto.content,
-    });
-
-    await this.promptVersionRepository.save(promptVersion);
-
-    return updatedPrompt;
   }
 
   async remove(id: string): Promise<void> {

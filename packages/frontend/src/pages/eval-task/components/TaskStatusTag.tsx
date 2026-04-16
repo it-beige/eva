@@ -7,6 +7,7 @@ import {
   PauseCircleOutlined,
 } from '@ant-design/icons';
 import { EvalTaskStatus } from '@eva/shared';
+import styles from './TaskStatusTag.module.scss';
 
 interface TaskStatusTagProps {
   status: EvalTaskStatus;
@@ -43,7 +44,7 @@ const TaskStatusTag: React.FC<TaskStatusTagProps> = ({ status, progress = 0 }) =
     default:
       return (
         <Tag color="default">
-          <Spin size="small" style={{ marginRight: 4 }} />
+          <Spin size="small" className={styles.pendingSpin} />
           待执行
         </Tag>
       );

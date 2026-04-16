@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Table,
   Button,
@@ -10,7 +10,7 @@ import {
   Avatar,
   Popconfirm,
   Space,
-  Alert,
+  message,
 } from 'antd';
 import {
   PlusOutlined,
@@ -19,15 +19,13 @@ import {
   CrownOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import type { AddMemberRequest, WorkspaceMember } from '@eva/shared';
 import {
-  fetchMembers,
-  addMember,
-  removeMember,
-  clearError,
-  clearSuccessMessage,
-} from '../../../store/settingsSlice';
-import { Member } from '../../../services/settingsApi';
+  useAddMemberMutation,
+  useGetMembersQuery,
+  useRemoveMemberMutation,
+} from '../../../services/settingsQueries';
+import { getQueryErrorMessage } from '../../../services/evaApi';
 
 const { Option } = Select;
 
@@ -40,28 +38,33 @@ const ROLE_CONFIG = {
 const MemberManagement: React.FC = () => {
   const [form] = Form.useForm();
   const [modalVisible, setModalVisible] = useState(false);
-  const dispatch = useAppDispatch();
-  const { members, membersLoading, memberActionLoading, successMessage, error } =
-    useAppSelector((state) => state.settings);
+  const { data: members = [], isLoading: membersLoading } = useGetMembersQuery();
+  const [addMember, { isLoading: isAddingMember }] = useAddMemberMutation();
+  const [removeMember, { isLoading: isRemovingMember }] =
+    useRemoveMemberMutation();
+  const memberActionLoading = isAddingMember || isRemovingMember;
 
-  useEffect(() => {
-    dispatch(fetchMembers());
-  }, [dispatch]);
-
-  const handleAddMember = (values: { email: string; role: 'owner' | 'admin' | 'member' }) => {
-    dispatch(addMember(values)).then((action) => {
-      if (addMember.fulfilled.match(action)) {
-        setModalVisible(false);
-        form.resetFields();
-      }
-    });
+  const handleAddMember = async (values: AddMemberRequest) => {
+    try {
+      await addMember(values).unwrap();
+      message.success('成员添加成功');
+      setModalVisible(false);
+      form.resetFields();
+    } catch (error) {
+      message.error(getQueryErrorMessage(error as any, '添加成员失败'));
+    }
   };
 
-  const handleRemoveMember = (id: string) => {
-    dispatch(removeMember(id));
+  const handleRemoveMember = async (id: string) => {
+    try {
+      await removeMember(id).unwrap();
+      message.success('成员已移除');
+    } catch (error) {
+      message.error(getQueryErrorMessage(error as any, '移除成员失败'));
+    }
   };
 
-  const columns: ColumnsType<Member> = [
+  const columns: ColumnsType<WorkspaceMember> = [
     {
       title: '成员',
       key: 'member',
@@ -103,7 +106,10 @@ const MemberManagement: React.FC = () => {
       title: '操作',
       key: 'action',
       render: (_, record) => {
-        if (record.role === 'owner') return null;
+        if (record.role === 'owner') {
+          return null;
+        }
+
         return (
           <Popconfirm
             title="确定要移除该成员吗？"
@@ -127,27 +133,6 @@ const MemberManagement: React.FC = () => {
 
   return (
     <div>
-      {successMessage && (
-        <Alert
-          message={successMessage}
-          type="success"
-          showIcon
-          closable
-          className="mb-4"
-          onClose={() => dispatch(clearSuccessMessage())}
-        />
-      )}
-      {error && (
-        <Alert
-          message={error}
-          type="error"
-          showIcon
-          closable
-          className="mb-4"
-          onClose={() => dispatch(clearError())}
-        />
-      )}
-
       <div className="flex justify-between items-center mb-4">
         <div className="text-gray-600">共 {members.length} 位成员</div>
         <Button

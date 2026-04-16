@@ -7,15 +7,15 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-import { AIApplication } from '../../../services/aiApplicationApi';
+import type { ApplicationResponse } from '@eva/shared';
 
 const { Text } = Typography;
 
 interface AppCardProps {
-  application: AIApplication;
-  onEdit: (app: AIApplication) => void;
-  onDelete: (app: AIApplication) => void;
-  onEvaluate: (app: AIApplication) => void;
+  application: ApplicationResponse;
+  onEdit: (app: ApplicationResponse) => void;
+  onDelete: (app: ApplicationResponse) => void;
+  onEvaluate: (app: ApplicationResponse) => void;
 }
 
 const AppCard: React.FC<AppCardProps> = ({

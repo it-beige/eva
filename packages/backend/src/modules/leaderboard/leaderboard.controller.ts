@@ -4,15 +4,21 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LeaderboardService } from './leaderboard.service';
 import {
   QueryLeaderboardDto,
   PaginatedLeaderboardResponse,
   LeaderboardSummary,
 } from './dto/query-leaderboard.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('api/leaderboard')
+@Controller('leaderboard')
+@UseGuards(JwtAuthGuard)
+@ApiTags('Leaderboard')
+@ApiBearerAuth('access-token')
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 

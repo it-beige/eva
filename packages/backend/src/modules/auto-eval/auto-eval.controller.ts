@@ -8,12 +8,10 @@ import {
   Param,
   Query,
   UseGuards,
-  Req,
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AutoEvalService } from './auto-eval.service';
 import { CreateAutoEvalDto } from './dto/create-auto-eval.dto';
 import { UpdateAutoEvalDto } from './dto/update-auto-eval.dto';
@@ -21,9 +19,11 @@ import { QueryAutoEvalDto } from './dto/query-auto-eval.dto';
 import { DebugFilterDto, DebugEvalDto } from './dto/debug-auto-eval.dto';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
 import { AutoEval } from '../../database/entities/auto-eval.entity';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('api/auto-evals')
-@UseGuards(AuthGuard('jwt'))
+@Controller('auto-evals')
+@UseGuards(JwtAuthGuard)
 export class AutoEvalController {
   constructor(private readonly autoEvalService: AutoEvalService) {}
 
@@ -44,10 +44,9 @@ export class AutoEvalController {
   @Post()
   async create(
     @Body() createDto: CreateAutoEvalDto,
-    @Req() req: any,
+    @CurrentUser('userId') userId?: string,
+    @CurrentUser('name') userName?: string,
   ): Promise<AutoEval> {
-    const userId = req.user?.id;
-    const userName = req.user?.name;
     return this.autoEvalService.create(createDto, userId, userName);
   }
 
@@ -55,10 +54,9 @@ export class AutoEvalController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDto: UpdateAutoEvalDto,
-    @Req() req: any,
+    @CurrentUser('userId') userId?: string,
+    @CurrentUser('name') userName?: string,
   ): Promise<AutoEval> {
-    const userId = req.user?.id;
-    const userName = req.user?.name;
     return this.autoEvalService.update(id, updateDto, userId, userName);
   }
 

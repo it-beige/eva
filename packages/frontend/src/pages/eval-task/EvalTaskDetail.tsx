@@ -32,7 +32,8 @@ import {
   addLog,
 } from '../../store/evalTaskSlice';
 import TaskStatusTag from './components/TaskStatusTag';
-import { EvalTaskStatus, EVAL_TYPE_LABELS, EVAL_TASK_STATUS_LABELS } from '@eva/shared';
+import { EvalTaskStatus, EVAL_TYPE_LABELS } from '@eva/shared';
+import styles from './EvalTaskDetail.module.scss';
 
 const { Title, Text } = Typography;
 
@@ -123,40 +124,33 @@ const EvalTaskDetailPage: React.FC = () => {
 
   if (!currentTask) {
     return (
-      <div style={{ padding: 24 }}>
+      <div className={styles.loadingState}>
         <Card loading={loading} />
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className={styles.page}>
       <Card bordered={false}>
-        {/* 头部 */}
-        <div style={{ marginBottom: 24 }}>
-          <Space>
+        <div className={styles.header}>
+          <Space className={styles.titleRow}>
             <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/eval/tasks')}>
               返回
             </Button>
-            <Title level={4} style={{ margin: 0 }}>
+            <Title level={4} className={styles.pageTitle}>
               {currentTask.name}
             </Title>
             <Badge
               count={currentTask.shortId}
-              style={{
-                backgroundColor: '#f0f0f0',
-                color: '#666',
-                fontSize: 12,
-                fontFamily: 'monospace',
-              }}
+              className={styles.shortIdBadge}
             />
           </Space>
         </div>
 
         <Row gutter={24}>
           <Col span={16}>
-            {/* 基本信息 */}
-            <Card title="基本信息" style={{ marginBottom: 24 }}>
+            <Card title="基本信息" className={styles.sectionCard}>
               <Descriptions column={2}>
                 <Descriptions.Item label="任务ID">{currentTask.shortId}</Descriptions.Item>
                 <Descriptions.Item label="状态">
@@ -189,7 +183,7 @@ const EvalTaskDetailPage: React.FC = () => {
               </Descriptions>
 
               {currentTask.status === EvalTaskStatus.RUNNING && (
-                <div style={{ marginTop: 16 }}>
+                <div className={styles.progressBlock}>
                   <Text type="secondary">当前进度</Text>
                   <Progress
                     percent={Math.round(currentTask.progress)}
@@ -200,7 +194,6 @@ const EvalTaskDetailPage: React.FC = () => {
               )}
             </Card>
 
-            {/* 日志 */}
             <Card
               title="执行日志"
               extra={
@@ -209,28 +202,15 @@ const EvalTaskDetailPage: React.FC = () => {
                 </Button>
               }
             >
-              <div
-                style={{
-                  backgroundColor: '#1e1e1e',
-                  color: '#d4d4d4',
-                  padding: 16,
-                  borderRadius: 4,
-                  fontFamily: 'monospace',
-                  fontSize: 13,
-                  maxHeight: 400,
-                  overflow: 'auto',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-all',
-                }}
-              >
+              <div className={styles.logPanel}>
                 {logs.length > 0 ? (
                   logs.map((log, index) => (
-                    <div key={index} style={{ marginBottom: 4 }}>
+                    <div key={index} className={styles.logLine}>
                       {log}
                     </div>
                   ))
                 ) : (
-                  <Text type="secondary" style={{ color: '#666' }}>
+                  <Text type="secondary" className={styles.emptyLog}>
                     暂无日志
                   </Text>
                 )}
@@ -239,9 +219,8 @@ const EvalTaskDetailPage: React.FC = () => {
           </Col>
 
           <Col span={8}>
-            {/* 操作按钮 */}
-            <Card title="操作" style={{ marginBottom: 24 }}>
-              <Space direction="vertical" style={{ width: '100%' }}>
+            <Card title="操作" className={styles.sectionCard}>
+              <Space direction="vertical" className={styles.actionStack}>
                 <Button
                   type="primary"
                   icon={<CopyOutlined />}
@@ -274,16 +253,7 @@ const EvalTaskDetailPage: React.FC = () => {
                 </Descriptions.Item>
                 {currentTask.config && (
                   <Descriptions.Item label="扩展配置">
-                    <pre
-                      style={{
-                        backgroundColor: '#f5f5f5',
-                        padding: 8,
-                        borderRadius: 4,
-                        fontSize: 12,
-                        maxHeight: 200,
-                        overflow: 'auto',
-                      }}
-                    >
+                    <pre className={styles.configPre}>
                       {JSON.stringify(currentTask.config, null, 2)}
                     </pre>
                   </Descriptions.Item>

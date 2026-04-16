@@ -4,7 +4,11 @@ import {
   Column,
   Index,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { AIApplication } from './ai-application.entity';
+import { User } from './user.entity';
 
 @Entity('trace_logs')
 export class TraceLog {
@@ -20,8 +24,26 @@ export class TraceLog {
   sessionId: string | null;
 
   @Index()
-  @Column({ name: 'user_id', type: 'varchar', length: 100, nullable: true })
+  @Column({ name: 'app_id', type: 'uuid', nullable: true })
+  appId: string | null;
+
+  @ManyToOne(() => AIApplication, (application) => application.traceLogs, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'app_id' })
+  application: AIApplication | null;
+
+  @Index()
+  @Column({ name: 'user_id', type: 'uuid', nullable: true })
   userId: string | null;
+
+  @ManyToOne(() => User, (user) => user.traceLogs, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'user_id' })
+  user: User | null;
 
   @Column({ name: 'node_id', type: 'varchar', length: 100, nullable: true })
   nodeId: string | null;

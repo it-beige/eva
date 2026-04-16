@@ -48,4 +48,8 @@ export class QueryTraceDto {
   @IsInt()
   @Min(1)
   pageSize?: number = 20;
+
+  @IsOptional()
+  @IsString()
+  cursor?: string;
 }

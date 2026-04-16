@@ -29,7 +29,6 @@ import {
   PlusOutlined,
   ClockCircleOutlined,
   LinkOutlined,
-  TagOutlined,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import {
@@ -46,6 +45,8 @@ import { EvalSetItemTable } from './components/EvalSetItemTable';
 import { ColumnManager } from './components/ColumnManager';
 import { TagManager } from './components/TagManager';
 import { EvalSetItem } from '@eva/shared';
+import TagClusterIcon from '../../components/icons/TagClusterIcon';
+import styles from './components/TagManager.module.scss';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -268,14 +269,19 @@ const EvalSetDetailPage = () => {
           </Row>
 
           <div style={{ marginBottom: 16 }}>
-            <Space align="center">
-              <TagOutlined />
+            <div className={styles.tagSection}>
+              <span className={styles.sectionMeta}>
+                <span className={styles.sectionLead}>
+                  <TagClusterIcon size={16} />
+                </span>
+                <span className={styles.sectionTitle}>标签</span>
+              </span>
               <TagManager
                 tags={tags}
                 onAddTag={handleAddTag}
                 onRemoveTag={handleRemoveTag}
               />
-            </Space>
+            </div>
           </div>
         </div>
 

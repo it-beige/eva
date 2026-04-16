@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Row, Col, Radio } from 'antd';
 import { EvalType } from '@eva/shared';
+import styles from './EvalModeSelector.module.scss';
 
 interface EvalModeSelectorProps {
   evalType: EvalType;
@@ -51,25 +52,20 @@ const EvalModeSelector: React.FC<EvalModeSelectorProps> = ({
     <Radio.Group
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      style={{ width: '100%' }}
+      className={styles.group}
     >
       <Row gutter={[16, 16]}>
         {options.map((option) => (
           <Col span={12} key={option.value}>
-            <Radio value={option.value} style={{ width: '100%' }}>
+            <Radio value={option.value} className={styles.radio}>
               <Card
                 hoverable
-                style={{
-                  width: '100%',
-                  borderColor: value === option.value ? '#1890ff' : undefined,
-                  backgroundColor: value === option.value ? '#e6f7ff' : undefined,
-                }}
-                bodyStyle={{ padding: 16 }}
+                className={`${styles.optionCard} ${
+                  value === option.value ? styles.optionCardActive : ''
+                }`}
               >
-                <div style={{ fontWeight: 500, fontSize: 16 }}>{option.label}</div>
-                <div style={{ fontSize: 13, color: '#666', marginTop: 8 }}>
-                  {option.description}
-                </div>
+                <div className={styles.optionTitle}>{option.label}</div>
+                <div className={styles.optionDescription}>{option.description}</div>
               </Card>
             </Radio>
           </Col>

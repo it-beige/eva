@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Tag, Button, Space, Popover, Input, theme } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import TagClusterIcon from '../../../components/icons/TagClusterIcon';
+import styles from './TagManager.module.scss';
 
 const { useToken } = theme;
 
@@ -29,22 +30,52 @@ export const TagManager: React.FC<TagManagerProps> = ({
     setInputVisible(false);
   };
 
-  const tagColors = [
-    'blue',
-    'green',
-    'cyan',
-    'geekblue',
-    'purple',
-    'magenta',
-    'red',
-    'orange',
-    'gold',
-    'lime',
+  const tagTones = [
+    {
+      background: '#eff3ff',
+      borderColor: '#cdd8ff',
+      textColor: '#4359c7',
+      iconStart: '#7280FF',
+      iconEnd: '#53B8FF',
+      iconSoft: 'rgba(114, 128, 255, 0.18)',
+    },
+    {
+      background: '#eef8ff',
+      borderColor: '#cbe8ff',
+      textColor: '#1e74b7',
+      iconStart: '#3FA7FF',
+      iconEnd: '#52D2FF',
+      iconSoft: 'rgba(83, 182, 255, 0.18)',
+    },
+    {
+      background: '#eefbf7',
+      borderColor: '#ccecdf',
+      textColor: '#1f8770',
+      iconStart: '#34B89A',
+      iconEnd: '#63D7BB',
+      iconSoft: 'rgba(52, 184, 154, 0.18)',
+    },
+    {
+      background: '#f4f1ff',
+      borderColor: '#ddd4ff',
+      textColor: '#6350c4',
+      iconStart: '#8C73FF',
+      iconEnd: '#B494FF',
+      iconSoft: 'rgba(140, 115, 255, 0.18)',
+    },
+    {
+      background: '#fff4ef',
+      borderColor: '#ffd8c8',
+      textColor: '#c46a3f',
+      iconStart: '#FF9368',
+      iconEnd: '#FFC06C',
+      iconSoft: 'rgba(255, 147, 104, 0.18)',
+    },
   ];
 
-  const getTagColor = (tag: string) => {
-    const index = tag.charCodeAt(0) % tagColors.length;
-    return tagColors[index];
+  const getTagTone = (tag: string) => {
+    const hash = Array.from(tag).reduce((total, char) => total + char.charCodeAt(0), 0);
+    return tagTones[hash % tagTones.length];
   };
 
   const addTagContent = (
@@ -64,18 +95,36 @@ export const TagManager: React.FC<TagManagerProps> = ({
   );
 
   return (
-    <Space size={[8, 8]} wrap>
-      {tags.map((tag) => (
-        <Tag
-          key={tag}
-          color={getTagColor(tag)}
-          closable={!readonly}
-          onClose={() => onRemoveTag(tag)}
-          style={{ marginRight: 0 }}
-        >
-          {tag}
-        </Tag>
-      ))}
+    <Space size={[8, 8]} wrap className={styles.tagGroup}>
+      {tags.map((tag) => {
+        const tone = getTagTone(tag);
+
+        return (
+          <Tag
+            key={tag}
+            closable={!readonly}
+            onClose={() => onRemoveTag(tag)}
+            className={styles.tagSurface}
+            icon={
+              <span className={styles.tagIcon}>
+                <TagClusterIcon
+                  size={12}
+                  startColor={tone.iconStart}
+                  endColor={tone.iconEnd}
+                  secondaryColor={tone.iconSoft}
+                />
+              </span>
+            }
+            style={{
+              background: tone.background,
+              borderColor: tone.borderColor,
+              color: tone.textColor,
+            }}
+          >
+            {tag}
+          </Tag>
+        );
+      })}
       {!readonly && (
         <Popover
           content={addTagContent}
@@ -86,13 +135,22 @@ export const TagManager: React.FC<TagManagerProps> = ({
           placement="bottomLeft"
         >
           <Tag
+            className={styles.addTagSurface}
             style={{
               background: token.colorBgContainer,
-              borderStyle: 'dashed',
-              cursor: 'pointer',
+              borderColor: token.colorBorderSecondary,
+              color: token.colorTextSecondary,
             }}
           >
-            <PlusOutlined /> 添加标签
+            <span className={styles.tagIcon}>
+              <TagClusterIcon
+                size={12}
+                startColor="#7280FF"
+                endColor="#53B8FF"
+                secondaryColor="rgba(114, 128, 255, 0.18)"
+              />
+            </span>
+            添加标签
           </Tag>
         </Popover>
       )}

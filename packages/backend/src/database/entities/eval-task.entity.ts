@@ -4,8 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { EvalTaskStatus, EvalType } from '@eva/shared';
+import { EvalSet } from './eval-set.entity';
+import { AIApplication } from './ai-application.entity';
 
 @Entity('eval_tasks')
 export class EvalTask {
@@ -43,6 +47,13 @@ export class EvalTask {
   @Column({ name: 'eval_set_id', type: 'uuid', nullable: true })
   evalSetId: string | null;
 
+  @ManyToOne(() => EvalSet, (evalSet) => evalSet.tasks, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'eval_set_id' })
+  evalSet: EvalSet | null;
+
   @Column({ name: 'task_group_id', type: 'varchar', length: 100, nullable: true })
   taskGroupId: string | null;
 
@@ -51,6 +62,13 @@ export class EvalTask {
 
   @Column({ name: 'app_id', type: 'uuid', nullable: true })
   appId: string | null;
+
+  @ManyToOne(() => AIApplication, (application) => application.tasks, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'app_id' })
+  application: AIApplication | null;
 
   @Column({ name: 'app_version', type: 'varchar', length: 50, nullable: true })
   appVersion: string | null;

@@ -1,5 +1,6 @@
 import { Select, Input, Button, Row, Col } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import styles from './FilterRuleBuilder.module.scss';
 
 const { Option } = Select;
 
@@ -68,12 +69,12 @@ const FilterRuleBuilder = ({ value, onChange }: FilterRuleBuilderProps) => {
   return (
     <div>
       {conditions.map((condition, index) => (
-        <Row key={index} gutter={8} style={{ marginBottom: 8 }} align="middle">
+        <Row key={index} gutter={8} className={styles.ruleRow} align="middle">
           <Col flex="120px">
             <Select
               value={condition.field}
               onChange={(val) => handleFieldChange(index, val)}
-              style={{ width: '100%' }}
+              className={styles.fullWidth}
               placeholder="选择字段"
             >
               {fieldOptions.map((opt) => (
@@ -87,7 +88,7 @@ const FilterRuleBuilder = ({ value, onChange }: FilterRuleBuilderProps) => {
             <Select
               value={condition.operator}
               onChange={(val) => handleOperatorChange(index, val)}
-              style={{ width: '100%' }}
+              className={styles.fullWidth}
               placeholder="操作符"
             >
               {operatorOptions.map((opt) => (
@@ -118,7 +119,7 @@ const FilterRuleBuilder = ({ value, onChange }: FilterRuleBuilderProps) => {
         type="dashed"
         onClick={handleAdd}
         icon={<PlusOutlined />}
-        style={{ width: '100%' }}
+        className={styles.fullWidth}
       >
         Add filter
       </Button>

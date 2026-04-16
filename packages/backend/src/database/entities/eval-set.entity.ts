@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { EvalSetType, EvalSetSourceType } from '@eva/shared';
 import { EvalSetItem } from './eval-set-item.entity';
+import { EvalTask } from './eval-task.entity';
+import { LeaderboardEntry } from './leaderboard-entry.entity';
 
 @Entity('eval_sets')
 export class EvalSet {
@@ -45,6 +47,9 @@ export class EvalSet {
   @Column({ name: 'created_by', type: 'varchar', length: 100, nullable: true })
   createdBy: string | null;
 
+  @Column({ type: 'jsonb', default: () => "'[]'" })
+  tags: string[];
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -53,4 +58,10 @@ export class EvalSet {
 
   @OneToMany(() => EvalSetItem, (item) => item.evalSet)
   items: EvalSetItem[];
+
+  @OneToMany(() => EvalTask, (task) => task.evalSet)
+  tasks: EvalTask[];
+
+  @OneToMany(() => LeaderboardEntry, (entry) => entry.evalSet)
+  leaderboardEntries: LeaderboardEntry[];
 }

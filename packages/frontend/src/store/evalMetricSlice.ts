@@ -10,7 +10,6 @@ import evalMetricApi, {
   CreateEvalMetricData,
   UpdateEvalMetricData,
   ParseRepoData,
-  ParseRepoResponse,
 } from '../services/evalMetricApi';
 
 // ==================== State Interface ====================
@@ -112,7 +111,7 @@ export const createEvalMetric = createAsyncThunk(
   async (data: CreateEvalMetricData, { dispatch }) => {
     const response = await evalMetricApi.create(data);
     // 创建成功后刷新列表
-    dispatch(fetchEvalMetrics());
+    dispatch(fetchEvalMetrics({}));
     return response;
   },
 );
@@ -126,7 +125,7 @@ export const updateEvalMetric = createAsyncThunk(
   ) => {
     const response = await evalMetricApi.update(id, data);
     // 更新成功后刷新列表
-    dispatch(fetchEvalMetrics());
+    dispatch(fetchEvalMetrics({}));
     return response;
   },
 );
@@ -137,7 +136,7 @@ export const deleteEvalMetric = createAsyncThunk(
   async (id: string, { dispatch }) => {
     await evalMetricApi.delete(id);
     // 删除成功后刷新列表
-    dispatch(fetchEvalMetrics());
+    dispatch(fetchEvalMetrics({}));
     return id;
   },
 );
@@ -148,7 +147,7 @@ export const deleteEvalMetrics = createAsyncThunk(
   async (ids: string[], { dispatch }) => {
     await evalMetricApi.deleteMany(ids);
     // 删除成功后刷新列表
-    dispatch(fetchEvalMetrics());
+    dispatch(fetchEvalMetrics({}));
     return ids;
   },
 );
@@ -242,7 +241,7 @@ const evalMetricSlice = createSlice({
         fetchEvalMetrics.fulfilled,
         (state, action: PayloadAction<PaginatedResponse<EvalMetric>>) => {
           state.loading = false;
-          state.items = action.payload.items || action.payload.list || [];
+          state.items = action.payload.items || [];
           state.total = action.payload.total;
           state.page = action.payload.page;
           state.pageSize = action.payload.pageSize;

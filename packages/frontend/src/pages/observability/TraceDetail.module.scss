@@ -1,0 +1,77 @@
+.page {
+  padding: 24px;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.emptyState {
+  padding: 24px;
+}
+
+.emptyActions {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.backButton {
+  padding-left: 0 !important;
+}
+
+.pageTitle {
+  margin-bottom: 24px !important;
+}
+
+.sectionCard {
+  margin-bottom: 24px;
+}
+
+.contentBlock {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--eva-border);
+  border-radius: 8px;
+  background: var(--eva-bg-subtle);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.footerAction {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.statistic {
+  text-align: center;
+}
+
+.statLabel {
+  margin-bottom: 8px;
+  color: var(--eva-text-secondary);
+  font-size: 14px;
+}
+
+.statValue {
+  color: var(--eva-text);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .page,
+  .emptyState {
+    padding: 20px 16px;
+  }
+}

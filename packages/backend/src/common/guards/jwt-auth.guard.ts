@@ -1,9 +1,11 @@
 import {
   Injectable,
   ExecutionContext,
-  UnauthorizedException,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { BusinessErrorCode } from '@eva/shared';
+import { BusinessException } from '../errors/business.exception';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -11,9 +13,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest(err: any, user: any, info: any) {
+  handleRequest<TUser = unknown>(
+    err: unknown,
+    user: TUser,
+    _info: unknown,
+  ): TUser {
     if (err || !user) {
-      throw err || new UnauthorizedException('Unauthorized');
+      throw (
+        err ||
+        new BusinessException(
+          BusinessErrorCode.AUTH_UNAUTHORIZED,
+          '未登录或登录状态已失效',
+          HttpStatus.UNAUTHORIZED,
+        )
+      );
     }
     return user;
   }

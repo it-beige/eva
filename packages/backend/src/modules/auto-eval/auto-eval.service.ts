@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, In } from 'typeorm';
+import { Repository, Like, In, DeepPartial } from 'typeorm';
 import { AutoEval } from '../../database/entities/auto-eval.entity';
 import { TraceLog } from '../../database/entities/trace-log.entity';
 import { CreateAutoEvalDto } from './dto/create-auto-eval.dto';
@@ -88,8 +88,11 @@ export class AutoEvalService {
 
     const autoEval = this.autoEvalRepository.create({
       ...createDto,
-      createdBy: userName || userId,
-    });
+      filterRules:
+        (createDto.filterRules as unknown as Record<string, unknown>) ?? null,
+      metricIds: createDto.metricIds ?? [],
+      createdBy: userName || userId || null,
+    } as DeepPartial<AutoEval>);
 
     return this.autoEvalRepository.save(autoEval);
   }
@@ -110,10 +113,19 @@ export class AutoEvalService {
       throw new BadRequestException('采样率必须在 0-100 之间');
     }
 
-    const updated = this.autoEvalRepository.merge(autoEval, {
-      ...updateDto,
-      createdBy: userName || userId,
-    });
+    const updated = this.autoEvalRepository.merge(
+      autoEval,
+      {
+        ...updateDto,
+        filterRules:
+          updateDto.filterRules === undefined
+            ? autoEval.filterRules
+            : ((updateDto.filterRules as unknown as Record<string, unknown>) ??
+              null),
+        metricIds: updateDto.metricIds ?? autoEval.metricIds,
+        createdBy: userName || userId || autoEval.createdBy,
+      } as DeepPartial<AutoEval>,
+    );
 
     return this.autoEvalRepository.save(updated);
   }

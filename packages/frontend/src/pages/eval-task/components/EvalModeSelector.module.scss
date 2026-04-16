@@ -1,0 +1,31 @@
+.group {
+  width: 100%;
+}
+
+.radio {
+  width: 100%;
+}
+
+.optionCard {
+  width: 100%;
+}
+
+.optionCard :global(.ant-card-body) {
+  padding: 16px;
+}
+
+.optionCardActive {
+  border-color: #1890ff !important;
+  background: #e6f7ff;
+}
+
+.optionTitle {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.optionDescription {
+  margin-top: 8px;
+  color: var(--eva-text-secondary);
+  font-size: 13px;
+}

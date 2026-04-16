@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
 import { TraceLog } from '../../database/entities/trace-log.entity';
+import { BusinessErrorCode } from '@eva/shared';
 import { QueryTraceDto } from './dto/query-trace.dto';
 import { CreateTraceDto } from './dto/create-trace.dto';
+import { BusinessException } from '../../common/errors/business.exception';
 
 export interface TraceListResult {
   list: TraceLog[];
   total: number;
   page: number;
   pageSize: number;
+  nextCursor: string | null;
 }
 
 @Injectable()
@@ -29,7 +32,8 @@ export class ObservabilityService {
       inputKeyword, 
       outputKeyword,
       page = 1, 
-      pageSize = 20 
+      pageSize = 20,
+      cursor,
     } = query;
 
     const qb = this.traceLogRepository.createQueryBuilder('trace');
@@ -76,28 +80,63 @@ export class ObservabilityService {
       qb.andWhere('trace.output LIKE :outputKeyword', { outputKeyword: `%${outputKeyword}%` });
     }
 
-    // 计算总数
+    if (cursor) {
+      const [cursorCalledAt, cursorId] = Buffer.from(cursor, 'base64')
+        .toString('utf8')
+        .split('|');
+      if (cursorCalledAt && cursorId) {
+        qb.andWhere(
+          '(trace.calledAt < :cursorCalledAt OR (trace.calledAt = :cursorCalledAt AND trace.id < :cursorId))',
+          {
+            cursorCalledAt: new Date(cursorCalledAt),
+            cursorId,
+          },
+        );
+      }
+    }
+
     const total = await qb.getCount();
 
-    // 分页
     qb.orderBy('trace.calledAt', 'DESC')
+      .addOrderBy('trace.id', 'DESC')
       .skip((page - 1) * pageSize)
       .take(pageSize);
 
     const list = await qb.getMany();
+    const lastItem = list.at(-1);
+    const nextCursor = lastItem
+      ? Buffer.from(`${lastItem.calledAt.toISOString()}|${lastItem.id}`).toString(
+          'base64',
+        )
+      : null;
 
     return {
       list,
       total,
       page,
       pageSize,
+      nextCursor,
     };
   }
 
-  async findOne(id: string): Promise<TraceLog | null> {
-    return this.traceLogRepository.findOne({
+  async findOne(id: string): Promise<TraceLog> {
+    const traceLog = await this.traceLogRepository.findOne({
       where: { id },
+      relations: {
+        application: true,
+        user: true,
+      },
     });
+
+    if (!traceLog) {
+      throw new BusinessException(
+        BusinessErrorCode.TRACE_NOT_FOUND,
+        'Trace 不存在',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return traceLog;
   }
 
   async findByTraceId(traceId: string): Promise<TraceLog | null> {

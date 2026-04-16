@@ -9,7 +9,6 @@ import {
   Tag,
   Popconfirm,
   Space,
-  Alert,
   message,
   Tooltip,
 } from 'antd';
@@ -21,34 +20,23 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import type { ApiTokenResponse, CreateTokenRequest } from '@eva/shared';
 import {
-  fetchTokens,
-  createToken,
-  deleteToken,
-  clearError,
-  clearSuccessMessage,
-  clearNewlyCreatedToken,
-} from '../../../store/settingsSlice';
-import { ApiToken } from '../../../services/settingsApi';
+  useCreateTokenMutation,
+  useDeleteTokenMutation,
+  useGetTokensQuery,
+} from '../../../services/settingsQueries';
+import { getQueryErrorMessage } from '../../../services/evaApi';
 
 const TokenManagement: React.FC = () => {
   const [form] = Form.useForm();
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [tokenDisplayModal, setTokenDisplayModal] = useState(false);
-  const dispatch = useAppDispatch();
-  const {
-    tokens,
-    tokensLoading,
-    tokenActionLoading,
-    newlyCreatedToken,
-    successMessage,
-    error,
-  } = useAppSelector((state) => state.settings);
-
-  useEffect(() => {
-    dispatch(fetchTokens());
-  }, [dispatch]);
+  const [newlyCreatedToken, setNewlyCreatedToken] = useState<string | null>(null);
+  const { data: tokens = [], isLoading: tokensLoading } = useGetTokensQuery();
+  const [createToken, { isLoading: creatingToken }] = useCreateTokenMutation();
+  const [deleteToken, { isLoading: deletingToken }] = useDeleteTokenMutation();
+  const tokenActionLoading = creatingToken || deletingToken;
 
   useEffect(() => {
     if (newlyCreatedToken) {
@@ -58,12 +46,23 @@ const TokenManagement: React.FC = () => {
     }
   }, [newlyCreatedToken, form]);
 
-  const handleCreateToken = (values: { name: string; expiresIn?: number }) => {
-    dispatch(createToken(values));
+  const handleCreateToken = async (values: CreateTokenRequest) => {
+    try {
+      const result = await createToken(values).unwrap();
+      message.success('Token 创建成功');
+      setNewlyCreatedToken(result.token);
+    } catch (error) {
+      message.error(getQueryErrorMessage(error as any, '创建 Token 失败'));
+    }
   };
 
-  const handleDeleteToken = (id: string) => {
-    dispatch(deleteToken(id));
+  const handleDeleteToken = async (id: string) => {
+    try {
+      await deleteToken(id).unwrap();
+      message.success('Token 已删除');
+    } catch (error) {
+      message.error(getQueryErrorMessage(error as any, '删除 Token 失败'));
+    }
   };
 
   const handleCopyToken = (token: string) => {
@@ -72,7 +71,7 @@ const TokenManagement: React.FC = () => {
     });
   };
 
-  const columns: ColumnsType<ApiToken> = [
+  const columns: ColumnsType<ApiTokenResponse> = [
     {
       title: 'Token 名称',
       dataIndex: 'name',
@@ -100,6 +99,7 @@ const TokenManagement: React.FC = () => {
         if (!expiresAt) {
           return <Tag color="green">永不过期</Tag>;
         }
+
         const expDate = new Date(expiresAt);
         const isExpired = expDate < new Date();
         const isExpiringSoon =
@@ -109,6 +109,7 @@ const TokenManagement: React.FC = () => {
         if (isExpired) {
           return <Tag color="red">已过期</Tag>;
         }
+
         if (isExpiringSoon) {
           return (
             <Tooltip title={expDate.toLocaleString('zh-CN')}>
@@ -118,6 +119,7 @@ const TokenManagement: React.FC = () => {
             </Tooltip>
           );
         }
+
         return (
           <span className="text-gray-500 text-sm">
             {expDate.toLocaleDateString('zh-CN')}
@@ -175,27 +177,6 @@ const TokenManagement: React.FC = () => {
 
   return (
     <div>
-      {successMessage && (
-        <Alert
-          message={successMessage}
-          type="success"
-          showIcon
-          closable
-          className="mb-4"
-          onClose={() => dispatch(clearSuccessMessage())}
-        />
-      )}
-      {error && (
-        <Alert
-          message={error}
-          type="error"
-          showIcon
-          closable
-          className="mb-4"
-          onClose={() => dispatch(clearError())}
-        />
-      )}
-
       <div className="flex justify-between items-center mb-4">
         <div className="text-gray-600">共 {tokens.length} 个 Token</div>
         <Button
@@ -215,7 +196,6 @@ const TokenManagement: React.FC = () => {
         pagination={false}
       />
 
-      {/* 创建 Token 弹窗 */}
       <Modal
         title="创建 API Token"
         open={createModalVisible}
@@ -248,7 +228,6 @@ const TokenManagement: React.FC = () => {
         </Form>
       </Modal>
 
-      {/* Token 展示弹窗 */}
       <Modal
         title={
           <Space>
@@ -259,7 +238,7 @@ const TokenManagement: React.FC = () => {
         open={tokenDisplayModal}
         onCancel={() => {
           setTokenDisplayModal(false);
-          dispatch(clearNewlyCreatedToken());
+          setNewlyCreatedToken(null);
         }}
         footer={[
           <Button
@@ -274,24 +253,19 @@ const TokenManagement: React.FC = () => {
             key="close"
             onClick={() => {
               setTokenDisplayModal(false);
-              dispatch(clearNewlyCreatedToken());
+              setNewlyCreatedToken(null);
             }}
           >
             关闭
           </Button>,
         ]}
       >
-        <Alert
-          message="请立即复制保存！此 Token 仅展示一次，关闭后将无法再次查看"
-          type="warning"
-          showIcon
-          className="mb-4"
-        />
-        {newlyCreatedToken && (
-          <div className="bg-gray-50 border rounded p-4 font-mono text-sm break-all">
-            {newlyCreatedToken}
-          </div>
-        )}
+        <p className="mb-4 text-orange-500">
+          请立即复制并保存此 Token，关闭后将无法再次查看完整内容。
+        </p>
+        <div className="bg-gray-100 p-4 rounded">
+          <code className="break-all">{newlyCreatedToken}</code>
+        </div>
       </Modal>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   AudioOutlined,
 } from '@ant-design/icons';
 import { EvalType } from '@eva/shared';
+import styles from './EvalTypeSelector.module.scss';
 
 interface EvalTypeSelectorProps {
   value: EvalType;
@@ -16,19 +17,19 @@ const evalTypeOptions = [
   {
     value: EvalType.GENERAL,
     label: '通用Agent',
-    icon: <RobotOutlined style={{ fontSize: 24 }} />,
+    Icon: RobotOutlined,
     description: '适用于通用对话场景的AI Agent评测',
   },
   {
     value: EvalType.CODE,
     label: 'Code agent',
-    icon: <CodeOutlined style={{ fontSize: 24 }} />,
+    Icon: CodeOutlined,
     description: '适用于代码生成、代码理解等场景',
   },
   {
     value: EvalType.AUDIO,
     label: '音频 agent',
-    icon: <AudioOutlined style={{ fontSize: 24 }} />,
+    Icon: AudioOutlined,
     description: '适用于语音识别、语音合成等场景',
   },
 ];
@@ -38,41 +39,29 @@ const EvalTypeSelector: React.FC<EvalTypeSelectorProps> = ({ value, onChange }) 
     <Radio.Group
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      style={{ width: '100%' }}
+      className={styles.group}
     >
       <Row gutter={[16, 16]}>
         {evalTypeOptions.map((option) => (
           <Col span={8} key={option.value}>
-            <Radio value={option.value} style={{ width: '100%' }}>
+            <Radio value={option.value} className={styles.radio}>
               <Card
                 hoverable
-                style={{
-                  width: '100%',
-                  borderColor: value === option.value ? '#1890ff' : undefined,
-                  backgroundColor: value === option.value ? '#e6f7ff' : undefined,
-                }}
-                bodyStyle={{ padding: 16 }}
+                className={`${styles.optionCard} ${
+                  value === option.value ? styles.optionCardActive : ''
+                }`}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div className={styles.optionContent}>
                   <div
-                    style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 8,
-                      backgroundColor: value === option.value ? '#1890ff' : '#f0f0f0',
-                      color: value === option.value ? '#fff' : '#666',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
+                    className={`${styles.iconSurface} ${
+                      value === option.value ? styles.iconSurfaceActive : ''
+                    }`}
                   >
-                    {option.icon}
+                    <option.Icon className={styles.optionIcon} />
                   </div>
                   <div>
-                    <div style={{ fontWeight: 500, fontSize: 16 }}>{option.label}</div>
-                    <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>
-                      {option.description}
-                    </div>
+                    <div className={styles.optionTitle}>{option.label}</div>
+                    <div className={styles.optionDescription}>{option.description}</div>
                   </div>
                 </div>
               </Card>

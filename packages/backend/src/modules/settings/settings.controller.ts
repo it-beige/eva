@@ -6,9 +6,11 @@ import {
   Delete,
   Body,
   Param,
+  UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SettingsService } from './settings.service';
 import { UpdateProjectDto, ProjectSettings } from './dto/update-project.dto';
 import {
@@ -18,8 +20,16 @@ import {
   CreateTokenDto,
   ApiToken,
 } from './dto/manage-member.dto';
+import { UserRole } from '@eva/shared';
+import { Roles } from '../../common/auth/roles.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
 
-@Controller('api/settings')
+@Controller('settings')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.ADMIN)
+@ApiTags('Settings')
+@ApiBearerAuth('access-token')
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 

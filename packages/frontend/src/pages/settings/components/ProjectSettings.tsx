@@ -1,25 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Card, Alert } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import type { UpdateProjectRequest } from '@eva/shared';
 import {
-  fetchProjectSettings,
-  updateProjectSettings,
-  clearSuccessMessage,
-  clearError,
-} from '../../../store/settingsSlice';
+  useGetProjectSettingsQuery,
+  useUpdateProjectSettingsMutation,
+} from '../../../services/settingsQueries';
+import { getQueryErrorMessage } from '../../../services/evaApi';
 
 const { TextArea } = Input;
 
 const ProjectSettings: React.FC = () => {
   const [form] = Form.useForm();
-  const dispatch = useAppDispatch();
-  const { project, projectLoading, projectSaving, successMessage, error } =
-    useAppSelector((state) => state.settings);
-
-  useEffect(() => {
-    dispatch(fetchProjectSettings());
-  }, [dispatch]);
+  const [feedback, setFeedback] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+  const { data: project, isLoading: projectLoading } =
+    useGetProjectSettingsQuery();
+  const [updateProjectSettings, { isLoading: projectSaving }] =
+    useUpdateProjectSettingsMutation();
 
   useEffect(() => {
     if (project) {
@@ -30,30 +30,38 @@ const ProjectSettings: React.FC = () => {
     }
   }, [project, form]);
 
-  const handleSubmit = (values: { name: string; description?: string }) => {
-    dispatch(updateProjectSettings(values));
+  const handleSubmit = async (values: UpdateProjectRequest) => {
+    try {
+      await updateProjectSettings(values).unwrap();
+      setFeedback({ type: 'success', message: '项目设置已保存' });
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        message: getQueryErrorMessage(error as any, '更新项目设置失败'),
+      });
+    }
   };
 
   return (
     <Card title="项目设置" loading={projectLoading}>
-      {successMessage && (
+      {feedback?.type === 'success' && (
         <Alert
-          message={successMessage}
+          message={feedback.message}
           type="success"
           showIcon
           closable
           className="mb-4"
-          onClose={() => dispatch(clearSuccessMessage())}
+          onClose={() => setFeedback(null)}
         />
       )}
-      {error && (
+      {feedback?.type === 'error' && (
         <Alert
-          message={error}
+          message={feedback.message}
           type="error"
           showIcon
           closable
           className="mb-4"
-          onClose={() => dispatch(clearError())}
+          onClose={() => setFeedback(null)}
         />
       )}
       <Form

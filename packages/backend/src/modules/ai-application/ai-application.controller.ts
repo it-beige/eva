@@ -8,9 +8,8 @@ import {
   Param,
   Query,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AIApplicationService } from './ai-application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
@@ -20,15 +19,18 @@ import { ImportPublicAgentDto } from './dto/import-public-agent.dto';
 import { AIApplication } from '../../database/entities/ai-application.entity';
 import { AppVersion } from '../../database/entities/app-version.entity';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('api/ai-applications')
-@UseGuards(AuthGuard('jwt'))
+@Controller('ai-applications')
+@UseGuards(JwtAuthGuard)
+@ApiTags('Applications')
+@ApiBearerAuth('access-token')
 export class AIApplicationController {
   constructor(private readonly appService: AIApplicationService) {}
 
   @Get()
   async findAll(
-    @Query(new ValidationPipe({ transform: true })) query: QueryApplicationDto,
+    @Query() query: QueryApplicationDto,
   ): Promise<PaginatedResponseDto<AIApplication>> {
     return this.appService.findAll(query);
   }
@@ -39,16 +41,14 @@ export class AIApplicationController {
   }
 
   @Post()
-  async create(
-    @Body(new ValidationPipe()) dto: CreateApplicationDto,
-  ): Promise<AIApplication> {
+  async create(@Body() dto: CreateApplicationDto): Promise<AIApplication> {
     return this.appService.create(dto);
   }
 
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body(new ValidationPipe()) dto: UpdateApplicationDto,
+    @Body() dto: UpdateApplicationDto,
   ): Promise<AIApplication> {
     return this.appService.update(id, dto);
   }
@@ -67,15 +67,13 @@ export class AIApplicationController {
   @Post(':id/versions')
   async createVersion(
     @Param('id') id: string,
-    @Body(new ValidationPipe()) dto: CreateVersionDto,
+    @Body() dto: CreateVersionDto,
   ): Promise<AppVersion> {
     return this.appService.createVersion(id, dto);
   }
 
   @Post('import-public')
-  async importPublicAgent(
-    @Body(new ValidationPipe()) dto: ImportPublicAgentDto,
-  ): Promise<AIApplication> {
+  async importPublicAgent(@Body() dto: ImportPublicAgentDto): Promise<AIApplication> {
     return this.appService.importPublicAgent(dto);
   }
 }

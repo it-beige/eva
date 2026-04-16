@@ -4,14 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { BullModule } from '@nestjs/bull';
+import { join } from 'path';
 
 import {
-  HttpExceptionFilter,
   AllExceptionsFilter,
 } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
-import { JwtStrategy } from './common/strategies/jwt.strategy';
+import { RolesGuard } from './common/guards/roles.guard';
 import { PromptModule } from './modules/prompt/prompt.module';
 
 import * as entities from './database/entities';
@@ -24,37 +24,64 @@ import { PlaygroundModule } from './modules/playground/playground.module';
 import { LeaderboardModule } from './modules/leaderboard/leaderboard.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { AutoEvalModule } from './modules/auto-eval/auto-eval.module';
+import { AuthModule } from './modules/auth/auth.module';
+import appConfig from './config/app.config';
+import databaseConfig from './config/database.config';
+import queueConfig from './config/queue.config';
+import securityConfig from './config/security.config';
+import cacheConfig from './config/cache.config';
+import llmConfig from './config/llm.config';
+import monitoringConfig from './config/monitoring.config';
+import { validateEnvironment } from './config/env.validation';
+import { CacheModule } from './infrastructure/cache/cache.module';
+import { LlmModule } from './infrastructure/llm/llm.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '../../.env',
+      load: [
+        appConfig,
+        databaseConfig,
+        queueConfig,
+        securityConfig,
+        cacheConfig,
+        llmConfig,
+        monitoringConfig,
+      ],
+      validate: validateEnvironment,
     }),
+    CacheModule,
+    LlmModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get('DB_HOST', 'localhost'),
-        port: configService.get<number>('DB_PORT', 5432),
-        username: configService.get('DB_USERNAME', 'postgres'),
-        password: configService.get('DB_PASSWORD', 'postgres'),
-        database: configService.get('DB_DATABASE', 'eva'),
+        host: configService.get<string>('database.host', 'localhost'),
+        port: configService.get<number>('database.port', 5432),
+        username: configService.get<string>('database.username', 'postgres'),
+        password: configService.get<string>('database.password', 'postgres'),
+        database: configService.get<string>('database.database', 'eva'),
         entities: Object.values(entities),
-        synchronize: configService.get('NODE_ENV') !== 'production',
-        logging: configService.get('NODE_ENV') !== 'production',
+        migrations: [join(__dirname, 'database/migrations/*{.ts,.js}')],
+        migrationsRun: configService.get<boolean>(
+          'database.migrationsRun',
+          false,
+        ),
+        synchronize: configService.get<boolean>('database.synchronize', false),
+        logging: configService.get<boolean>('database.logging', false),
       }),
     }),
-    TypeOrmModule.forFeature(Object.values(entities)),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         redis: {
-          host: configService.get('REDIS_HOST', 'localhost'),
-          port: configService.get<number>('REDIS_PORT', 6379),
+          host: configService.get<string>('queue.redisHost', 'localhost'),
+          port: configService.get<number>('queue.redisPort', 6379),
         },
       }),
     }),
@@ -68,9 +95,10 @@ import { AutoEvalModule } from './modules/auto-eval/auto-eval.module';
     PlaygroundModule,
     LeaderboardModule,
     SettingsModule,
+    AuthModule,
   ],
   providers: [
-    JwtStrategy,
+    RolesGuard,
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,

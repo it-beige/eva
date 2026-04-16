@@ -1,0 +1,79 @@
+.page {
+  padding: 24px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  margin-bottom: 8px !important;
+}
+
+.helpLink {
+  margin-left: 8px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.search {
+  width: 320px;
+  max-width: 100%;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.importButton {
+  background-color: #722ed1 !important;
+  border-color: #722ed1 !important;
+  color: #fff !important;
+}
+
+.importButton:hover,
+.importButton:focus {
+  background-color: #8a4cf2 !important;
+  border-color: #8a4cf2 !important;
+  color: #fff !important;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+
+.emptyState {
+  margin-top: 80px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 20px 16px;
+  }
+
+  .toolbar {
+    align-items: stretch;
+  }
+
+  .search {
+    width: 100%;
+  }
+}

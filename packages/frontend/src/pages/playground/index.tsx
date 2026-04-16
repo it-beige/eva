@@ -5,6 +5,7 @@ import PlaygroundConfig from './components/PlaygroundConfig';
 import StreamOutput from './components/StreamOutput';
 import {
   runPlaygroundStream,
+  appendOutput,
   setOutput,
   setStreaming,
   setUsage,
@@ -25,7 +26,7 @@ const PlaygroundPage: React.FC = () => {
       switch (event.type) {
         case 'chunk':
           if (event.data) {
-            dispatch(setOutput(output + event.data));
+            dispatch(appendOutput(event.data));
           }
           break;
         case 'done':
@@ -44,7 +45,7 @@ const PlaygroundPage: React.FC = () => {
           break;
       }
     },
-    [dispatch, output]
+    [dispatch]
   );
 
   const handleSubmit = (values: {

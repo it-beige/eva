@@ -1,0 +1,88 @@
+.tagSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sectionMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fbfcff 0%, #f2f6ff 100%);
+  border: 1px solid #e1e8f7;
+  box-shadow: 0 10px 22px rgba(90, 99, 255, 0.08);
+}
+
+.sectionLead {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.86), transparent 48%),
+    linear-gradient(135deg, #edf1ff 0%, #e0f4ff 100%);
+  border: 1px solid #d7e4ff;
+}
+
+.sectionTitle {
+  color: var(--eva-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.tagGroup {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tagSurface,
+.addTagSurface {
+  margin-inline-end: 0 !important;
+  border-radius: 999px;
+  padding-inline: 10px;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.tagSurface:hover,
+.addTagSurface:hover {
+  transform: translateY(-1px);
+}
+
+.tagSurface :global(.ant-tag-close-icon),
+.addTagSurface :global(.ant-tag-close-icon) {
+  color: currentColor;
+}
+
+.tagIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.addTagSurface {
+  cursor: pointer;
+  border-style: dashed;
+}
+
+@media (max-width: 768px) {
+  .tagSection {
+    align-items: flex-start;
+  }
+}

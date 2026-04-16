@@ -243,7 +243,7 @@ const EvalSetListPage = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      <Card bordered={false}>
+      <Card variant="borderless">
         <div style={{ marginBottom: 24 }}>
           <Title level={4} style={{ marginBottom: 8 }}>
             评测集

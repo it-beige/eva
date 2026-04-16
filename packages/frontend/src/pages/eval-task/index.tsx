@@ -13,6 +13,7 @@ import {
   Typography,
   Tooltip,
   Badge,
+  Statistic,
 } from 'antd';
 import {
   PlusOutlined,
@@ -20,7 +21,6 @@ import {
   FilterOutlined,
   ReloadOutlined,
   BarChartOutlined,
-  MoreOutlined,
   CopyOutlined,
   PauseCircleOutlined,
   FileTextOutlined,
@@ -42,8 +42,10 @@ import TaskStatusTag from './components/TaskStatusTag';
 import { EvalTaskStatus, EVAL_TASK_STATUS_LABELS } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
 import type { EvalTaskWithEvalSet } from '../../services/evalTaskApi';
+import PageContainer from '../../components/page/PageContainer';
+import styles from './EvalTaskListPage.module.scss';
 
-const { Title, Text, Link } = Typography;
+const { Text, Link } = Typography;
 const { Option } = Select;
 
 const EvalTaskListPage: React.FC = () => {
@@ -141,12 +143,7 @@ const EvalTaskListPage: React.FC = () => {
       render: (text: string) => (
         <Badge
           count={text}
-          style={{
-            backgroundColor: '#f0f0f0',
-            color: '#666',
-            fontSize: 12,
-            fontFamily: 'monospace',
-          }}
+          className={styles.shortIdBadge}
         />
       ),
     },
@@ -169,11 +166,7 @@ const EvalTaskListPage: React.FC = () => {
           {evalSet?.type === 'code' && (
             <Badge
               count="Code"
-              style={{
-                backgroundColor: '#e6f7ff',
-                color: '#1890ff',
-                fontSize: 11,
-              }}
+              className={styles.codeBadge}
             />
           )}
         </Space>
@@ -262,70 +255,22 @@ const EvalTaskListPage: React.FC = () => {
     { key: 'delete', label: '批量删除', onClick: handleBatchDelete },
   ];
 
-  return (
-    <div style={{ padding: 24 }}>
-      <Card bordered={false}>
-        <div style={{ marginBottom: 24 }}>
-          <Title level={4} style={{ margin: 0 }}>
-            评测任务
-          </Title>
-          <Text type="secondary">
-            评测任务帮助您测试Prompt和模型，对比不同版本，并跟踪问题改进。
-            <Link href="#" style={{ marginLeft: 8 }}>
-              帮助文档
-            </Link>
-          </Text>
-        </div>
+  const runningTaskCount = tasks.filter((task) => task.status === EvalTaskStatus.RUNNING).length;
+  const finishedTaskCount = tasks.filter(
+    (task) =>
+      task.status === EvalTaskStatus.SUCCESS ||
+      task.status === EvalTaskStatus.FAILED ||
+      task.status === EvalTaskStatus.ABORTED
+  ).length;
 
-        <Space wrap style={{ marginBottom: 16 }}>
-          <Input
-            placeholder="按名称搜索"
-            prefix={<SearchOutlined />}
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onPressEnter={loadData}
-            style={{ width: 200 }}
-            allowClear
-          />
-          <Select
-            placeholder="评测集"
-            allowClear
-            style={{ width: 160 }}
-            value={selectedEvalSetId}
-            onChange={setSelectedEvalSetId}
-          >
-            {evalSets.map((es) => (
-              <Option key={es.id} value={es.id}>
-                {es.name}
-              </Option>
-            ))}
-          </Select>
-          <Select
-            placeholder="任务状态"
-            allowClear
-            style={{ width: 140 }}
-            value={selectedStatus}
-            onChange={setSelectedStatus}
-          >
-            {Object.entries(EVAL_TASK_STATUS_LABELS).map(([key, label]) => (
-              <Option key={key} value={key}>
-                {label}
-              </Option>
-            ))}
-          </Select>
-          <Button icon={<FilterOutlined />}>
-            筛选 (0)
-          </Button>
-          <Dropdown menu={{ items: batchMenuItems }}>
-            <Button>
-              批量操作 <DownOutlined />
+  return (
+    <PageContainer
+      extra={
+        <>
+          <Tooltip title="刷新列表">
+            <Button icon={<ReloadOutlined />} onClick={loadData}>
+              刷新
             </Button>
-          </Dropdown>
-          <Tooltip title="刷新">
-            <Button icon={<ReloadOutlined />} onClick={loadData} />
-          </Tooltip>
-          <Tooltip title="图表">
-            <Button icon={<BarChartOutlined />} />
           </Tooltip>
           <Button
             type="primary"
@@ -334,8 +279,78 @@ const EvalTaskListPage: React.FC = () => {
           >
             新建评测任务
           </Button>
-        </Space>
+        </>
+      }
+      content={
+        <div className="eva-panelGrid">
+          <Card className="eva-statCard">
+            <Statistic title="任务总量" value={total} suffix={<Text className="eva-muted">条</Text>} />
+          </Card>
+          <Card className="eva-statCard">
+            <Statistic title="运行中任务" value={runningTaskCount} suffix={<Text className="eva-muted">个</Text>} />
+          </Card>
+          <Card className="eva-statCard">
+            <Statistic title="已完成任务" value={finishedTaskCount} suffix={<Text className="eva-muted">个</Text>} />
+          </Card>
+        </div>
+      }
+    >
+      <Card>
+        <div className={`eva-toolbar ${styles.toolbar}`}>
+          <div className="eva-toolbarGroup">
+            <Input
+              placeholder="按名称搜索"
+              prefix={<SearchOutlined />}
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onPressEnter={loadData}
+              className={styles.searchInput}
+              allowClear
+            />
+            <Select
+              placeholder="评测集"
+              allowClear
+              className={styles.evalSetSelect}
+              value={selectedEvalSetId}
+              onChange={setSelectedEvalSetId}
+            >
+              {evalSets.map((es) => (
+                <Option key={es.id} value={es.id}>
+                  {es.name}
+                </Option>
+              ))}
+            </Select>
+            <Select
+              placeholder="任务状态"
+              allowClear
+              className={styles.statusSelect}
+              value={selectedStatus}
+              onChange={setSelectedStatus}
+            >
+              {Object.entries(EVAL_TASK_STATUS_LABELS).map(([key, label]) => (
+                <Option key={key} value={key}>
+                  {label}
+                </Option>
+              ))}
+            </Select>
+            <Button icon={<FilterOutlined />}>高级筛选</Button>
+          </div>
 
+          <div className="eva-toolbarGroup">
+            <Dropdown menu={{ items: batchMenuItems }}>
+              <Button>
+                批量操作 <DownOutlined />
+              </Button>
+            </Dropdown>
+            <Tooltip title="图表视图">
+              <Button icon={<BarChartOutlined />} />
+            </Tooltip>
+            <Link href="#">帮助文档</Link>
+          </div>
+        </div>
+      </Card>
+
+      <Card>
         <Table
           rowKey="id"
           rowSelection={rowSelection}
@@ -355,7 +370,7 @@ const EvalTaskListPage: React.FC = () => {
           }}
         />
       </Card>
-    </div>
+    </PageContainer>
   );
 };
 

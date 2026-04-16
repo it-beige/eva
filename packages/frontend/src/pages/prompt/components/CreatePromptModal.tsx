@@ -9,7 +9,7 @@ import {
 import { LinkOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useRedux';
 import { createPrompt, updatePrompt } from '../../../store/promptSlice';
-import styles from '../Prompt.module.css';
+import styles from '../Prompt.module.scss';
 
 const { TextArea } = Input;
 const { Panel } = Collapse;

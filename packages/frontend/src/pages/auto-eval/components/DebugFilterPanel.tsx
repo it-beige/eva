@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Card,
   DatePicker,
   Button,
   Table,
@@ -14,6 +13,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/useRedux';
 import { debugFilter } from '../../../store/autoEvalSlice';
 import type { FilterRules } from '../../../services/autoEvalApi';
 import type { ColumnsType } from 'antd/es/table';
+import styles from './DebugFilterPanel.module.scss';
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -21,6 +21,7 @@ const { Text } = Typography;
 interface DebugFilterPanelProps {
   filterRules?: FilterRules;
   sampleRate?: number;
+  onDateRangeChange?: (value: [string, string] | null) => void;
 }
 
 interface DebugResult {
@@ -29,7 +30,11 @@ interface DebugResult {
   calledAt: string;
 }
 
-const DebugFilterPanel = ({ filterRules, sampleRate }: DebugFilterPanelProps) => {
+const DebugFilterPanel = ({
+  filterRules,
+  sampleRate,
+  onDateRangeChange,
+}: DebugFilterPanelProps) => {
   const dispatch = useAppDispatch();
   const { debugFilterResults, debugLoading } = useAppSelector((state) => state.autoEval);
   const [dateRange, setDateRange] = useState<[string, string] | null>(null);
@@ -75,27 +80,30 @@ const DebugFilterPanel = ({ filterRules, sampleRate }: DebugFilterPanelProps) =>
   return (
     <div>
       {/* 时间选择 */}
-      <div style={{ marginBottom: 16 }}>
-        <Text style={{ marginRight: 8 }}>样本时间</Text>
+      <div className={styles.controls}>
+        <Text className={styles.label}>样本时间</Text>
         <RangePicker
           showTime
           format="YYYY-MM-DD HH:mm:ss"
           placeholder={['Start date', 'End date']}
           onChange={(_, dateStrings) => {
             if (dateStrings[0] && dateStrings[1]) {
-              setDateRange(dateStrings as [string, string]);
+              const nextRange = dateStrings as [string, string];
+              setDateRange(nextRange);
+              onDateRangeChange?.(nextRange);
             } else {
               setDateRange(null);
+              onDateRangeChange?.(null);
             }
           }}
-          style={{ width: 320 }}
+          className={styles.rangePicker}
         />
         <Button
           type="primary"
           icon={<PlayCircleOutlined />}
           onClick={handleDebug}
           loading={debugLoading}
-          style={{ marginLeft: 8 }}
+          className={styles.runButton}
         >
           调试运行
         </Button>
@@ -116,7 +124,7 @@ const DebugFilterPanel = ({ filterRules, sampleRate }: DebugFilterPanelProps) =>
           <Empty
             description="No data"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
-            style={{ marginTop: 40 }}
+            className={styles.empty}
           />
         )}
       </Spin>

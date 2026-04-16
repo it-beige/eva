@@ -10,7 +10,6 @@ import {
   Button,
   Space,
   Typography,
-  message,
   InputNumber,
   Row,
   Col,
@@ -102,12 +101,12 @@ const sourceTypeOptions = [
 
 const codeSourceOptions = [
   {
-    key: 'public_reference',
+    key: EvalSetSourceType.PUBLIC,
     label: '引用公共评测集',
     icon: <GlobalOutlined />,
   },
   {
-    key: 'custom',
+    key: EvalSetSourceType.CUSTOM,
     label: '自定义评测集',
     icon: <CodeOutlined />,
   },
@@ -136,7 +135,7 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
   const [sourceType, setSourceType] = useState<string>(
     EvalSetSourceType.LOCAL_UPLOAD,
   );
-  const [codeSourceType, setCodeSourceType] = useState<string>('public_reference');
+  const [codeSourceType, setCodeSourceType] = useState<string>(EvalSetSourceType.PUBLIC);
 
   // 当类型切换时重置表单
   useEffect(() => {
@@ -144,7 +143,7 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
       form.resetFields();
       setEvalSetType(EvalSetType.TEXT);
       setSourceType(EvalSetSourceType.LOCAL_UPLOAD);
-      setCodeSourceType('public_reference');
+      setCodeSourceType(EvalSetSourceType.PUBLIC);
     }
   }, [open, form]);
 
@@ -152,8 +151,8 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
     setEvalSetType(type);
     form.setFieldsValue({ type });
     if (type === EvalSetType.CODE) {
-      setSourceType('public_reference');
-      form.setFieldsValue({ sourceType: 'public_reference' });
+      setSourceType(EvalSetSourceType.PUBLIC);
+      form.setFieldsValue({ sourceType: EvalSetSourceType.PUBLIC });
     } else {
       setSourceType(EvalSetSourceType.LOCAL_UPLOAD);
       form.setFieldsValue({ sourceType: EvalSetSourceType.LOCAL_UPLOAD });
@@ -223,19 +222,24 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
               <TextArea rows={3} placeholder="请输入评测集描述" />
             </Form.Item>
             <Form.Item
-              label="上传CSV文件"
               name="fileUrl"
+              hidden
               rules={[{ required: true, message: '请上传CSV文件' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="上传CSV文件"
+              required
             >
               <Upload.Dragger
                 name="file"
                 multiple={false}
+                maxCount={1}
                 beforeUpload={() => false}
                 onChange={(info) => {
-                  if (info.file.status === 'done') {
-                    message.success(`${info.file.name} 上传成功`);
-                    form.setFieldsValue({ fileUrl: info.file.name });
-                  }
+                  const fileName = info.fileList[0]?.name;
+                  form.setFieldsValue({ fileUrl: fileName });
                 }}
               >
                 <p className="ant-upload-drag-icon">
@@ -283,11 +287,24 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
               <Input placeholder="请输入评测集名称" />
             </Form.Item>
             <Form.Item
-              label="上传示例CSV"
               name="exampleFileUrl"
+              hidden
               rules={[{ required: true, message: '请上传示例CSV文件' }]}
             >
-              <Upload beforeUpload={() => false}>
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="上传示例CSV"
+              required
+            >
+              <Upload
+                beforeUpload={() => false}
+                maxCount={1}
+                onChange={(info) => {
+                  const fileName = info.fileList[0]?.name;
+                  form.setFieldsValue({ exampleFileUrl: fileName });
+                }}
+              >
                 <Button icon={<UploadOutlined />}>选择文件</Button>
               </Upload>
             </Form.Item>
@@ -371,7 +388,7 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
               form.setFieldsValue({ sourceType: e.target.value });
             }}
           >
-            <Space direction="vertical">
+            <Space orientation="vertical">
               {codeSourceOptions.map((option) => (
                 <Radio.Button
                   key={option.key}
@@ -476,7 +493,7 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
       onOk={handleSubmit}
       confirmLoading={loading}
       width={720}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}

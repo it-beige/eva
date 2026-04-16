@@ -8,14 +8,14 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ObservabilityService, TraceListResult } from './observability.service';
 import { QueryTraceDto } from './dto/query-trace.dto';
 import { CreateTraceDto } from './dto/create-trace.dto';
 import { TraceLog } from '../../database/entities/trace-log.entity';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('api/traces')
-@UseGuards(AuthGuard('jwt'))
+@Controller('traces')
+@UseGuards(JwtAuthGuard)
 export class ObservabilityController {
   constructor(private readonly observabilityService: ObservabilityService) {}
 
@@ -27,7 +27,7 @@ export class ObservabilityController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<TraceLog | null> {
+  async findOne(@Param('id') id: string): Promise<TraceLog> {
     return this.observabilityService.findOne(id);
   }
 

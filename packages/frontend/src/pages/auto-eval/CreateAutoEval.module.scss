@@ -1,0 +1,52 @@
+.page {
+  padding: 24px;
+}
+
+.breadcrumb {
+  margin-bottom: 16px;
+}
+
+.accentTitle {
+  margin-bottom: 24px;
+  padding-left: 12px;
+  border-left: 3px solid #5b21b6;
+}
+
+.accentTitleText {
+  margin: 0 !important;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  margin-bottom: 16px;
+}
+
+.sliderValueCol {
+  margin-left: 16px;
+}
+
+.fullWidthInput {
+  width: 100%;
+}
+
+.footerActions {
+  margin-top: 32px;
+  margin-bottom: 0 !important;
+}
+
+.debugSection {
+  margin-bottom: 32px;
+}
+
+.star {
+  color: #faad14;
+}
+
+@media (max-width: 992px) {
+  .page {
+    padding: 20px 16px;
+  }
+}

@@ -15,6 +15,7 @@ import { ArrowLeftOutlined, CopyOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchTraceDetail, clearSelectedTrace } from '../../store/observabilitySlice';
 import dayjs from 'dayjs';
+import styles from './TraceDetail.module.scss';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -73,7 +74,7 @@ const TraceDetailPage = () => {
 
   if (detailLoading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div className={styles.loadingState}>
         <Spin size="large" tip="加载中..." />
       </div>
     );
@@ -81,10 +82,10 @@ const TraceDetailPage = () => {
 
   if (!selectedTrace) {
     return (
-      <div style={{ padding: '24px' }}>
+      <div className={styles.emptyState}>
         <Card>
           <Empty description="未找到Trace记录" />
-          <div style={{ textAlign: 'center', marginTop: 16 }}>
+          <div className={styles.emptyActions}>
             <Button type="primary" onClick={handleBack}>
               返回列表
             </Button>
@@ -95,14 +96,13 @@ const TraceDetailPage = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      {/* 面包屑 */}
-      <div style={{ marginBottom: 24 }}>
+    <div className={styles.page}>
+      <div className={styles.breadcrumb}>
         <Button
           type="link"
           icon={<ArrowLeftOutlined />}
           onClick={handleBack}
-          style={{ paddingLeft: 0 }}
+          className={styles.backButton}
         >
           调用明细
         </Button>
@@ -110,13 +110,11 @@ const TraceDetailPage = () => {
         <Text>{selectedTrace.traceId}</Text>
       </div>
 
-      {/* 标题 */}
-      <Title level={4} style={{ marginBottom: 24 }}>
+      <Title level={4} className={styles.pageTitle}>
         Trace 详情
       </Title>
 
-      {/* 基本信息卡片 */}
-      <Card title="基本信息" bordered={false} style={{ marginBottom: 24 }}>
+      <Card title="基本信息" bordered={false} className={styles.sectionCard}>
         <Descriptions bordered column={2}>
           <Descriptions.Item label="Trace ID">
             <Text copyable={{ text: selectedTrace.traceId }}>
@@ -149,8 +147,7 @@ const TraceDetailPage = () => {
         </Descriptions>
       </Card>
 
-      {/* 性能指标卡片 */}
-      <Card title="性能指标" bordered={false} style={{ marginBottom: 24 }}>
+      <Card title="性能指标" bordered={false} className={styles.sectionCard}>
         <Row gutter={24}>
           <Col span={8}>
             <Card size="small">
@@ -179,11 +176,10 @@ const TraceDetailPage = () => {
         </Row>
       </Card>
 
-      {/* 输入内容 */}
       <Card
         title="输入内容"
         bordered={false}
-        style={{ marginBottom: 24 }}
+        className={styles.sectionCard}
         extra={
           selectedTrace.input && (
             <Button
@@ -197,15 +193,7 @@ const TraceDetailPage = () => {
         }
       >
         {selectedTrace.input ? (
-          <Paragraph
-            style={{
-              background: '#f5f5f5',
-              padding: 16,
-              borderRadius: 4,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-            }}
-          >
+          <Paragraph className={styles.contentBlock}>
             {selectedTrace.input}
           </Paragraph>
         ) : (
@@ -213,7 +201,6 @@ const TraceDetailPage = () => {
         )}
       </Card>
 
-      {/* 输出内容 */}
       <Card
         title="输出内容"
         bordered={false}
@@ -230,15 +217,7 @@ const TraceDetailPage = () => {
         }
       >
         {selectedTrace.output ? (
-          <Paragraph
-            style={{
-              background: '#f5f5f5',
-              padding: 16,
-              borderRadius: 4,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-            }}
-          >
+          <Paragraph className={styles.contentBlock}>
             {selectedTrace.output}
           </Paragraph>
         ) : (
@@ -246,8 +225,7 @@ const TraceDetailPage = () => {
         )}
       </Card>
 
-      {/* 返回按钮 */}
-      <div style={{ marginTop: 24, textAlign: 'center' }}>
+      <div className={styles.footerAction}>
         <Button type="primary" onClick={handleBack} icon={<ArrowLeftOutlined />}>
           返回列表
         </Button>
@@ -258,9 +236,9 @@ const TraceDetailPage = () => {
 
 // 简单的统计组件
 const Statistic = ({ title, value }: { title: string; value: string | number }) => (
-  <div style={{ textAlign: 'center' }}>
-    <div style={{ color: '#666', fontSize: 14, marginBottom: 8 }}>{title}</div>
-    <div style={{ color: '#333', fontSize: 24, fontWeight: 'bold' }}>{value}</div>
+  <div className={styles.statistic}>
+    <div className={styles.statLabel}>{title}</div>
+    <div className={styles.statValue}>{value}</div>
   </div>
 );
 

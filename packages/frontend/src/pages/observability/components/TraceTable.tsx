@@ -4,6 +4,7 @@ import { useAppSelector, useAppDispatch } from '../../../hooks/useRedux';
 import { setPage, setPageSize } from '../../../store/observabilitySlice';
 import type { TraceLog } from '../../../types/observability';
 import dayjs from 'dayjs';
+import styles from './TraceTable.module.scss';
 
 const { Text } = Typography;
 
@@ -90,7 +91,7 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       },
       render: (traceId: string) => (
         <Tooltip placement="topLeft" title={traceId}>
-          <Text copyable={{ text: traceId }} style={{ maxWidth: 200 }}>
+          <Text copyable={{ text: traceId }} className={styles.traceIdText}>
             {truncateText(traceId, 25)}
           </Text>
         </Tooltip>
@@ -209,8 +210,8 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       scroll={{ x: 1600 }}
       locale={{
         emptyText: (
-          <div style={{ padding: '40px 0', textAlign: 'center' }}>
-            <div style={{ color: '#999', fontSize: 14 }}>暂无数据</div>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyText}>暂无数据</div>
           </div>
         ),
       }}

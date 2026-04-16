@@ -1,4 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { clearSession, getAccessToken } from '../auth/session';
 
 const api = axios.create({
   baseURL: '/api',
@@ -10,7 +11,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('token');
+    const token = getAccessToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -23,6 +24,17 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data
+    ) {
+      return {
+        ...response,
+        data: (response.data as { data: unknown }).data,
+      };
+    }
+
     return response;
   },
   (error: AxiosError) => {
@@ -31,8 +43,10 @@ api.interceptors.response.use(
       
       switch (status) {
         case 401:
-          localStorage.removeItem('token');
-          window.location.href = '/login';
+          clearSession();
+          if (window.location.pathname !== '/login') {
+            window.location.replace('/login');
+          }
           break;
         case 403:
           console.error('权限不足');
@@ -44,7 +58,12 @@ api.interceptors.response.use(
           console.error('服务器错误');
           break;
         default:
-          console.error('请求失败:', error.message);
+          console.error(
+            '请求失败:',
+            (
+              error.response.data as { message?: string } | undefined
+            )?.message || error.message,
+          );
       }
     } else if (error.request) {
       // 网络错误处理（请求已发送但没有收到响应）

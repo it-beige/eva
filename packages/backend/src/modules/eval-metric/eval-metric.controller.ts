@@ -8,12 +8,10 @@ import {
   Param,
   Query,
   UseGuards,
-  Req,
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { EvalMetricService } from './eval-metric.service';
 import { CreateEvalMetricDto } from './dto/create-eval-metric.dto';
 import { UpdateEvalMetricDto } from './dto/update-eval-metric.dto';
@@ -21,18 +19,19 @@ import { QueryEvalMetricDto } from './dto/query-eval-metric.dto';
 import { ParseRepoDto } from './dto/parse-repo.dto';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
 import { EvalMetric } from '../../database/entities/eval-metric.entity';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('api/eval-metrics')
-@UseGuards(AuthGuard('jwt'))
+@Controller('eval-metrics')
+@UseGuards(JwtAuthGuard)
 export class EvalMetricController {
   constructor(private readonly evalMetricService: EvalMetricService) {}
 
   @Get()
   async findAll(
     @Query() query: QueryEvalMetricDto,
-    @Req() req: any,
+    @CurrentUser('userId') userId?: string,
   ): Promise<PaginatedResponseDto<EvalMetric>> {
-    const userId = req.user?.id;
     return this.evalMetricService.findAll(query, userId);
   }
 
@@ -46,10 +45,9 @@ export class EvalMetricController {
   @Post()
   async create(
     @Body() createDto: CreateEvalMetricDto,
-    @Req() req: any,
+    @CurrentUser('userId') userId?: string,
+    @CurrentUser('name') userName?: string,
   ): Promise<EvalMetric> {
-    const userId = req.user?.id;
-    const userName = req.user?.name;
     return this.evalMetricService.create(createDto, userId, userName);
   }
 
@@ -57,10 +55,9 @@ export class EvalMetricController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDto: UpdateEvalMetricDto,
-    @Req() req: any,
+    @CurrentUser('userId') userId?: string,
+    @CurrentUser('name') userName?: string,
   ): Promise<EvalMetric> {
-    const userId = req.user?.id;
-    const userName = req.user?.name;
     return this.evalMetricService.update(id, updateDto, userId, userName);
   }
 

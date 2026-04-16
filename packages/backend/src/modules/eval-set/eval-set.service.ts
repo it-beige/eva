@@ -72,6 +72,7 @@ export class EvalSetService {
       ...dto,
       dataCount: 0,
       createdBy,
+      tags: [],
     });
 
     const saved = await this.evalSetRepository.save(evalSet);
@@ -203,15 +204,16 @@ export class EvalSetService {
 
   async addTag(id: string, tagName: string): Promise<EvalSet> {
     const evalSet = await this.findOne(id);
+    const normalizedTag = tagName.trim();
 
-    // 使用 metadata 存储标签
-    const metadata = (evalSet as unknown as { tags?: string[] }).tags || [];
-    if (!metadata.includes(tagName)) {
-      metadata.push(tagName);
+    if (!normalizedTag) {
+      throw new BadRequestException('标签不能为空');
+    }
+
+    if (!evalSet.tags.includes(normalizedTag)) {
       await this.evalSetRepository.update(id, {
-        ...evalSet,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any);
+        tags: [...evalSet.tags, normalizedTag],
+      });
     }
 
     return this.findOne(id);
@@ -220,16 +222,9 @@ export class EvalSetService {
   async removeTag(id: string, tagName: string): Promise<EvalSet> {
     const evalSet = await this.findOne(id);
 
-    // 使用 metadata 存储标签
-    const metadata = (evalSet as unknown as { tags?: string[] }).tags || [];
-    const index = metadata.indexOf(tagName);
-    if (index > -1) {
-      metadata.splice(index, 1);
-      await this.evalSetRepository.update(id, {
-        ...evalSet,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any);
-    }
+    await this.evalSetRepository.update(id, {
+      tags: evalSet.tags.filter((tag) => tag !== tagName),
+    });
 
     return this.findOne(id);
   }

@@ -1,0 +1,66 @@
+.page {
+  padding: 24px;
+}
+
+.breadcrumb {
+  margin-bottom: 24px;
+}
+
+.breadcrumbLink {
+  cursor: pointer;
+}
+
+.breadcrumbSeparator {
+  margin: 0 8px;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sectionIndex {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: var(--eva-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sectionTitle {
+  margin: 0 !important;
+}
+
+.fullWidthInput {
+  width: 100%;
+}
+
+.collapseContent {
+  padding: 8px 0;
+}
+
+.audioConfigRow {
+  margin-top: 16px;
+}
+
+.footerActions {
+  margin-top: 32px;
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 992px) {
+  .page {
+    padding: 20px 16px;
+  }
+}

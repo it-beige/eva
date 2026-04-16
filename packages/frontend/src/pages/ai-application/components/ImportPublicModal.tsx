@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Form, Input, Select } from 'antd';
-import { ImportPublicAgentRequest } from '../../../services/aiApplicationApi';
+import type { ImportPublicAgentRequest } from '@eva/shared';
 
 const { Option } = Select;
 
@@ -42,7 +42,7 @@ interface ImportPublicModalProps {
   visible: boolean;
   onCancel: () => void;
   onSubmit: (values: ImportPublicAgentRequest) => void;
-  projectId: string;
+  projectId?: string;
   loading: boolean;
 }
 
@@ -71,7 +71,7 @@ const ImportPublicModal: React.FC<ImportPublicModalProps> = ({
       const submitData: ImportPublicAgentRequest = {
         name: values.name,
         gitRepoUrl: values.gitRepoUrl,
-        projectId,
+        ...(projectId ? { projectId } : {}),
       };
       onSubmit(submitData);
     } catch (error) {

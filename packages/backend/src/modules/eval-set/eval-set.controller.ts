@@ -7,17 +7,25 @@ import {
   Body,
   Param,
   Query,
+  UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EvalSetService } from './eval-set.service';
 import { CreateEvalSetDto } from './dto/create-eval-set.dto';
 import { UpdateEvalSetDto } from './dto/update-eval-set.dto';
 import { QueryEvalSetDto } from './dto/query-eval-set.dto';
+import { UpdateEvalSetTagsDto } from './dto/update-eval-set-tags.dto';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
 import { EvalSet } from '../../database/entities';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('api/eval-sets')
+@Controller('eval-sets')
+@UseGuards(JwtAuthGuard)
+@ApiTags('EvalSets')
+@ApiBearerAuth('access-token')
 export class EvalSetController {
   constructor(private readonly evalSetService: EvalSetService) {}
 
@@ -34,9 +42,12 @@ export class EvalSetController {
   }
 
   @Post()
-  async create(@Body() dto: CreateEvalSetDto): Promise<EvalSet> {
-    // TODO: 从请求中获取当前用户
-    return this.evalSetService.create(dto, 'system');
+  async create(
+    @Body() dto: CreateEvalSetDto,
+    @CurrentUser('name') userName?: string,
+    @CurrentUser('employeeId') employeeId?: string,
+  ): Promise<EvalSet> {
+    return this.evalSetService.create(dto, userName ?? employeeId ?? undefined);
   }
 
   @Put(':id')
@@ -56,9 +67,16 @@ export class EvalSetController {
   @Post(':id/tags')
   async addTag(
     @Param('id') id: string,
-    @Body('tagName') tagName: string,
+    @Body() dto: UpdateEvalSetTagsDto,
   ): Promise<EvalSet> {
-    return this.evalSetService.addTag(id, tagName);
+    const tags = dto.tags ?? (dto.tagName ? [dto.tagName] : []);
+    let latest = await this.evalSetService.findOne(id);
+
+    for (const tag of tags) {
+      latest = await this.evalSetService.addTag(latest.id, tag);
+    }
+
+    return latest;
   }
 
   @Delete(':id/tags/:tagName')

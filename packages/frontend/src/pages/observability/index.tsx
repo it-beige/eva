@@ -1,20 +1,23 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Tabs, Typography, Space, Tooltip } from 'antd';
-import { FileTextOutlined } from '@ant-design/icons';
+import { Card, Tabs, Typography, Space, Tooltip, Statistic, Button } from 'antd';
+import { FileTextOutlined, ReloadOutlined } from '@ant-design/icons';
 import TraceFilter from './components/TraceFilter';
 import TraceTable from './components/TraceTable';
 import BehaviorLogTab from './components/BehaviorLogTab';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchTraces, fetchBehaviorLogs } from '../../store/observabilitySlice';
+import PageContainer from '../../components/page/PageContainer';
+import styles from './ObservabilityPage.module.scss';
 
-const { Title, Text } = Typography;
-const { TabPane } = Tabs;
+const { Text } = Typography;
 
 const ObservabilityPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { filters, currentPage, pageSize } = useAppSelector((state) => state.observability);
+  const { filters, pageSize, traces, total } = useAppSelector(
+    (state) => state.observability
+  );
   const [activeTab, setActiveTab] = useState('trace');
 
   const handleSearch = useCallback(() => {
@@ -27,11 +30,11 @@ const ObservabilityPage = () => {
         userId: filters.userId || undefined,
         inputKeyword: filters.inputKeyword || undefined,
         outputKeyword: filters.outputKeyword || undefined,
-        page: currentPage,
+        page: 1,
         pageSize: pageSize,
       })
     );
-  }, [dispatch, filters, currentPage, pageSize]);
+  }, [dispatch, filters, pageSize]);
 
   const handleViewDetail = useCallback(
     (id: string) => {
@@ -57,42 +60,78 @@ const ObservabilityPage = () => {
 
   // 组件挂载时不自动加载数据，等待用户点击查询按钮
 
-  return (
-    <div style={{ padding: '24px' }}>
-      {/* 页面标题 */}
-      <div style={{ marginBottom: 24 }}>
-        <Title level={4} style={{ marginBottom: 8 }}>
-          调用明细
-        </Title>
-        <Space>
-          <Text type="secondary">
-            通过结构化、语义化的日志指标，可快速定位问题、分析性能并评估系统健康度。
-          </Text>
-          <Tooltip title="查看帮助文档">
-            <Text style={{ cursor: 'pointer', color: '#5B21B6' }}>
-              <FileTextOutlined /> 帮助文档
-            </Text>
-          </Tooltip>
-        </Space>
-      </div>
+  const successTraceCount = traces.filter((trace) => trace.status === 'success').length;
+  const abnormalTraceCount = traces.filter(
+    (trace) => trace.status === 'error' || trace.status === 'timeout'
+  ).length;
+  const ttftSamples = traces.filter((trace) => trace.ttft !== null);
+  const avgTtft = ttftSamples.length
+    ? Math.round(
+        ttftSamples.reduce((sum, trace) => sum + (trace.ttft ?? 0), 0) / ttftSamples.length
+      )
+    : 0;
 
-      {/* 筛选栏 */}
-      <Card bordered={false} style={{ marginBottom: 24 }}>
+  return (
+    <PageContainer
+      extra={
+        <>
+          <Button icon={<ReloadOutlined />} onClick={handleSearch}>
+            立即查询
+          </Button>
+          <Tooltip title="查看帮助文档">
+            <Button icon={<FileTextOutlined />}>帮助文档</Button>
+          </Tooltip>
+        </>
+      }
+      content={
+        <div className="eva-panelGrid">
+          <Card className="eva-statCard">
+            <Statistic title="Trace 总量" value={total} suffix={<Text className="eva-muted">条</Text>} />
+          </Card>
+          <Card className="eva-statCard">
+            <Statistic title="成功调用" value={successTraceCount} suffix={<Text className="eva-muted">条</Text>} />
+          </Card>
+          <Card className="eva-statCard">
+            <Statistic title="异常调用" value={abnormalTraceCount} suffix={<Text className="eva-muted">条</Text>} />
+          </Card>
+        </div>
+      }
+    >
+      <Card>
         <TraceFilter onSearch={handleSearch} />
       </Card>
 
-      {/* Tabs */}
-      <Card bordered={false}>
-        <Tabs activeKey={activeTab} onChange={handleTabChange}>
-          <TabPane tab="Trace" key="trace">
-            <TraceTable onViewDetail={handleViewDetail} />
-          </TabPane>
-          <TabPane tab="行为日志" key="behavior">
-            <BehaviorLogTab />
-          </TabPane>
-        </Tabs>
+      <Card>
+        <div className={`eva-toolbar ${styles.toolbar}`}>
+          <div className="eva-toolbarGroup">
+            <Space>
+              <Text type="secondary">平均 TTFT</Text>
+              <Text>{avgTtft} ms</Text>
+            </Space>
+          </div>
+          <div className="eva-toolbarGroup">
+            <Text type="secondary">当前页大小 {pageSize}</Text>
+          </div>
+        </div>
+
+        <Tabs
+          activeKey={activeTab}
+          onChange={handleTabChange}
+          items={[
+            {
+              key: 'trace',
+              label: 'Trace',
+              children: <TraceTable onViewDetail={handleViewDetail} />,
+            },
+            {
+              key: 'behavior',
+              label: '行为日志',
+              children: <BehaviorLogTab />,
+            },
+          ]}
+        />
       </Card>
-    </div>
+    </PageContainer>
   );
 };
 

@@ -1,67 +1,23 @@
 import api from './api';
+import type {
+  ApplicationResponse as AIApplication,
+  ApplicationVersionResponse as AppVersion,
+  CreateApplicationRequest,
+  CreateApplicationVersionRequest as CreateVersionRequest,
+  ImportPublicAgentRequest,
+  PaginatedResponse,
+  QueryApplicationsParams,
+  UpdateApplicationRequest,
+} from '@eva/shared';
 
-export interface AIApplication {
-  id: string;
-  name: string;
-  description: string | null;
-  icon: string | null;
-  latestVersion: string | null;
-  gitRepoUrl: string | null;
-  projectId: string;
-  createdAt: string;
-  updatedAt: string;
-  versions?: AppVersion[];
-}
-
-export interface AppVersion {
-  id: string;
-  appId: string;
-  version: string;
-  config: Record<string, unknown> | null;
-  createdAt: string;
-}
-
-export interface CreateApplicationRequest {
-  name: string;
-  description?: string;
-  icon?: string;
-  gitRepoUrl?: string;
-  projectId: string;
-}
-
-export interface UpdateApplicationRequest {
-  name?: string;
-  description?: string;
-  icon?: string;
-  gitRepoUrl?: string;
-  projectId?: string;
-}
-
-export interface ImportPublicAgentRequest {
-  name: string;
-  gitRepoUrl: string;
-  projectId: string;
-}
-
-export interface CreateVersionRequest {
-  version: string;
-  config?: Record<string, unknown>;
-}
-
-export interface QueryApplicationsParams {
-  page?: number;
-  pageSize?: number;
-  keyword?: string;
-  projectId?: string;
-}
-
-export interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
+export type {
+  AIApplication,
+  AppVersion,
+  CreateApplicationRequest,
+  CreateVersionRequest,
+  ImportPublicAgentRequest,
+  QueryApplicationsParams,
+};
 
 export const aiApplicationApi = {
   // 获取应用列表

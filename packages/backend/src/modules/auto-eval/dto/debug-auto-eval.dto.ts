@@ -2,6 +2,7 @@ import {
   IsString,
   IsOptional,
   IsNumber,
+  IsNotEmpty,
   Min,
   Max,
   ValidateNested,

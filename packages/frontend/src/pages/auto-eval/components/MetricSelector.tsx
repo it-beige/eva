@@ -4,7 +4,6 @@ import {
   Tabs,
   Input,
   Checkbox,
-  List,
   Tag,
   Tooltip,
   Empty,
@@ -17,8 +16,8 @@ import { InfoCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useRedux';
 import { fetchEvalMetrics, setSelectedType } from '../../../store/evalMetricSlice';
 import { MetricType, MetricScope, EvalMetric } from '@eva/shared';
+import styles from './MetricSelector.module.scss';
 
-const { TabPane } = Tabs;
 const { Search } = Input;
 
 interface MetricSelectorProps {
@@ -82,18 +81,21 @@ const MetricSelector = ({
   return (
     <div>
       {/* 创建指标链接 */}
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ color: '#ff4d4f' }}>*</span>
-        <a href="/eval-metric" target="_blank" rel="noopener noreferrer">
+      <div className={styles.header}>
+        <span className={styles.required}>*</span>
+        <a href="/eval/metrics" target="_blank" rel="noopener noreferrer">
           创建指标 →
         </a>
       </div>
 
-      {/* 类型 Tab */}
-      <Tabs activeKey={selectedType} onChange={handleTypeChange}>
-        <TabPane tab="LLM指标" key={MetricType.LLM} />
-        <TabPane tab="Code指标" key={MetricType.CODE} />
-      </Tabs>
+      <Tabs
+        activeKey={selectedType}
+        onChange={handleTypeChange}
+        items={[
+          { key: MetricType.LLM, label: 'LLM指标' },
+          { key: MetricType.CODE, label: 'Code指标' },
+        ]}
+      />
 
       {/* 搜索框 */}
       <Search
@@ -101,30 +103,27 @@ const MetricSelector = ({
         prefix={<SearchOutlined />}
         value={searchKeyword}
         onChange={(e) => setSearchKeyword(e.target.value)}
-        style={{ marginBottom: 16 }}
+        className={styles.search}
         allowClear
       />
 
       <Row gutter={16}>
         {/* 左侧范围筛选 */}
         <Col span={6}>
-          <Card size="small" bordered={false} style={{ background: '#f5f5f5' }}>
-            <List
-              dataSource={scopeOptions}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    cursor: 'pointer',
-                    background: scopeFilter === item.key ? '#e6f7ff' : 'transparent',
-                    padding: '8px 12px',
-                    borderRadius: 4,
-                  }}
+          <Card size="small" variant="borderless" className={styles.scopeCard}>
+            <div className={styles.scopeList}>
+              {scopeOptions.map((item) => (
+                <div
+                  key={item.key}
+                  className={`${styles.scopeItem} ${
+                    scopeFilter === item.key ? styles.scopeItemActive : ''
+                  }`}
                   onClick={() => setScopeFilter(item.key as MetricScope | 'all')}
                 >
                   {item.label}
-                </List.Item>
-              )}
-            />
+                </div>
+              ))}
+            </div>
           </Card>
         </Col>
 
@@ -132,37 +131,34 @@ const MetricSelector = ({
         <Col span={18}>
           <Spin spinning={loading}>
             {filteredMetrics.length > 0 ? (
-              <List
-                dataSource={filteredMetrics}
-                renderItem={(metric: EvalMetric) => (
-                  <List.Item
-                    style={{
-                      padding: '12px 0',
-                      borderBottom: '1px solid #f0f0f0',
-                    }}
+              <div>
+                {filteredMetrics.map((metric: EvalMetric) => (
+                  <div
+                    key={metric.id}
+                    className={styles.metricRow}
                   >
                     <Checkbox
                       checked={value.includes(metric.id)}
                       onChange={(e) =>
                         handleMetricToggle(metric.id, e.target.checked)
                       }
-                      style={{ width: '100%' }}
+                      className={styles.metricCheckbox}
                     >
                       <Space>
                         <span>{metric.name}</span>
                         <Tooltip title={metric.description || '暂无描述'}>
-                          <InfoCircleOutlined style={{ color: '#999' }} />
+                          <InfoCircleOutlined className={styles.infoIcon} />
                         </Tooltip>
                         {metric.scope === MetricScope.PUBLIC && (
-                          <Tag size="small" color="blue">
+                          <Tag color="blue">
                             公共
                           </Tag>
                         )}
                       </Space>
                     </Checkbox>
-                  </List.Item>
-                )}
-              />
+                  </div>
+                ))}
+              </div>
             ) : (
               <Empty
                 description="暂无指标"

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Card,
   Form,
@@ -15,18 +14,24 @@ import {
   InputNumber,
   Space,
 } from 'antd';
-import { AppDispatch, RootState } from '../../app/store';
 import { createEvalTask } from '../../store/evalTaskSlice';
 import { fetchEvalSets } from '../../store/evalSetSlice';
-import { fetchApplications } from '../../store/aiApplicationSlice';
-import { aiApplicationApi } from '../../services/aiApplicationApi';
 import EvalTypeSelector from './components/EvalTypeSelector';
 import EvalModeSelector from './components/EvalModeSelector';
 import HelpPanel from './components/HelpPanel';
-import { EvalType, AppVersion } from '@eva/shared';
+import {
+  ApplicationVersionResponse,
+  CreateEvalTaskRequest,
+  EvalType,
+} from '@eva/shared';
+import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
+import {
+  useGetApplicationVersionsQuery,
+  useGetApplicationsQuery,
+} from '../../services/applicationQueries';
+import styles from './CreateEvalTask.module.scss';
 
 const { Title, Text } = Typography;
-const { Panel } = Collapse;
 const { Option } = Select;
 
 interface FormValues {
@@ -43,35 +48,37 @@ interface FormValues {
   configInfo?: string;
 }
 
+const SectionHeading = ({ index, title }: { index: number; title: string }) => (
+  <div className={styles.sectionHeader}>
+    <div className={styles.sectionIndex}>{index}</div>
+    <Title level={5} className={styles.sectionTitle}>
+      {title}
+    </Title>
+  </div>
+);
+
 const CreateEvalTaskPage: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const [form] = Form.useForm<FormValues>();
 
-  const { loading } = useSelector((state: RootState) => state.evalTask);
-  const { evalSets } = useSelector((state: RootState) => state.evalSet);
-  const { applications } = useSelector((state: RootState) => state.aiApplication);
+  const { loading } = useAppSelector((state) => state.evalTask);
+  const { evalSets } = useAppSelector((state) => state.evalSet);
+  const { data: applicationData } = useGetApplicationsQuery({ pageSize: 100 });
 
   const [evalType, setEvalType] = useState<EvalType>(EvalType.GENERAL);
   const [evalMode, setEvalMode] = useState<string | undefined>();
   const [selectedAppId, setSelectedAppId] = useState<string | undefined>();
-  const [appVersions, setAppVersions] = useState<AppVersion[]>([]);
   const [extraConfigExpanded, setExtraConfigExpanded] = useState(false);
+  const applications = applicationData?.items ?? [];
+  const { data: appVersions = [] } = useGetApplicationVersionsQuery(
+    selectedAppId ?? '',
+    { skip: !selectedAppId },
+  );
 
   useEffect(() => {
     dispatch(fetchEvalSets({ pageSize: 100 }));
-    dispatch(fetchApplications({ pageSize: 100 }));
   }, [dispatch]);
-
-  useEffect(() => {
-    if (selectedAppId) {
-      aiApplicationApi.getVersions(selectedAppId).then((versions) => {
-        setAppVersions(versions);
-      });
-    } else {
-      setAppVersions([]);
-    }
-  }, [selectedAppId]);
 
   // 当评测类型改变时，重置评测模式
   useEffect(() => {
@@ -96,7 +103,7 @@ const CreateEvalTaskPage: React.FC = () => {
 
   const handleSubmit = async (values: FormValues) => {
     try {
-      const requestData = {
+      const requestData: CreateEvalTaskRequest = {
         name: values.name,
         evalType: values.evalType,
         evalMode: values.evalMode,
@@ -128,17 +135,16 @@ const CreateEvalTaskPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className={styles.page}>
       <Row gutter={24}>
         <Col span={18}>
-          <Card bordered={false}>
-            {/* 面包屑 */}
-            <div style={{ marginBottom: 24 }}>
+          <Card variant="borderless">
+            <div className={styles.breadcrumb}>
               <Text type="secondary">
-                <span style={{ cursor: 'pointer' }} onClick={() => navigate('/eval/tasks')}>
+                <span className={styles.breadcrumbLink} onClick={() => navigate('/eval/tasks')}>
                   评测任务
                 </span>
-                <span style={{ margin: '0 8px' }}>{'>'}</span>
+                <span className={styles.breadcrumbSeparator}>{'>'}</span>
                 <span>新建评测任务</span>
               </Text>
             </div>
@@ -152,30 +158,8 @@ const CreateEvalTaskPage: React.FC = () => {
                 maxConcurrency: 10,
               }}
             >
-              {/* 1. 评测模式 */}
-              <div style={{ marginBottom: 32 }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-                  <div
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: '50%',
-                      backgroundColor: '#1890ff',
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 14,
-                      fontWeight: 500,
-                      marginRight: 8,
-                    }}
-                  >
-                    1
-                  </div>
-                  <Title level={5} style={{ margin: 0 }}>
-                    评测模式
-                  </Title>
-                </div>
+              <div className={styles.section}>
+                <SectionHeading index={1} title="评测模式" />
 
                 <Form.Item
                   label="评测类型"
@@ -199,29 +183,8 @@ const CreateEvalTaskPage: React.FC = () => {
               </div>
 
               {/* 2. 基础配置 */}
-              <div style={{ marginBottom: 32 }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-                  <div
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: '50%',
-                      backgroundColor: '#1890ff',
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 14,
-                      fontWeight: 500,
-                      marginRight: 8,
-                    }}
-                  >
-                    2
-                  </div>
-                  <Title level={5} style={{ margin: 0 }}>
-                    基础配置
-                  </Title>
-                </div>
+              <div className={styles.section}>
+                <SectionHeading index={2} title="基础配置" />
 
                 <Row gutter={16}>
                   <Col span={12}>
@@ -239,7 +202,7 @@ const CreateEvalTaskPage: React.FC = () => {
                       name="maxConcurrency"
                       rules={[{ required: true, message: '请输入最大并发数' }]}
                     >
-                      <InputNumber min={1} max={100} style={{ width: '100%' }} />
+                      <InputNumber min={1} max={100} className={styles.fullWidthInput} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -271,29 +234,8 @@ const CreateEvalTaskPage: React.FC = () => {
               </div>
 
               {/* 3. 评测对象配置 */}
-              <div style={{ marginBottom: 32 }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-                  <div
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: '50%',
-                      backgroundColor: '#1890ff',
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 14,
-                      fontWeight: 500,
-                      marginRight: 8,
-                    }}
-                  >
-                    3
-                  </div>
-                  <Title level={5} style={{ margin: 0 }}>
-                    评测对象配置
-                  </Title>
-                </div>
+              <div className={styles.section}>
+                <SectionHeading index={3} title="评测对象配置" />
 
                 <Row gutter={16}>
                   <Col span={12}>
@@ -322,7 +264,7 @@ const CreateEvalTaskPage: React.FC = () => {
                       rules={[{ required: true, message: '请选择版本' }]}
                     >
                       <Select placeholder="请选择" allowClear disabled={!selectedAppId}>
-                        {appVersions.map((version) => (
+                        {appVersions.map((version: ApplicationVersionResponse) => (
                           <Option key={version.id} value={version.version}>
                             {version.version}
                           </Option>
@@ -335,19 +277,28 @@ const CreateEvalTaskPage: React.FC = () => {
                 <Collapse
                   ghost
                   activeKey={extraConfigExpanded ? ['1'] : []}
-                  onChange={(keys) => setExtraConfigExpanded(keys.includes('1'))}
-                >
-                  <Panel header="更多AI应用配置" key="1">
-                    <div style={{ padding: '8px 0' }}>
-                      <Text type="secondary">额外配置项将在这里显示</Text>
-                    </div>
-                  </Panel>
-                </Collapse>
+                  onChange={(keys) =>
+                    setExtraConfigExpanded(
+                      (Array.isArray(keys) ? keys : [keys]).includes('1'),
+                    )
+                  }
+                  items={[
+                    {
+                      key: '1',
+                      label: '更多AI应用配置',
+                      children: (
+                        <div className={styles.collapseContent}>
+                          <Text type="secondary">额外配置项将在这里显示</Text>
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
 
                 {/* 音频agent额外配置 */}
                 {evalType === EvalType.AUDIO && (
                   <>
-                    <Row gutter={16} style={{ marginTop: 16 }}>
+                    <Row gutter={16} className={styles.audioConfigRow}>
                       <Col span={12}>
                         <Form.Item
                           label="数据集选择"
@@ -387,8 +338,7 @@ const CreateEvalTaskPage: React.FC = () => {
                 )}
               </div>
 
-              {/* 底部按钮 */}
-              <Form.Item style={{ marginTop: 32, marginBottom: 0 }}>
+              <Form.Item className={styles.footerActions}>
                 <Space>
                   <Button type="primary" htmlType="submit" loading={loading}>
                     确定

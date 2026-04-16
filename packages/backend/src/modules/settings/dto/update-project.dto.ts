@@ -1,6 +1,12 @@
+import type {
+  ProjectSettingsResponse as ProjectSettings,
+  UpdateProjectRequest,
+} from '@eva/shared';
 import { IsString, IsOptional, MaxLength } from 'class-validator';
 
-export class UpdateProjectDto {
+export type { ProjectSettings };
+
+export class UpdateProjectDto implements UpdateProjectRequest {
   @IsString()
   @MaxLength(100)
   name: string;
@@ -9,12 +15,4 @@ export class UpdateProjectDto {
   @IsOptional()
   @MaxLength(500)
   description?: string;
-}
-
-export interface ProjectSettings {
-  id: string;
-  name: string;
-  description: string | null;
-  createdAt: string;
-  updatedAt: string;
 }

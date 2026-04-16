@@ -14,11 +14,13 @@ import {
   ClearOutlined,
   RobotOutlined,
   FileTextOutlined,
-  CodeOutlined,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
-import { fetchApplications } from '../../../store/aiApplicationSlice';
 import { fetchPrompts } from '../../../store/promptSlice';
+import {
+  useGetApplicationVersionsQuery,
+  useGetApplicationsQuery,
+} from '../../../services/applicationQueries';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -45,12 +47,19 @@ const PlaygroundConfig: React.FC<PlaygroundConfigProps> = ({
   const dispatch = useAppDispatch();
   const [promptType, setPromptType] = useState<'select' | 'custom'>('select');
   const [selectedApp, setSelectedApp] = useState<string>();
+  const { data: applicationsData } = useGetApplicationsQuery({
+    page: 1,
+    pageSize: 100,
+  });
+  const applications = applicationsData?.items ?? [];
+  const { data: appVersions = [] } = useGetApplicationVersionsQuery(
+    selectedApp ?? '',
+    { skip: !selectedApp },
+  );
 
-  const { applications } = useAppSelector((state) => state.aiApplication);
   const { prompts } = useAppSelector((state) => state.prompt);
 
   useEffect(() => {
-    dispatch(fetchApplications({ page: 1, pageSize: 100 }));
     dispatch(fetchPrompts({ page: 1, pageSize: 100 }));
   }, [dispatch]);
 
@@ -58,8 +67,6 @@ const PlaygroundConfig: React.FC<PlaygroundConfigProps> = ({
     setSelectedApp(value);
     form.setFieldValue('appVersion', undefined);
   };
-
-  const selectedAppData = applications.find((app) => app.id === selectedApp);
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
@@ -109,12 +116,12 @@ const PlaygroundConfig: React.FC<PlaygroundConfigProps> = ({
             placeholder="选择版本"
             disabled={!selectedApp}
           >
-            {selectedAppData?.versions?.map((version) => (
+            {appVersions.map((version) => (
               <Option key={version.id} value={version.version}>
                 {version.version}
               </Option>
             ))}
-            {!selectedAppData?.versions?.length && (
+            {!appVersions.length && (
               <Option value="latest">最新版本</Option>
             )}
           </Select>

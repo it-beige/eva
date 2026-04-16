@@ -13,7 +13,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchPrompt, fetchVersions } from '../../store/promptSlice';
 import VersionCompare from './components/VersionCompare';
-import styles from './Prompt.module.css';
+import styles from './Prompt.module.scss';
 
 const PromptDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +32,7 @@ const PromptDetailPage = () => {
 
   if (loading && !currentPrompt) {
     return (
-      <div style={{ padding: 24, textAlign: 'center' }}>
+      <div className={styles.loadingState}>
         <Spin size="large" />
       </div>
     );
@@ -40,9 +40,9 @@ const PromptDetailPage = () => {
 
   if (!currentPrompt) {
     return (
-      <div style={{ padding: 24 }}>
+      <div className={styles.emptyState}>
         <Empty description="Prompt 不存在或已被删除" />
-        <div style={{ textAlign: 'center', marginTop: 16 }}>
+        <div className={styles.emptyActions}>
           <Button onClick={() => navigate('/eval/prompts')}>
             返回列表
           </Button>
@@ -60,7 +60,7 @@ const PromptDetailPage = () => {
         <Breadcrumb.Item>{currentPrompt.name}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <div style={{ marginBottom: 16 }}>
+      <div className={styles.detailActions}>
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate('/eval/prompts')}
@@ -69,7 +69,7 @@ const PromptDetailPage = () => {
         </Button>
       </div>
 
-      <Card title="基本信息" style={{ marginBottom: 24 }}>
+      <Card title="基本信息" className={styles.infoCard}>
         <Descriptions column={2}>
           <Descriptions.Item label="名称">
             {currentPrompt.name}
@@ -92,21 +92,8 @@ const PromptDetailPage = () => {
         </Descriptions>
       </Card>
 
-      <Card title="当前 Prompt 内容" style={{ marginBottom: 24 }}>
-        <pre
-          style={{
-            background: '#f5f5f5',
-            padding: 16,
-            borderRadius: 4,
-            whiteSpace: 'pre-wrap',
-            wordWrap: 'break-word',
-            fontFamily: 'monospace',
-            fontSize: 13,
-            lineHeight: 1.6,
-            maxHeight: 400,
-            overflow: 'auto',
-          }}
-        >
+      <Card title="当前 Prompt 内容" className={styles.contentCard}>
+        <pre className={styles.promptContent}>
           {currentPrompt.content}
         </pre>
       </Card>

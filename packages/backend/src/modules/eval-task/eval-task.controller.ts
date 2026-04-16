@@ -6,9 +6,8 @@ import {
   Param,
   Query,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EvalTaskService } from './eval-task.service';
 import {
   CreateEvalTaskDto,
@@ -17,15 +16,19 @@ import {
 } from './dto';
 import { EvalTask } from '../../database/entities/eval-task.entity';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('api/eval-tasks')
-@UseGuards(AuthGuard('jwt'))
+@Controller('eval-tasks')
+@UseGuards(JwtAuthGuard)
+@ApiTags('EvalTasks')
+@ApiBearerAuth('access-token')
 export class EvalTaskController {
   constructor(private readonly evalTaskService: EvalTaskService) {}
 
   @Get()
   async findAll(
-    @Query(new ValidationPipe({ transform: true })) query: QueryEvalTaskDto,
+    @Query() query: QueryEvalTaskDto,
   ): Promise<PaginatedResponseDto<EvalTask>> {
     return this.evalTaskService.findAll(query);
   }
@@ -37,15 +40,20 @@ export class EvalTaskController {
 
   @Post()
   async create(
-    @Body(new ValidationPipe()) dto: CreateEvalTaskDto,
+    @Body() dto: CreateEvalTaskDto,
+    @CurrentUser('name') userName?: string,
+    @CurrentUser('employeeId') employeeId?: string,
   ): Promise<EvalTask> {
-    // TODO: 从JWT中获取当前用户
-    return this.evalTaskService.create(dto, 'system');
+    return this.evalTaskService.create(dto, userName ?? employeeId ?? undefined);
   }
 
   @Post(':id/copy')
-  async copy(@Param('id') id: string): Promise<EvalTask> {
-    return this.evalTaskService.copy(id, 'system');
+  async copy(
+    @Param('id') id: string,
+    @CurrentUser('name') userName?: string,
+    @CurrentUser('employeeId') employeeId?: string,
+  ): Promise<EvalTask> {
+    return this.evalTaskService.copy(id, userName ?? employeeId ?? undefined);
   }
 
   @Post(':id/abort')
@@ -59,9 +67,7 @@ export class EvalTaskController {
   }
 
   @Post('batch')
-  async batchOperation(
-    @Body(new ValidationPipe()) dto: BatchOperationDto,
-  ): Promise<{ success: number; failed: number }> {
+  async batchOperation(@Body() dto: BatchOperationDto): Promise<{ success: number; failed: number }> {
     return this.evalTaskService.batchOperation(dto);
   }
 }

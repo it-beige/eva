@@ -1,11 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { EvalTask } from '../../database/entities/eval-task.entity';
 import { EvalSet } from '../../database/entities/eval-set.entity';
-import { EvalTaskStatus, EvalType } from '@eva/shared';
+import { AIApplication } from '../../database/entities/ai-application.entity';
+import {
+  BusinessErrorCode,
+  EvalTaskStatus,
+  EvalType,
+} from '@eva/shared';
 import {
   CreateEvalTaskDto,
   QueryEvalTaskDto,
@@ -13,6 +18,7 @@ import {
   BatchOperationType,
 } from './dto';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
+import { BusinessException } from '../../common/errors/business.exception';
 
 @Injectable()
 export class EvalTaskService {
@@ -21,6 +27,8 @@ export class EvalTaskService {
     private readonly evalTaskRepository: Repository<EvalTask>,
     @InjectRepository(EvalSet)
     private readonly evalSetRepository: Repository<EvalSet>,
+    @InjectRepository(AIApplication)
+    private readonly applicationRepository: Repository<AIApplication>,
     @InjectQueue('eval-tasks')
     private readonly evalTaskQueue: Queue,
   ) {}
@@ -59,32 +67,17 @@ export class EvalTaskService {
 
     const [items, total] = await this.evalTaskRepository.findAndCount({
       where,
+      relations: {
+        evalSet: true,
+        application: true,
+      },
       order: { createdAt: 'DESC' },
       skip: (page - 1) * pageSize,
       take: pageSize,
     });
 
-    // 加载评测集名称
-    const evalSetIds = items
-      .map((item) => item.evalSetId)
-      .filter((id): id is string => !!id);
-    
-    let evalSets: EvalSet[] = [];
-    if (evalSetIds.length > 0) {
-      evalSets = await this.evalSetRepository.find({
-        where: evalSetIds.map((id) => ({ id })),
-      });
-    }
-    
-    const evalSetMap = new Map(evalSets.map((es) => [es.id, es]));
-
-    const itemsWithEvalSet = items.map((item) => ({
-      ...item,
-      evalSet: item.evalSetId ? evalSetMap.get(item.evalSetId) : null,
-    }));
-
     return {
-      items: itemsWithEvalSet as EvalTask[],
+      items,
       total,
       page,
       pageSize,
@@ -94,15 +87,53 @@ export class EvalTaskService {
 
   // 获取任务详情
   async findOne(id: string): Promise<EvalTask> {
-    const task = await this.evalTaskRepository.findOne({ where: { id } });
+    const task = await this.evalTaskRepository.findOne({
+      where: { id },
+      relations: {
+        evalSet: true,
+        application: true,
+      },
+    });
     if (!task) {
-      throw new NotFoundException('评测任务不存在');
+      throw new BusinessException(
+        BusinessErrorCode.TASK_NOT_FOUND,
+        '评测任务不存在',
+        HttpStatus.NOT_FOUND,
+      );
     }
     return task;
   }
 
   // 创建任务
   async create(dto: CreateEvalTaskDto, createdBy?: string): Promise<EvalTask> {
+    if (dto.evalSetId) {
+      const evalSet = await this.evalSetRepository.findOne({
+        where: { id: dto.evalSetId },
+      });
+
+      if (!evalSet) {
+        throw new BusinessException(
+          BusinessErrorCode.EVAL_SET_NOT_FOUND,
+          '评测集不存在',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
+
+    if (dto.appId) {
+      const application = await this.applicationRepository.findOne({
+        where: { id: dto.appId },
+      });
+
+      if (!application) {
+        throw new BusinessException(
+          BusinessErrorCode.APPLICATION_NOT_FOUND,
+          'AI 应用不存在',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
+
     // 生成唯一的短ID
     let shortId = this.generateShortId();
     let existing = await this.evalTaskRepository.findOne({ where: { shortId } });
@@ -265,5 +296,25 @@ export class EvalTaskService {
   // 更新任务状态（供Processor调用）
   async updateStatus(id: string, status: EvalTaskStatus): Promise<void> {
     await this.evalTaskRepository.update(id, { status });
+  }
+
+  async updateExecutionSummary(
+    id: string,
+    summary: Record<string, unknown>,
+  ): Promise<void> {
+    const task = await this.evalTaskRepository.findOne({
+      where: { id },
+    });
+
+    if (!task) {
+      return;
+    }
+
+    await this.evalTaskRepository.update(id, {
+      config: {
+        ...(task.config ?? {}),
+        executionSummary: summary,
+      },
+    });
   }
 }

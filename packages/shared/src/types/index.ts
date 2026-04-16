@@ -52,6 +52,22 @@ export enum UserRole {
   USER = 'user',
 }
 
+export enum BusinessErrorCode {
+  VALIDATION_ERROR = 'COMMON_001',
+  RESOURCE_NOT_FOUND = 'COMMON_404',
+  INTERNAL_SERVER_ERROR = 'COMMON_500',
+  AUTH_UNAUTHORIZED = 'AUTH_001',
+  AUTH_FORBIDDEN = 'AUTH_002',
+  TASK_NOT_FOUND = 'TASK_001',
+  EVAL_SET_NOT_FOUND = 'EVAL_SET_001',
+  APPLICATION_NOT_FOUND = 'APP_001',
+  TRACE_NOT_FOUND = 'TRACE_001',
+  MEMBER_NOT_FOUND = 'SETTINGS_001',
+  MEMBER_ALREADY_EXISTS = 'SETTINGS_002',
+  OWNER_CANNOT_BE_REMOVED = 'SETTINGS_003',
+  TOKEN_NOT_FOUND = 'SETTINGS_004',
+}
+
 // ==================== Interfaces ====================
 
 export interface User {
@@ -65,7 +81,7 @@ export interface User {
 }
 
 export interface ApiResponse<T = unknown> {
-  code: number;
+  code: number | string;
   message: string;
   data: T;
   timestamp: string;
@@ -73,11 +89,30 @@ export interface ApiResponse<T = unknown> {
 }
 
 export interface ErrorResponse {
-  code: number;
+  code: number | string;
   message: string;
   data: null;
   timestamp: string;
   path: string;
+  traceId: string;
+  statusCode: number;
+}
+
+export interface AuthenticatedUser {
+  id: string;
+  name: string;
+  employeeId?: string | null;
+  role: UserRole;
+}
+
+export interface LoginRequest {
+  employeeId: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+  user: AuthenticatedUser;
 }
 
 export interface PaginationQuery {
@@ -230,6 +265,7 @@ export interface TraceLog {
   id: string;
   traceId: string;
   sessionId?: string;
+  appId?: string;
   userId?: string;
   nodeId?: string;
   messageId?: string;

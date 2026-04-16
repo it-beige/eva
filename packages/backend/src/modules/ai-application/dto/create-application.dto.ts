@@ -1,6 +1,7 @@
+import type { CreateApplicationRequest } from '@eva/shared';
 import { IsString, IsOptional, IsUUID, Length, MaxLength } from 'class-validator';
 
-export class CreateApplicationDto {
+export class CreateApplicationDto implements CreateApplicationRequest {
   @IsString()
   @Length(1, 255)
   name: string;
@@ -20,5 +21,6 @@ export class CreateApplicationDto {
   gitRepoUrl?: string;
 
   @IsUUID()
-  projectId: string;
+  @IsOptional()
+  projectId?: string;
 }

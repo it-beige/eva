@@ -47,7 +47,7 @@ const CreateEvalSetPage = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      <Card bordered={false}>
+      <Card variant="borderless">
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate('/eval/datasets')}

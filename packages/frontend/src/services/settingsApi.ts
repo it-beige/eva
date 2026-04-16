@@ -1,53 +1,25 @@
 import api from './api';
+import type {
+  AddMemberRequest,
+  ApiTokenResponse as ApiToken,
+  CreateTokenRequest,
+  CreateTokenResponse,
+  ProjectSettingsResponse as ProjectSettings,
+  UpdateMemberRequest,
+  UpdateProjectRequest,
+  WorkspaceMember as Member,
+} from '@eva/shared';
 
-export interface ProjectSettings {
-  id: string;
-  name: string;
-  description: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UpdateProjectRequest {
-  name: string;
-  description?: string;
-}
-
-export interface Member {
-  id: string;
-  email: string;
-  name: string;
-  role: 'owner' | 'admin' | 'member';
-  avatar?: string;
-  joinedAt: string;
-}
-
-export interface AddMemberRequest {
-  email: string;
-  role: 'owner' | 'admin' | 'member';
-}
-
-export interface UpdateMemberRequest {
-  role: 'owner' | 'admin' | 'member';
-}
-
-export interface ApiToken {
-  id: string;
-  name: string;
-  maskedToken: string;
-  expiresAt: string | null;
-  createdAt: string;
-  lastUsedAt: string | null;
-}
-
-export interface CreateTokenRequest {
-  name: string;
-  expiresIn?: number; // 过期时间（天），不传表示永不过期
-}
-
-export interface CreateTokenResponse extends ApiToken {
-  token: string; // 仅创建时返回完整 token
-}
+export type {
+  AddMemberRequest,
+  ApiToken,
+  CreateTokenRequest,
+  CreateTokenResponse,
+  Member,
+  ProjectSettings,
+  UpdateMemberRequest,
+  UpdateProjectRequest,
+};
 
 export const settingsApi = {
   // ========== 项目设置 ==========

@@ -1,0 +1,71 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heroCard {
+  background: #f0f5ff;
+  border: none;
+}
+
+.heroCard :global(.ant-card-body),
+.guideCard :global(.ant-card-body) {
+  padding: 16px;
+}
+
+.heroContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.heroIcon {
+  margin-top: 2px;
+  color: var(--eva-primary);
+  font-size: 20px;
+}
+
+.sectionTitle {
+  margin: 0 0 8px !important;
+}
+
+.bodyText {
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.linkRow {
+  margin-top: 8px;
+}
+
+.linkRowCompact {
+  margin-top: 4px;
+}
+
+.link {
+  font-size: 13px;
+}
+
+.guideList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.itemIcon {
+  color: var(--eva-primary);
+}
+
+@media (max-width: 768px) {
+  .heroContent {
+    flex-direction: column;
+  }
+}
