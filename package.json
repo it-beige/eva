@@ -1,0 +1,20 @@
+{
+  "name": "eva",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Eva AI Evaluation Platform",
+  "scripts": {
+    "dev:frontend": "pnpm --filter @eva/frontend dev",
+    "dev:backend": "pnpm --filter @eva/backend start:dev",
+    "dev": "pnpm run dev:frontend & pnpm run dev:backend",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
