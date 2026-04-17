@@ -25,6 +25,7 @@ import { LeaderboardModule } from './modules/leaderboard/leaderboard.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { AutoEvalModule } from './modules/auto-eval/auto-eval.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ProjectModule } from './modules/project/project.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import queueConfig from './config/queue.config';
@@ -96,6 +97,7 @@ import { LlmModule } from './infrastructure/llm/llm.module';
     LeaderboardModule,
     SettingsModule,
     AuthModule,
+    ProjectModule,
   ],
   providers: [
     RolesGuard,

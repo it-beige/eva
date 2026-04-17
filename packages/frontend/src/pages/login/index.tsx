@@ -29,7 +29,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const { message } = AntdApp.useApp();
   const from = location.state as { from?: string } | null;
-  const redirectTo = from?.from ?? '/eval/tasks';
+  const redirectTo = from?.from ?? '/projects';
 
   useEffect(() => {
     if (getAccessToken()) {

@@ -52,6 +52,20 @@ export enum UserRole {
   USER = 'user',
 }
 
+export enum ProjectSource {
+  IDEALAB = 'IDEALAB',
+  IDEALAB_WORKSPACE = 'IDEALAB_WORKSPACE',
+  DEMO = 'DEMO',
+  DIRECT = 'DIRECT',
+  JOINT = 'JOINT',
+}
+
+export enum ProjectCreateMode {
+  LINKED = 'linked',
+  DIRECT = 'direct',
+  JOINT = 'joint',
+}
+
 export enum BusinessErrorCode {
   VALIDATION_ERROR = 'COMMON_001',
   RESOURCE_NOT_FOUND = 'COMMON_404',
@@ -66,6 +80,9 @@ export enum BusinessErrorCode {
   MEMBER_ALREADY_EXISTS = 'SETTINGS_002',
   OWNER_CANNOT_BE_REMOVED = 'SETTINGS_003',
   TOKEN_NOT_FOUND = 'SETTINGS_004',
+  PROJECT_NOT_FOUND = 'PROJECT_001',
+  PROJECT_NAME_EXISTS = 'PROJECT_002',
+  PROJECT_PID_EXISTS = 'PROJECT_003',
 }
 
 // ==================== Interfaces ====================
@@ -142,12 +159,58 @@ export interface PaginationResponse<T> {
 
 // ==================== Entity Interfaces ====================
 
-export interface Project {
+export interface ProjectEncryption {
+  keyName: string;
+  issueCode: string;
+  generated: boolean;
+}
+
+export interface ProjectUser {
   id: string;
   name: string;
+  employeeId: string;
+}
+
+export interface Project {
+  id: string;
+  pid: string;
+  name: string;
   description?: string;
+  appCode?: string;
+  source: ProjectSource;
+  admins: ProjectUser[];
+  users: ProjectUser[];
+  userCount: number;
+  encryption?: ProjectEncryption;
+  jointApps?: AppInfo[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface AppInfo {
+  appId: string;
+  appName: string;
+  appCode: string;
+  platform: string;
+}
+
+export interface CreateProjectRequest {
+  createMode: ProjectCreateMode;
+  pid?: string;
+  platform?: string;
+  linkedApp?: string;
+  projectName: string;
+  description?: string;
+  jointApps?: string[];
+  adminIds: string[];
+  userIds?: string[];
+}
+
+export interface UpdateProjectDetailRequest {
+  projectName: string;
+  description?: string;
+  adminIds: string[];
+  userIds?: string[];
 }
 
 export interface AIApplication {

@@ -1,0 +1,92 @@
+.page {
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000d9;
+  margin: 0;
+}
+
+.searchBar {
+  margin-bottom: 16px;
+
+  :global(.ant-input-search) {
+    max-width: 400px;
+  }
+}
+
+.sourceTag {
+  &.idealab {
+    color: #1677ff;
+    background: #e6f4ff;
+    border-color: #91caff;
+  }
+
+  &.workspace {
+    color: #52c41a;
+    background: #f6ffed;
+    border-color: #b7eb8f;
+  }
+
+  &.demo {
+    color: #8c8c8c;
+    background: #fafafa;
+    border-color: #d9d9d9;
+  }
+
+  &.direct {
+    color: #1677ff;
+    background: #e6f4ff;
+    border-color: #91caff;
+  }
+
+  &.joint {
+    color: #722ed1;
+    background: #f9f0ff;
+    border-color: #d3adf7;
+  }
+}
+
+.adminList {
+  display: inline;
+}
+
+.moreAdmins {
+  color: #00000073;
+  cursor: pointer;
+}
+
+.actionLink {
+  padding: 0;
+  height: auto;
+  line-height: 1;
+}
+
+.deleteLink {
+  padding: 0;
+  height: auto;
+  line-height: 1;
+  color: #ff4d4f;
+
+  &:hover {
+    color: #ff7875;
+  }
+}
+
+.projectIdLink {
+  color: #1677ff;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

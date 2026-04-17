@@ -27,6 +27,9 @@ const ObservabilityPage = lazy(() => import('../pages/observability/index'));
 const TraceDetailPage = lazy(() => import('../pages/observability/TraceDetail'));
 const AnalyticsPage = lazy(() => import('../pages/analytics/index'));
 const LoginPage = lazy(() => import('../pages/login/index'));
+const ProjectListPage = lazy(() => import('../pages/project/index'));
+const CreateProjectPage = lazy(() => import('../pages/project/CreateProject'));
+const EditProjectPage = lazy(() => import('../pages/project/EditProject'));
 
 // Wrapper for lazy loaded components
 const withSuspense = (Component: React.ComponentType) => (
@@ -44,6 +47,28 @@ export const router = createBrowserRouter(
     {
       path: '/login',
       element: withSuspense(LoginPage),
+    },
+    {
+      path: '/projects',
+      element: (
+        <AuthGuard>
+          <MainLayout />
+        </AuthGuard>
+      ),
+      children: [
+        {
+          path: '',
+          element: withSuspense(ProjectListPage),
+        },
+        {
+          path: 'create',
+          element: withSuspense(CreateProjectPage),
+        },
+        {
+          path: ':id/edit',
+          element: withSuspense(EditProjectPage),
+        },
+      ],
     },
     {
       path: '/eval',

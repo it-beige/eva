@@ -110,6 +110,39 @@ export const observabilityMenuItems: ShellMenuItem[] = [
 
 const pageMetaRegistry: Array<{ pattern: string; meta: PageMeta }> = [
   {
+    pattern: '/projects',
+    meta: {
+      title: '项目列表',
+      description: '统一管理 AI 应用项目的创建、编辑、查看和删除操作。',
+      section: 'evaluation',
+      breadcrumbs: [{ title: '项目列表' }],
+    },
+  },
+  {
+    pattern: '/projects/create',
+    meta: {
+      title: '创建项目',
+      description: '创建新的 AI 应用项目，支持关联应用、直接创建和联合创建三种方式。',
+      section: 'evaluation',
+      breadcrumbs: [
+        { title: '项目列表', path: '/projects' },
+        { title: '创建项目' },
+      ],
+    },
+  },
+  {
+    pattern: '/projects/:id/edit',
+    meta: {
+      title: '编辑项目',
+      description: '编辑已有项目的基础信息和成员配置。',
+      section: 'evaluation',
+      breadcrumbs: [
+        { title: '项目列表', path: '/projects' },
+        { title: '编辑项目' },
+      ],
+    },
+  },
+  {
     pattern: '/analytics',
     meta: {
       title: '应用分析',
