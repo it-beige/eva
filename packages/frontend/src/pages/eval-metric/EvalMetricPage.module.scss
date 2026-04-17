@@ -1,0 +1,25 @@
+.searchInput {
+  width: 280px;
+}
+
+.nameLink {
+  color: var(--eva-primary);
+  cursor: pointer;
+}
+
+.nameLink:hover {
+  text-decoration: underline;
+}
+
+.dangerText {
+  color: #ff4d4f;
+}
+
+.helpLink {
+  margin-left: 8px;
+  color: var(--eva-primary);
+}
+
+.helpIcon {
+  font-size: 12px;
+}

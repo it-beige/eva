@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Modal,
+  Drawer,
   Form,
   Input,
   Select,
@@ -25,6 +25,7 @@ import {
   GlobalOutlined,
 } from '@ant-design/icons';
 import { EvalSetType, EvalSetSourceType } from '@eva/shared';
+import styles from './CreateEvalSetModal.module.scss';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -172,38 +173,21 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
     if (evalSetType !== EvalSetType.TEXT) return null;
     return (
       <>
-        <Form.Item
-          label="数据集创建方式"
-          required
-          style={{ marginBottom: 16 }}
-        >
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <Form.Item label="数据集创建方式" required>
+          <div className={styles.sourceGrid}>
             {sourceTypeOptions.map((option) => (
               <Card
                 key={option.key}
                 size="small"
-                style={{
-                  width: 140,
-                  cursor: 'pointer',
-                  border:
-                    sourceType === option.key
-                      ? '2px solid #5B21B6'
-                      : '1px solid #d9d9d9',
-                }}
+                className={`${styles.sourceCard} ${sourceType === option.key ? styles.sourceCardActive : ''}`}
                 onClick={() => {
                   setSourceType(option.key);
                   form.setFieldsValue({ sourceType: option.key });
                 }}
               >
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, marginBottom: 8, color: '#5B21B6' }}>
-                    {option.icon}
-                  </div>
-                  <div style={{ fontWeight: 500 }}>{option.label}</div>
-                  <div style={{ fontSize: 12, color: '#999' }}>
-                    {option.description}
-                  </div>
-                </div>
+                <div className={styles.sourceIcon}>{option.icon}</div>
+                <div className={styles.sourceLabel}>{option.label}</div>
+                <div className={styles.sourceDescription}>{option.description}</div>
               </Card>
             ))}
           </div>
@@ -271,7 +255,7 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
             <Form.Item label="分区条件" name="odpsPartition">
               <Input placeholder="可选，如: dt=20240101" />
             </Form.Item>
-            <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+            <Text type="secondary" className={styles.hint}>
               提示：单次导入数据量建议不超过2万条
             </Text>
           </>
@@ -376,11 +360,7 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
     if (evalSetType !== EvalSetType.CODE) return null;
     return (
       <>
-        <Form.Item
-          label="创建方式"
-          required
-          style={{ marginBottom: 16 }}
-        >
+        <Form.Item label="创建方式" required>
           <Radio.Group
             value={codeSourceType}
             onChange={(e) => {
@@ -388,23 +368,15 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
               form.setFieldsValue({ sourceType: e.target.value });
             }}
           >
-            <Space orientation="vertical">
+            <Space direction="vertical">
               {codeSourceOptions.map((option) => (
                 <Radio.Button
                   key={option.key}
                   value={option.key}
-                  style={{
-                    width: 400,
-                    height: 60,
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '0 16px',
-                  }}
+                  className={styles.codeSourceOption}
                 >
                   <Space>
-                    <span style={{ fontSize: 20, color: '#5B21B6' }}>
-                      {option.icon}
-                    </span>
+                    <span className={styles.codeSourceIcon}>{option.icon}</span>
                     <span>{option.label}</span>
                   </Space>
                 </Radio.Button>
@@ -486,14 +458,20 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
   };
 
   return (
-    <Modal
+    <Drawer
       title="新建评测集"
       open={open}
-      onCancel={onCancel}
-      onOk={handleSubmit}
-      confirmLoading={loading}
+      onClose={onCancel}
       width={720}
-      destroyOnHidden
+      destroyOnClose
+      extra={
+        <Space>
+          <Button onClick={onCancel}>取消</Button>
+          <Button type="primary" onClick={handleSubmit} loading={loading}>
+            创建
+          </Button>
+        </Space>
+      }
     >
       <Form
         form={form}
@@ -503,38 +481,24 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
           sourceType: EvalSetSourceType.LOCAL_UPLOAD,
         }}
       >
-        <Form.Item label="评测集类型" required style={{ marginBottom: 16 }}>
+        <Form.Item label="评测集类型" required>
           <Row gutter={16}>
             <Col span={12}>
               <Card
                 size="small"
-                style={{
-                  cursor: 'pointer',
-                  border:
-                    evalSetType === EvalSetType.TEXT
-                      ? '2px solid #5B21B6'
-                      : '1px solid #d9d9d9',
-                  textAlign: 'center',
-                }}
+                className={`${styles.typeCard} ${evalSetType === EvalSetType.TEXT ? styles.typeCardActive : ''}`}
                 onClick={() => handleTypeChange(EvalSetType.TEXT)}
               >
-                <div style={{ fontWeight: 500 }}>文本/多模态</div>
+                <div className={styles.typeLabel}>文本/多模态</div>
               </Card>
             </Col>
             <Col span={12}>
               <Card
                 size="small"
-                style={{
-                  cursor: 'pointer',
-                  border:
-                    evalSetType === EvalSetType.CODE
-                      ? '2px solid #5B21B6'
-                      : '1px solid #d9d9d9',
-                  textAlign: 'center',
-                }}
+                className={`${styles.typeCard} ${evalSetType === EvalSetType.CODE ? styles.typeCardActive : ''}`}
                 onClick={() => handleTypeChange(EvalSetType.CODE)}
               >
-                <div style={{ fontWeight: 500 }}>Code</div>
+                <div className={styles.typeLabel}>Code</div>
               </Card>
             </Col>
           </Row>
@@ -550,7 +514,7 @@ export const CreateEvalSetModal: React.FC<CreateEvalSetModalProps> = ({
         {renderTextTypeForm()}
         {renderCodeTypeForm()}
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

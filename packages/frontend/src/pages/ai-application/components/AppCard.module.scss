@@ -1,0 +1,50 @@
+.card {
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--eva-shadow);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.appName {
+  font-size: 15px;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardBody {
+  margin-bottom: 16px;
+  min-height: 56px;
+}
+
+.fieldRow {
+  margin-bottom: 6px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+}
+
+.fieldValue {
+  font-size: 13px;
+}
+
+.cardFooter {
+  display: flex;
+  gap: 8px;
+}
+
+.footerButton {
+  flex: 1;
+}

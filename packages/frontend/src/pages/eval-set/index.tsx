@@ -7,7 +7,6 @@ import {
   Input,
   Space,
   Tag,
-  Typography,
   Tooltip,
   Popconfirm,
   message,
@@ -28,16 +27,16 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import {
   fetchEvalSets,
   deleteEvalSet,
+  createEvalSet,
   setKeyword,
   setPage,
   setPageSize,
 } from '../../store/evalSetSlice';
 import { CreateEvalSetModal } from './components/CreateEvalSetModal';
-import { createEvalSet } from '../../store/evalSetSlice';
+import PageContainer from '../../components/page/PageContainer';
 import { EvalSet, EvalSetType } from '@eva/shared';
 import { ColumnsType } from 'antd/es/table';
-
-const { Title, Text } = Typography;
+import styles from './EvalSetPage.module.scss';
 
 const EVAL_SET_TYPE_COLORS: Record<string, string> = {
   [EvalSetType.TEXT]: 'blue',
@@ -133,8 +132,8 @@ const EvalSetListPage = () => {
       width: 200,
       render: (name: string, record: EvalSet) => (
         <a
+          className={styles.nameLink}
           onClick={() => navigate(`/eval/datasets/${record.id}`)}
-          style={{ fontWeight: 500 }}
         >
           {name}
         </a>
@@ -242,32 +241,37 @@ const EvalSetListPage = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      <Card variant="borderless">
-        <div style={{ marginBottom: 24 }}>
-          <Title level={4} style={{ marginBottom: 8 }}>
-            评测集
-          </Title>
-          <Text type="secondary">
-            评测集是用于评测评估对象的一组数据。它通常包含输入数据和预期的输出结果、实际输出结果，验证评估对象的效果。
-          </Text>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16,
-          }}
-        >
-          <Space>
+    <PageContainer
+      description="评测集是用于评测评估对象的一组数据。它通常包含输入数据和预期的输出结果、实际输出结果，验证评估对象的效果。"
+      extra={
+        <>
+          <Segmented
+            value={viewMode}
+            onChange={(value) => setViewMode(value as 'table' | 'chart')}
+            options={[
+              { value: 'table', icon: <TableOutlined /> },
+              { value: 'chart', icon: <BarChartOutlined /> },
+            ]}
+          />
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setCreateModalOpen(true)}
+          >
+            新建评测集
+          </Button>
+        </>
+      }
+    >
+      <Card>
+        <div className="eva-toolbar">
+          <div className="eva-toolbarGroup">
             <Input
               placeholder="按名称搜索"
               prefix={<SearchOutlined />}
               value={keyword}
               onChange={(e) => handleSearch(e.target.value)}
-              style={{ width: 240 }}
+              className={styles.searchInput}
               allowClear
             />
             <Button icon={<FilterOutlined />}>筛选 (0)</Button>
@@ -284,25 +288,7 @@ const EvalSetListPage = () => {
                 </Button>
               </Popconfirm>
             )}
-          </Space>
-
-          <Space>
-            <Segmented
-              value={viewMode}
-              onChange={(value) => setViewMode(value as 'table' | 'chart')}
-              options={[
-                { value: 'table', icon: <TableOutlined /> },
-                { value: 'chart', icon: <BarChartOutlined /> },
-              ]}
-            />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setCreateModalOpen(true)}
-            >
-              新建评测集
-            </Button>
-          </Space>
+          </div>
         </div>
 
         <Table
@@ -318,9 +304,9 @@ const EvalSetListPage = () => {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条`,
-            onChange: (page, pageSize) => {
-              dispatch(setPage(page));
-              if (pageSize) dispatch(setPageSize(pageSize));
+            onChange: (p, ps) => {
+              dispatch(setPage(p));
+              if (ps) dispatch(setPageSize(ps));
             },
           }}
           scroll={{ x: 'max-content' }}
@@ -333,7 +319,7 @@ const EvalSetListPage = () => {
         onSubmit={handleCreateSubmit}
         loading={creating}
       />
-    </div>
+    </PageContainer>
   );
 };
 

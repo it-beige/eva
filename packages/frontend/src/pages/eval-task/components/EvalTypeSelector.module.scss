@@ -15,8 +15,8 @@
 }
 
 .optionCardActive {
-  border-color: #1890ff !important;
-  background: #e6f7ff;
+  border-color: var(--eva-primary) !important;
+  background: var(--eva-primary-soft);
 }
 
 .optionContent {
@@ -32,12 +32,12 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: #f0f0f0;
-  color: #666;
+  background: var(--eva-bg-subtle);
+  color: var(--eva-text-secondary);
 }
 
 .iconSurfaceActive {
-  background: #1890ff;
+  background: var(--eva-primary);
   color: #fff;
 }
 

@@ -1,0 +1,31 @@
+.typeGroup {
+  width: 100%;
+}
+
+.typeCard {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.typeCardActive {
+  border-color: var(--eva-primary) !important;
+  background: var(--eva-primary-soft) !important;
+}
+
+.typeRadio {
+  width: 100%;
+}
+
+.typeIconLlm {
+  font-size: 24px;
+  color: var(--eva-primary);
+}
+
+.typeIconCode {
+  font-size: 24px;
+  color: #34C759;
+}
+
+.typeDesc {
+  font-size: 12px;
+}

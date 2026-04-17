@@ -1,0 +1,51 @@
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.topAppScore {
+  color: #34C759;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.filterCard {
+  margin-bottom: 24px;
+}
+
+.filterLabel {
+  color: var(--eva-text-secondary);
+  font-weight: 500;
+}
+
+.filterSelect {
+  width: 200px;
+}
+
+.metricSelect {
+  width: 150px;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1200px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Card, Typography, Space, Tag, Spin } from 'antd';
 import { ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
+import styles from './StreamOutput.module.scss';
 
 const { Text } = Typography;
 
@@ -22,7 +23,6 @@ const StreamOutput: React.FC<StreamOutputProps> = ({
 }) => {
   const outputRef = useRef<HTMLDivElement>(null);
 
-  // 自动滚动到底部
   useEffect(() => {
     if (outputRef.current && isStreaming) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
@@ -32,20 +32,17 @@ const StreamOutput: React.FC<StreamOutputProps> = ({
   return (
     <Card
       title="输出结果"
-      className="h-full"
-      styles={{ body: { padding: 0, height: 'calc(100% - 56px)' } }}
+      styles={{ body: { padding: 0 } }}
     >
-      <div className="flex flex-col h-full">
-        {/* 输出内容区域 */}
-        <div
-          ref={outputRef}
-          className="flex-1 p-4 overflow-auto bg-gray-50 font-mono text-sm whitespace-pre-wrap"
-          style={{ minHeight: '300px' }}
-        >
+      <div className={styles.wrapper}>
+        <div ref={outputRef} className={styles.outputArea}>
           {output ? (
-            <Text>{output}</Text>
+            <>
+              <Text>{output}</Text>
+              {isStreaming && <span className={styles.cursor} />}
+            </>
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400">
+            <div className={styles.placeholder}>
               {isStreaming ? (
                 <Space>
                   <Spin size="small" />
@@ -56,14 +53,10 @@ const StreamOutput: React.FC<StreamOutputProps> = ({
               )}
             </div>
           )}
-          {isStreaming && (
-            <span className="inline-block w-2 h-4 ml-1 bg-blue-500 animate-pulse" />
-          )}
         </div>
 
-        {/* Token 统计区域 */}
         {(usage || duration) && (
-          <div className="p-3 border-t bg-gray-50">
+          <div className={styles.statsBar}>
             <Space size="large">
               {usage && (
                 <>

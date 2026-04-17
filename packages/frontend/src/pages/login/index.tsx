@@ -63,21 +63,27 @@ const LoginPage = () => {
   return (
     <div className={styles.page}>
       <Card className={styles.card}>
-        <Space orientation="vertical" size={20} className={styles.stack}>
+        <Space direction="vertical" size={24} className={styles.stack}>
           <div>
-            <Text className={styles.brand}>Eva Platform</Text>
-            <Title level={2} className={styles.title}>
-              登录评测平台
-            </Title>
-            <Paragraph type="secondary" className={styles.description}>
-              使用演示账号即可进入系统。当前仓库未实现完整注册流程，这里提供最小可用登录。
+            <div className={styles.logoRow}>
+              <div className={styles.logoIcon}>E</div>
+              <div className={styles.logoText}>
+                <Text className={styles.brand}>Eva Platform</Text>
+                <Title level={2} className={styles.title}>
+                  登录评测平台
+                </Title>
+              </div>
+            </div>
+            <Paragraph className={styles.description}>
+              使用工号和密码登录 Eva AI 评测平台，管理您的评测任务与数据。
             </Paragraph>
           </div>
 
           <Alert
             type="info"
             showIcon
-            title="演示账号"
+            className={styles.demoAlert}
+            message="演示账号"
             description="工号：admin001，密码：admin123"
             action={
               <Button size="small" type="link" onClick={handleFillDemo}>
@@ -94,6 +100,7 @@ const LoginPage = () => {
               employeeId: 'admin001',
               password: 'admin123',
             }}
+            requiredMark={false}
           >
             <Form.Item
               label="工号"
@@ -122,13 +129,17 @@ const LoginPage = () => {
             <Button
               type="primary"
               htmlType="submit"
-              size="large"
               block
               loading={loading}
+              className={styles.loginButton}
             >
               登录
             </Button>
           </Form>
+
+          <div className={styles.footer}>
+            Eva AI Evaluation Platform v1.0
+          </div>
         </Space>
       </Card>
     </div>

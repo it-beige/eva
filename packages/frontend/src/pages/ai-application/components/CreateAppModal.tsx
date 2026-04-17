@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input } from 'antd';
+import { Drawer, Form, Input, Button, Space } from 'antd';
 import type {
   ApplicationResponse,
   CreateApplicationRequest,
@@ -62,21 +62,21 @@ const CreateAppModal: React.FC<CreateAppModalProps> = ({
   };
 
   return (
-    <Modal
+    <Drawer
       title={isEdit ? '编辑AI应用' : '新增AI应用'}
       open={visible}
-      onOk={handleSubmit}
-      onCancel={handleCancel}
-      confirmLoading={loading}
-      okText={isEdit ? '保存' : '创建'}
-      cancelText="取消"
+      onClose={handleCancel}
       width={560}
+      extra={
+        <Space>
+          <Button onClick={handleCancel}>取消</Button>
+          <Button type="primary" onClick={handleSubmit} loading={loading}>
+            {isEdit ? '保存' : '创建'}
+          </Button>
+        </Space>
+      }
     >
-      <Form
-        form={form}
-        layout="vertical"
-        style={{ marginTop: 16 }}
-      >
+      <Form form={form} layout="vertical">
         <Form.Item
           name="name"
           label="应用名称"
@@ -117,7 +117,7 @@ const CreateAppModal: React.FC<CreateAppModalProps> = ({
           <Input placeholder="请输入Git仓库地址（可选）" />
         </Form.Item>
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

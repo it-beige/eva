@@ -15,8 +15,8 @@
 }
 
 .optionCardActive {
-  border-color: #1890ff !important;
-  background: #e6f7ff;
+  border-color: var(--eva-primary) !important;
+  background: var(--eva-primary-soft);
 }
 
 .optionTitle {

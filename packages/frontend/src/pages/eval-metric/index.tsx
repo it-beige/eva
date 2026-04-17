@@ -1,11 +1,10 @@
 import React, { useEffect, useCallback } from 'react';
 import {
+  Card,
   Table,
   Button,
   Input,
   Tabs,
-  Space,
-  Typography,
   Dropdown,
   message,
   Popconfirm,
@@ -33,11 +32,11 @@ import {
   showEditModal,
 } from '../../store/evalMetricSlice';
 import CreateMetricModal from './components/CreateMetricModal';
+import PageContainer from '../../components/page/PageContainer';
 import { MetricScope, MetricType, EvalMetric, METRIC_TYPE_LABELS } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
 import type { MenuProps } from 'antd';
-
-const { Title, Paragraph } = Typography;
+import styles from './EvalMetricPage.module.scss';
 
 const EvalMetricListPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -55,27 +54,22 @@ const EvalMetricListPage: React.FC = () => {
     editingMetric,
   } = useAppSelector((state) => state.evalMetric);
 
-  // 获取列表数据
   const loadData = useCallback(() => {
     dispatch(fetchEvalMetrics({}));
   }, [dispatch]);
 
-  // 初始加载和依赖变化时重新加载
   useEffect(() => {
     loadData();
   }, [loadData, currentScope, page, pageSize, keyword]);
 
-  // 处理 Tab 切换
   const handleTabChange = (activeKey: string) => {
     dispatch(setCurrentScope(activeKey as MetricScope));
   };
 
-  // 处理搜索
   const handleSearch = (value: string) => {
     dispatch(setKeyword(value));
   };
 
-  // 处理分页
   const handlePageChange = (newPage: number, newPageSize?: number) => {
     dispatch(setPage(newPage));
     if (newPageSize && newPageSize !== pageSize) {
@@ -83,22 +77,18 @@ const EvalMetricListPage: React.FC = () => {
     }
   };
 
-  // 处理选择行
   const handleRowSelection = (selectedKeys: React.Key[]) => {
     dispatch(setSelectedRowKeys(selectedKeys as string[]));
   };
 
-  // 处理新建
   const handleCreate = () => {
     dispatch(showCreateModal());
   };
 
-  // 处理编辑
   const handleEdit = (record: EvalMetric) => {
     dispatch(showEditModal(record));
   };
 
-  // 处理删除
   const handleDelete = async (id: string) => {
     try {
       await dispatch(deleteEvalMetric(id)).unwrap();
@@ -108,7 +98,6 @@ const EvalMetricListPage: React.FC = () => {
     }
   };
 
-  // 处理批量删除
   const handleBatchDelete = async () => {
     if (selectedRowKeys.length === 0) {
       message.warning('请先选择要删除的指标');
@@ -122,7 +111,6 @@ const EvalMetricListPage: React.FC = () => {
     }
   };
 
-  // 格式化日期
   const formatDate = (dateStr: string | Date) => {
     const date = new Date(dateStr);
     return date.toLocaleString('zh-CN', {
@@ -134,17 +122,13 @@ const EvalMetricListPage: React.FC = () => {
     });
   };
 
-  // 表格列定义
   const columns: ColumnsType<EvalMetric> = [
     {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
       render: (text: string, record: EvalMetric) => (
-        <a
-          onClick={() => handleEdit(record)}
-          style={{ color: '#1890ff', cursor: 'pointer' }}
-        >
+        <a className={styles.nameLink} onClick={() => handleEdit(record)}>
           {text}
         </a>
       ),
@@ -212,7 +196,7 @@ const EvalMetricListPage: React.FC = () => {
                 okText="确定"
                 cancelText="取消"
               >
-                <span style={{ color: '#ff4d4f' }}>删除</span>
+                <span className={styles.dangerText}>删除</span>
               </Popconfirm>
             ),
           },
@@ -227,115 +211,94 @@ const EvalMetricListPage: React.FC = () => {
     },
   ];
 
-  // 行选择配置
   const rowSelection = {
     selectedRowKeys,
     onChange: handleRowSelection,
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      {/* 页面标题 */}
-      <div style={{ marginBottom: 24 }}>
-        <Title level={4} style={{ marginBottom: 8 }}>
-          评估指标
-        </Title>
-        <Paragraph type="secondary" style={{ marginBottom: 0 }}>
+    <PageContainer
+      description={
+        <>
           评估指标充当裁判的角色，用于自动化或半自动化评估 AI Agent 效果。评估指标通过预定义的规则，对评估对象的输出进行多维度分析，生成可量化的指标和归因结论。
           <a
             href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              // TODO: 打开帮助文档
-            }}
-            style={{ marginLeft: 8 }}
+            className={styles.helpLink}
+            onClick={(e) => e.preventDefault()}
           >
-            帮助文档 <ExportOutlined style={{ fontSize: 12 }} />
+            帮助文档 <ExportOutlined className={styles.helpIcon} />
           </a>
-        </Paragraph>
-      </div>
-
-      {/* Tabs */}
-      <Tabs
-        activeKey={currentScope}
-        onChange={handleTabChange}
-        style={{ marginBottom: 16 }}
-        items={[
-          { key: MetricScope.PERSONAL, label: '个人指标' },
-          { key: MetricScope.PUBLIC, label: '公共指标' },
-        ]}
-      />
-
-      {/* 操作栏 */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 16,
-        }}
-      >
-        <Space>
-          <Input.Search
-            placeholder="按名称搜索"
-            allowClear
-            onSearch={handleSearch}
-            style={{ width: 280 }}
-            prefix={<SearchOutlined />}
-          />
-          {selectedRowKeys.length > 0 && (
-            <Popconfirm
-              title={`确定删除选中的 ${selectedRowKeys.length} 个指标?`}
-              onConfirm={handleBatchDelete}
-              okText="确定"
-              cancelText="取消"
-            >
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                loading={deleting}
-              >
-                删除 ({selectedRowKeys.length})
-              </Button>
-            </Popconfirm>
-          )}
-        </Space>
-
-        <Space>
+        </>
+      }
+      extra={
+        <>
           <Tooltip title="图表视图">
             <Button icon={<BarChartOutlined />} />
           </Tooltip>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             新建评估指标
           </Button>
-        </Space>
-      </div>
+        </>
+      }
+    >
+      <Card>
+        <Tabs
+          activeKey={currentScope}
+          onChange={handleTabChange}
+          items={[
+            { key: MetricScope.PERSONAL, label: '个人指标' },
+            { key: MetricScope.PUBLIC, label: '公共指标' },
+          ]}
+        />
 
-      {/* 表格 */}
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={items}
-        loading={loading}
-        rowSelection={rowSelection}
-        pagination={{
-          current: page,
-          pageSize,
-          total,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total) => `共 ${total} 条`,
-          onChange: handlePageChange,
-        }}
-        scroll={{ x: 1200 }}
-      />
+        <div className="eva-toolbar">
+          <div className="eva-toolbarGroup">
+            <Input.Search
+              placeholder="按名称搜索"
+              allowClear
+              onSearch={handleSearch}
+              className={styles.searchInput}
+              prefix={<SearchOutlined />}
+            />
+            {selectedRowKeys.length > 0 && (
+              <Popconfirm
+                title={`确定删除选中的 ${selectedRowKeys.length} 个指标?`}
+                onConfirm={handleBatchDelete}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Button danger icon={<DeleteOutlined />} loading={deleting}>
+                  删除 ({selectedRowKeys.length})
+                </Button>
+              </Popconfirm>
+            )}
+          </div>
+        </div>
 
-      {/* 新建/编辑弹窗 */}
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={items}
+          loading={loading}
+          rowSelection={rowSelection}
+          pagination={{
+            current: page,
+            pageSize,
+            total,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total) => `共 ${total} 条`,
+            onChange: handlePageChange,
+          }}
+          scroll={{ x: 1200 }}
+        />
+      </Card>
+
       <CreateMetricModal
         visible={createModalVisible}
         editingMetric={editingMetric}
       />
-    </div>
+    </PageContainer>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Table,
   Button,
+  Drawer,
   Modal,
   Form,
   Input,
@@ -196,17 +197,20 @@ const TokenManagement: React.FC = () => {
         pagination={false}
       />
 
-      <Modal
+      <Drawer
         title="创建 API Token"
         open={createModalVisible}
-        onCancel={() => {
+        onClose={() => {
           setCreateModalVisible(false);
           form.resetFields();
         }}
-        onOk={() => form.submit()}
-        confirmLoading={tokenActionLoading}
-        okText="创建"
-        cancelText="取消"
+        width={420}
+        extra={
+          <Space>
+            <Button onClick={() => { setCreateModalVisible(false); form.resetFields(); }}>取消</Button>
+            <Button type="primary" onClick={() => form.submit()} loading={tokenActionLoading}>创建</Button>
+          </Space>
+        }
       >
         <Form form={form} layout="vertical" onFinish={handleCreateToken}>
           <Form.Item
@@ -226,7 +230,7 @@ const TokenManagement: React.FC = () => {
             />
           </Form.Item>
         </Form>
-      </Modal>
+      </Drawer>
 
       <Modal
         title={

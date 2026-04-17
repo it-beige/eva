@@ -5,8 +5,8 @@
 }
 
 .heroCard {
-  background: #f0f5ff;
-  border: none;
+  background: var(--eva-primary-soft);
+  border: 1px solid var(--eva-primary-soft-strong);
 }
 
 .heroCard :global(.ant-card-body),

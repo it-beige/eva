@@ -7,7 +7,7 @@ const { Paragraph, Title } = Typography;
 
 type PageContainerProps = {
   title?: string;
-  description?: string;
+  description?: ReactNode;
   extra?: ReactNode;
   content?: ReactNode;
   children: ReactNode;

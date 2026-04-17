@@ -15,15 +15,9 @@ async function bootstrap() {
 
   // Nest 10's ValidationPipe still references plainToClass.
   // class-transformer 0.5 only exports plainToInstance.
-  if (
-    !('plainToClass' in classTransformer) &&
-    'plainToInstance' in classTransformer
-  ) {
-    (
-      classTransformer as typeof classTransformer & {
-        plainToClass?: typeof classTransformer.plainToInstance;
-      }
-    ).plainToClass = classTransformer.plainToInstance;
+  const ct = classTransformer as Record<string, unknown>;
+  if (!('plainToClass' in ct) && 'plainToInstance' in ct) {
+    ct['plainToClass'] = ct['plainToInstance'];
   }
 
   const apiPrefix = configService.get<string>('app.apiPrefix', 'api');

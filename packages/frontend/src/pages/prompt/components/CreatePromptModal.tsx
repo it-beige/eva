@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import {
-  Modal,
+  Drawer,
   Form,
   Input,
   Collapse,
+  Button,
+  Space,
   message,
 } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
@@ -89,15 +91,19 @@ const CreatePromptModal = ({
   };
 
   return (
-    <Modal
+    <Drawer
       title={isEditing ? '编辑Prompt' : '新建Prompt'}
       open={open}
-      onCancel={onCancel}
-      onOk={handleSubmit}
-      confirmLoading={loading}
+      onClose={onCancel}
       width={640}
-      okText={isEditing ? '保存' : '确认'}
-      cancelText="取消"
+      extra={
+        <Space>
+          <Button onClick={onCancel}>取消</Button>
+          <Button type="primary" onClick={handleSubmit} loading={loading}>
+            {isEditing ? '保存' : '确认'}
+          </Button>
+        </Space>
+      }
     >
       <div className={styles.modalDescription}>
         编写Prompt，包括基本内容、动态占位符、格式等信息。
@@ -167,7 +173,7 @@ const CreatePromptModal = ({
           </Panel>
         </Collapse>
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

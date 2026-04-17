@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, Select, Statistic, Space } from 'antd';
+import { Card, Select, Statistic, Space } from 'antd';
 import {
   TrophyOutlined,
   AppstoreOutlined,
@@ -9,12 +9,14 @@ import {
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import LeaderboardTable from './components/LeaderboardTable';
 import LeaderboardChart from './components/LeaderboardChart';
+import PageContainer from '../../components/page/PageContainer';
 import { fetchEvalSets } from '../../store/evalSetSlice';
 import { fetchEvalMetrics } from '../../store/evalMetricSlice';
 import {
   useGetLeaderboardQuery,
   useGetLeaderboardSummaryQuery,
 } from '../../services/leaderboardQueries';
+import styles from './LeaderboardPage.module.scss';
 
 const { Option } = Select;
 
@@ -52,69 +54,59 @@ const LeaderboardPage: React.FC = () => {
   };
 
   return (
-    <div className="h-full p-6">
-      <h1 className="text-2xl font-bold mb-6">Leaderboard</h1>
+    <PageContainer
+      description="查看各 AI 应用在不同评测集和指标下的综合排名与得分对比。"
+    >
+      <div className={styles.summaryGrid}>
+        <Card className="eva-statCard">
+          <Statistic
+            title="应用总数"
+            value={summary?.totalApps || 0}
+            prefix={<AppstoreOutlined />}
+            loading={summaryLoading}
+          />
+        </Card>
+        <Card className="eva-statCard">
+          <Statistic
+            title="评测集数量"
+            value={summary?.totalEvalSets || 0}
+            prefix={<DatabaseOutlined />}
+            loading={summaryLoading}
+          />
+        </Card>
+        <Card className="eva-statCard">
+          <Statistic
+            title="平均得分"
+            value={summary?.avgScore || 0}
+            precision={2}
+            prefix={<BarChartOutlined />}
+            suffix="分"
+            loading={summaryLoading}
+          />
+        </Card>
+        <Card className="eva-statCard">
+          <Statistic
+            title="最佳应用"
+            value={summary?.topApp?.name || '-'}
+            prefix={<TrophyOutlined />}
+            loading={summaryLoading}
+            styles={{ content: { fontSize: '16px' } }}
+          />
+          {summary?.topApp && (
+            <div className={styles.topAppScore}>
+              得分: {summary.topApp.score.toFixed(2)}
+            </div>
+          )}
+        </Card>
+      </div>
 
-      {/* 汇总统计 */}
-      <Row gutter={16} className="mb-6">
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="应用总数"
-              value={summary?.totalApps || 0}
-              prefix={<AppstoreOutlined />}
-              loading={summaryLoading}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="评测集数量"
-              value={summary?.totalEvalSets || 0}
-              prefix={<DatabaseOutlined />}
-              loading={summaryLoading}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="平均得分"
-              value={summary?.avgScore || 0}
-              precision={2}
-              prefix={<BarChartOutlined />}
-              suffix="分"
-              loading={summaryLoading}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="最佳应用"
-              value={summary?.topApp?.name || '-'}
-              prefix={<TrophyOutlined />}
-              loading={summaryLoading}
-              styles={{ content: { fontSize: '16px' } }}
-            />
-            {summary?.topApp && (
-              <div className="text-green-500 text-sm mt-1">
-                得分: {summary.topApp.score.toFixed(2)}
-              </div>
-            )}
-          </Card>
-        </Col>
-      </Row>
-
-      {/* 筛选器 */}
-      <Card className="mb-6">
+      <Card className={styles.filterCard}>
         <Space size="large">
-          <span>筛选:</span>
+          <span className={styles.filterLabel}>筛选:</span>
           <Select
             placeholder="选择评测集"
             allowClear
-            style={{ width: 200 }}
+            className={styles.filterSelect}
             value={evalSetId}
             onChange={(value) => {
               setEvalSetId(value);
@@ -130,7 +122,7 @@ const LeaderboardPage: React.FC = () => {
           <Select
             placeholder="选择指标"
             allowClear
-            style={{ width: 150 }}
+            className={styles.metricSelect}
             value={metricId}
             onChange={(value) => {
               setMetricId(value);
@@ -146,25 +138,20 @@ const LeaderboardPage: React.FC = () => {
         </Space>
       </Card>
 
-      {/* 排行榜内容 */}
-      <Row gutter={24}>
-        <Col span={16}>
-          <LeaderboardTable
-            data={items}
-            loading={loading}
-            pagination={{
-              current: page,
-              pageSize,
-              total,
-              onChange: handlePageChange,
-            }}
-          />
-        </Col>
-        <Col span={8}>
-          <LeaderboardChart data={items} loading={loading} />
-        </Col>
-      </Row>
-    </div>
+      <div className={styles.contentGrid}>
+        <LeaderboardTable
+          data={items}
+          loading={loading}
+          pagination={{
+            current: page,
+            pageSize,
+            total,
+            onChange: handlePageChange,
+          }}
+        />
+        <LeaderboardChart data={items} loading={loading} />
+      </div>
+    </PageContainer>
   );
 };
 

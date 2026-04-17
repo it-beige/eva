@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Table,
   Button,
-  Modal,
+  Drawer,
   Form,
   Input,
   Select,
@@ -152,17 +152,20 @@ const MemberManagement: React.FC = () => {
         pagination={false}
       />
 
-      <Modal
+      <Drawer
         title="添加成员"
         open={modalVisible}
-        onCancel={() => {
+        onClose={() => {
           setModalVisible(false);
           form.resetFields();
         }}
-        onOk={() => form.submit()}
-        confirmLoading={memberActionLoading}
-        okText="添加"
-        cancelText="取消"
+        width={420}
+        extra={
+          <Space>
+            <Button onClick={() => { setModalVisible(false); form.resetFields(); }}>取消</Button>
+            <Button type="primary" onClick={() => form.submit()} loading={memberActionLoading}>添加</Button>
+          </Space>
+        }
       >
         <Form form={form} layout="vertical" onFinish={handleAddMember}>
           <Form.Item
@@ -188,7 +191,7 @@ const MemberManagement: React.FC = () => {
             </Select>
           </Form.Item>
         </Form>
-      </Modal>
+      </Drawer>
     </div>
   );
 };

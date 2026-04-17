@@ -1,7 +1,3 @@
-.page {
-  padding: 24px;
-}
-
 .breadcrumb {
   margin-bottom: 16px;
 }
@@ -9,7 +5,7 @@
 .accentTitle {
   margin-bottom: 24px;
   padding-left: 12px;
-  border-left: 3px solid #5b21b6;
+  border-left: 3px solid var(--eva-primary);
 }
 
 .accentTitleText {
@@ -45,8 +41,4 @@
   color: #faad14;
 }
 
-@media (max-width: 992px) {
-  .page {
-    padding: 20px 16px;
-  }
-}
+

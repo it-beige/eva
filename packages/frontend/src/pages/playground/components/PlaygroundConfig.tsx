@@ -75,7 +75,7 @@ const PlaygroundConfig: React.FC<PlaygroundConfigProps> = ({
   };
 
   return (
-    <Card title="配置" className="h-full">
+    <Card title="配置">
       <Form
         form={form}
         layout="vertical"
@@ -185,7 +185,7 @@ const PlaygroundConfig: React.FC<PlaygroundConfigProps> = ({
 
         {/* 操作按钮 */}
         <Form.Item>
-          <Space className="w-full justify-end">
+          <Space>
             <Tooltip title="清空">
               <Button
                 icon={<ClearOutlined />}

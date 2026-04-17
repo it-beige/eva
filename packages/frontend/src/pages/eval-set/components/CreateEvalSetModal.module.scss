@@ -1,0 +1,77 @@
+.sourceGrid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sourceCard {
+  width: 130px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  border: 1px solid var(--eva-border);
+}
+
+.sourceCard:hover {
+  border-color: var(--eva-primary);
+}
+
+.sourceCardActive {
+  border: 2px solid var(--eva-primary) !important;
+  background: var(--eva-primary-soft);
+}
+
+.sourceIcon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: var(--eva-primary);
+}
+
+.sourceLabel {
+  font-weight: 500;
+}
+
+.sourceDescription {
+  font-size: 12px;
+  color: var(--eva-text-tertiary);
+}
+
+.typeCard {
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  border: 1px solid var(--eva-border);
+}
+
+.typeCard:hover {
+  border-color: var(--eva-primary);
+}
+
+.typeCardActive {
+  border: 2px solid var(--eva-primary) !important;
+  background: var(--eva-primary-soft);
+}
+
+.typeLabel {
+  font-weight: 500;
+}
+
+.codeSourceOption {
+  width: 100%;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.codeSourceIcon {
+  font-size: 20px;
+  color: var(--eva-primary);
+}
+
+.hint {
+  display: block;
+  margin-bottom: 16px;
+  color: var(--eva-text-secondary);
+  font-size: 13px;
+}

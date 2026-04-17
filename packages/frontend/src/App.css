@@ -4,20 +4,23 @@
 
 :root {
   color-scheme: light;
-  --eva-bg: #ffffff;
-  --eva-bg-subtle: #f7f8fc;
-  --eva-bg-panel: #f5f7ff;
+  --eva-bg: #f0f2f5;
+  --eva-bg-subtle: #f5f7fa;
+  --eva-bg-panel: #f0f2f5;
   --eva-surface: #ffffff;
-  --eva-border: #e6ebf5;
-  --eva-border-soft: rgba(255, 255, 255, 0.08);
-  --eva-border-strong: #dbe2f0;
-  --eva-text: #2f3542;
-  --eva-text-secondary: #6f7d95;
-  --eva-text-tertiary: #a8b2c3;
+  --eva-border: #e3e8f0;
+  --eva-border-soft: #eef1f6;
+  --eva-border-strong: #d5dce8;
+  --eva-text: #1d2129;
+  --eva-text-secondary: #6b7785;
+  --eva-text-tertiary: #a0a9b8;
   --eva-primary: #5a63ff;
+  --eva-primary-hover: #4850e6;
   --eva-primary-soft: #eef0ff;
-  --eva-primary-soft-strong: #e6e9ff;
-  --eva-shadow: 0 8px 24px rgba(96, 114, 146, 0.08);
+  --eva-primary-soft-strong: #e0e3ff;
+  --eva-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --eva-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(71, 92, 122, 0.06);
+  --eva-shadow-lg: 0 4px 16px rgba(71, 92, 122, 0.1);
 }
 
 html,
@@ -31,7 +34,7 @@ body {
   margin: 0;
   padding: 0;
   color: var(--eva-text);
-  font-family: "PingFang SC", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  font-family: "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
   background: var(--eva-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -47,38 +50,54 @@ a {
   background: var(--eva-bg);
 }
 
+/* ── Scrollbar ─────────────────────────────────────────── */
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d5dceb;
+  background: #c8ced9;
   border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #adb5c4;
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
+/* ── Ant Layout ────────────────────────────────────────── */
+
 .ant-layout {
   background: transparent;
 }
 
-.ant-card,
-.ant-select-dropdown,
-.ant-dropdown .ant-dropdown-menu,
-.ant-modal-content {
-  box-shadow: none;
-}
+/* ── Card ──────────────────────────────────────────────── */
 
 .ant-card {
   border: 1px solid var(--eva-border);
-  background: #fff;
+  border-radius: 10px;
+  background: var(--eva-surface);
+  box-shadow: var(--eva-shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.ant-card:hover {
+  box-shadow: var(--eva-shadow);
+}
+
+.ant-select-dropdown,
+.ant-dropdown .ant-dropdown-menu,
+.ant-modal-content {
+  box-shadow: var(--eva-shadow-lg);
 }
 
 .ant-card .ant-card-head {
-  border-bottom-color: var(--eva-border);
+  border-bottom-color: var(--eva-border-soft);
 }
 
 .ant-card .ant-card-head-title,
@@ -92,15 +111,7 @@ a {
   color: var(--eva-text);
 }
 
-.ant-input,
-.ant-input-affix-wrapper,
-.ant-select-selector,
-.ant-picker,
-.ant-input-number,
-.ant-mentions,
-.ant-btn:not(.ant-btn-text):not(.ant-btn-link) {
-  border-color: var(--eva-border-strong) !important;
-}
+/* ── Form Controls ─────────────────────────────────────── */
 
 .ant-input,
 .ant-input-affix-wrapper,
@@ -109,7 +120,24 @@ a {
 .ant-input-number,
 .ant-mentions {
   background: #fff !important;
+  border-color: var(--eva-border) !important;
   box-shadow: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-select-selector:hover,
+.ant-picker:hover,
+.ant-input-number:hover {
+  border-color: #bfc8ff !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper-focused,
+.ant-input:focus-within {
+  border-color: var(--eva-primary) !important;
+  box-shadow: 0 0 0 2px rgba(90, 99, 255, 0.08) !important;
 }
 
 .ant-input::placeholder,
@@ -121,58 +149,94 @@ a {
   color: var(--eva-text-tertiary) !important;
 }
 
+/* ── Buttons ───────────────────────────────────────────── */
+
 .ant-btn {
   font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-.ant-btn:not(.ant-btn-text):not(.ant-btn-link) {
-  background: #fff;
+.ant-btn.ant-btn-default {
+  background: var(--eva-bg-subtle);
+  border-color: var(--eva-border);
+  color: var(--eva-text);
+}
+
+.ant-btn.ant-btn-default:hover,
+.ant-btn.ant-btn-default:focus {
+  color: var(--eva-primary) !important;
+  background: var(--eva-primary-soft) !important;
+  border-color: #c5caff !important;
 }
 
 .ant-btn.ant-btn-primary {
   background: var(--eva-primary);
   color: #fff;
   border-color: var(--eva-primary) !important;
+  box-shadow: 0 2px 6px rgba(90, 99, 255, 0.18);
 }
 
-.ant-btn.ant-btn-default:hover,
-.ant-btn.ant-btn-default:focus,
+.ant-btn.ant-btn-primary:hover,
+.ant-btn.ant-btn-primary:focus {
+  background: var(--eva-primary-hover) !important;
+  border-color: var(--eva-primary-hover) !important;
+  box-shadow: 0 4px 12px rgba(90, 99, 255, 0.28) !important;
+}
+
 .ant-btn.ant-btn-text:hover,
 .ant-btn.ant-btn-link:hover {
   color: var(--eva-primary) !important;
-  border-color: #cdd4ff !important;
 }
+
+.ant-btn.ant-btn-text:hover {
+  background: var(--eva-primary-soft) !important;
+}
+
+/* ── Table ─────────────────────────────────────────────── */
 
 .ant-table {
   background: transparent !important;
 }
 
-.ant-table-thead > tr > th {
-  color: #7f8da3 !important;
+.ant-table-thead > tr > th,
+.ant-table-thead > tr > td {
+  color: var(--eva-text-secondary) !important;
   font-size: 12px;
   font-weight: 600;
-  background: #fff !important;
-  border-bottom-color: var(--eva-border) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--eva-bg-subtle) !important;
+  border-bottom: 1px solid var(--eva-border) !important;
 }
 
 .ant-table-tbody > tr > td {
-  border-bottom-color: var(--eva-border) !important;
+  border-bottom-color: var(--eva-border-soft) !important;
 }
 
 .ant-table-tbody > tr.ant-table-row:hover > td {
-  background: #fbfcff !important;
+  background: #f0f3ff !important;
 }
+
+/* ── Pagination ────────────────────────────────────────── */
 
 .ant-pagination .ant-pagination-item,
 .ant-pagination .ant-pagination-prev,
 .ant-pagination .ant-pagination-next {
   border-color: var(--eva-border);
   background: #fff;
+  border-radius: 6px;
 }
 
 .ant-pagination .ant-pagination-item-active {
-  border-color: #a7b0ff;
+  background: var(--eva-primary-soft);
+  border-color: var(--eva-primary);
 }
+
+.ant-pagination .ant-pagination-item-active a {
+  color: var(--eva-primary);
+}
+
+/* ── Breadcrumb ────────────────────────────────────────── */
 
 .ant-breadcrumb,
 .ant-breadcrumb a,
@@ -180,6 +244,12 @@ a {
 .ant-breadcrumb-separator {
   color: var(--eva-text-secondary) !important;
 }
+
+.ant-breadcrumb a:hover {
+  color: var(--eva-primary) !important;
+}
+
+/* ── Menu ──────────────────────────────────────────────── */
 
 .ant-menu {
   background: transparent !important;
@@ -194,6 +264,8 @@ a {
   color: var(--eva-primary) !important;
 }
 
+/* ── Statistic ─────────────────────────────────────────── */
+
 .ant-statistic .ant-statistic-title {
   color: var(--eva-text-secondary) !important;
   font-size: 13px;
@@ -202,7 +274,10 @@ a {
 
 .ant-statistic .ant-statistic-content {
   color: var(--eva-text);
+  font-weight: 600;
 }
+
+/* ── Tabs ──────────────────────────────────────────────── */
 
 .ant-tabs .ant-tabs-tab {
   padding: 10px 4px;
@@ -210,10 +285,54 @@ a {
   font-weight: 500;
 }
 
+/* ── Modal ─────────────────────────────────────────────── */
+
+.ant-modal-content {
+  border-radius: 14px !important;
+  overflow: hidden;
+}
+
+.ant-modal-header {
+  border-bottom: 1px solid var(--eva-border-soft);
+  padding-bottom: 16px;
+}
+
+/* ── Drawer ─────────────────────────────────────────────── */
+
+.ant-drawer .ant-drawer-header {
+  border-bottom: 1px solid var(--eva-border-soft);
+  padding: 16px 24px;
+}
+
+.ant-drawer .ant-drawer-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--eva-text);
+}
+
+.ant-drawer .ant-drawer-body {
+  padding: 24px;
+}
+
+.ant-drawer .ant-drawer-footer {
+  border-top: 1px solid var(--eva-border-soft);
+  padding: 12px 24px;
+}
+
+/* ── Tag ───────────────────────────────────────────────── */
+
+.ant-tag {
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+/* ── Eva Page System ───────────────────────────────────── */
+
 .eva-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  padding: 24px;
 }
 
 .eva-pageHeader {
@@ -236,14 +355,14 @@ a {
 .eva-pageTitle {
   margin: 0 !important;
   color: var(--eva-text) !important;
-  font-size: 18px !important;
+  font-size: 20px !important;
   line-height: 1.35 !important;
-  font-weight: 600 !important;
-  letter-spacing: 0 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
 }
 
 .eva-pageDescription {
-  margin: 0 !important;
+  margin: 4px 0 0 !important;
   color: var(--eva-text-secondary) !important;
   font-size: 13px !important;
   line-height: 1.75 !important;
@@ -254,8 +373,10 @@ a {
   flex-wrap: wrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
+
+/* ── Stat Cards ────────────────────────────────────────── */
 
 .eva-panelGrid {
   display: grid;
@@ -265,7 +386,42 @@ a {
 
 .eva-statCard {
   min-height: 110px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--eva-border);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
 }
+
+.eva-statCard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--eva-primary);
+}
+
+.eva-statCard:nth-child(2)::before {
+  background: #34C759;
+}
+
+.eva-statCard:nth-child(3)::before {
+  background: #FAAD14;
+}
+
+.eva-statCard:nth-child(4)::before {
+  background: #FF6B6B;
+}
+
+.eva-statCard .ant-statistic-content-value {
+  font-weight: 700;
+  color: var(--eva-text);
+}
+
+/* ── Toolbar ───────────────────────────────────────────── */
 
 .eva-toolbar {
   display: flex;
@@ -278,8 +434,11 @@ a {
 .eva-toolbarGroup {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
 }
+
+/* ── Dashboard Split ───────────────────────────────────── */
 
 .eva-dashboardSplit {
   display: grid;
@@ -287,14 +446,22 @@ a {
   gap: 16px;
 }
 
+/* ── Helpers ───────────────────────────────────────────── */
+
 .eva-sectionLabel {
-  color: var(--eva-text-secondary);
-  font-size: 12px;
+  color: var(--eva-text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .eva-muted {
   color: var(--eva-text-secondary);
+  font-size: 13px;
 }
+
+/* ── Responsive ────────────────────────────────────────── */
 
 @media (max-width: 1200px) {
   .eva-panelGrid,
@@ -304,6 +471,10 @@ a {
 }
 
 @media (max-width: 768px) {
+  .eva-page {
+    padding: 16px;
+  }
+
   .eva-pageHeader {
     flex-direction: column;
   }

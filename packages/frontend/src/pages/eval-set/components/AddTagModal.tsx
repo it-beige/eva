@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Modal, Form, Input, Tag, Space } from 'antd';
+import { Drawer, Form, Input, Tag, Space, Button } from 'antd';
 
 interface AddTagModalProps {
   open: boolean;
@@ -59,13 +59,20 @@ export const AddTagModal: React.FC<AddTagModalProps> = ({
   );
 
   return (
-    <Modal
+    <Drawer
       title="添加标签"
       open={open}
-      onCancel={onCancel}
-      onOk={handleSubmit}
-      confirmLoading={loading}
-      destroyOnHidden
+      onClose={onCancel}
+      width={420}
+      destroyOnClose
+      extra={
+        <Space>
+          <Button onClick={onCancel}>取消</Button>
+          <Button type="primary" onClick={handleSubmit} loading={loading}>
+            确定
+          </Button>
+        </Space>
+      }
     >
       <Form form={form} layout="vertical">
         <Form.Item
@@ -106,7 +113,7 @@ export const AddTagModal: React.FC<AddTagModalProps> = ({
           </Form.Item>
         )}
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

@@ -1,0 +1,68 @@
+.barList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.barRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.barRank {
+  width: 28px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--eva-text-secondary);
+  font-size: 13px;
+}
+
+.barName {
+  width: 120px;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--eva-text);
+}
+
+.barTrack {
+  flex: 1;
+  height: 24px;
+  background: var(--eva-bg-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  transition: width 0.5s ease;
+}
+
+.barFillGreen {
+  background: linear-gradient(90deg, #34c759, #30d158);
+}
+
+.barFillBlue {
+  background: linear-gradient(90deg, #5a63ff, #7c87ff);
+}
+
+.barFillOrange {
+  background: linear-gradient(90deg, #faad14, #ffc53d);
+}
+
+.barFillRed {
+  background: linear-gradient(90deg, #ff4d4f, #ff7875);
+}
+
+.barScore {
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}

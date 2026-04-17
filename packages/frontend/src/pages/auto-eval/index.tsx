@@ -5,12 +5,9 @@ import {
   Button,
   Input,
   Tag,
-  Space,
   Dropdown,
   Pagination,
-  Typography,
   Row,
-  Col,
   Tooltip,
   Empty,
   Modal,
@@ -37,12 +34,11 @@ import {
   setPageSize,
   setSelectedRowKeys,
 } from '../../store/autoEvalSlice';
+import PageContainer from '../../components/page/PageContainer';
 import { AutoEvalStatus } from '@eva/shared';
 import type { AutoEval } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
 import styles from './AutoEvalListPage.module.scss';
-
-const { Title, Text } = Typography;
 
 const statusMap: Record<AutoEvalStatus, { color: string; text: string }> = {
   [AutoEvalStatus.ENABLED]: { color: 'success', text: '已启用' },
@@ -65,22 +61,18 @@ const AutoEvalListPage = () => {
 
   const [searchValue, setSearchValue] = useState(keyword);
 
-  // 加载数据
   useEffect(() => {
     dispatch(fetchAutoEvals({}));
   }, [dispatch, page, pageSize, keyword]);
 
-  // 搜索防抖
   const handleSearch = useCallback(() => {
     dispatch(setKeyword(searchValue));
   }, [dispatch, searchValue]);
 
-  // 创建新规则
   const handleCreate = () => {
     navigate('/auto-eval/create');
   };
 
-  // 删除单个
   const handleDelete = (record: AutoEval) => {
     Modal.confirm({
       title: '确认删除',
@@ -93,7 +85,6 @@ const AutoEvalListPage = () => {
     });
   };
 
-  // 批量删除
   const handleBatchDelete = () => {
     if (selectedRowKeys.length === 0) {
       message.warning('请先选择要删除的规则');
@@ -110,7 +101,6 @@ const AutoEvalListPage = () => {
     });
   };
 
-  // 表格列定义
   const columns: ColumnsType<AutoEval> = [
     {
       title: '名称',
@@ -189,7 +179,6 @@ const AutoEvalListPage = () => {
     },
   ];
 
-  // 行选择配置
   const rowSelection = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
@@ -198,61 +187,43 @@ const AutoEvalListPage = () => {
   };
 
   return (
-    <div className={styles.page}>
-      {/* 标题区域 */}
-      <Row justify="space-between" align="middle" className={styles.header}>
-        <Col>
-          <Title level={4} className={styles.title}>
-            自动化评测
-          </Title>
-          <Text type="secondary">
-            通过定义采样过滤规则及评估指标，针对线上trace数据周期性自动评测并沉淀报告。
-          </Text>
-        </Col>
-        <Col>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            创建新规则
-          </Button>
-        </Col>
-      </Row>
-
-      {/* 搜索和操作栏 */}
-      <Card className={styles.searchCard}>
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Space>
-              <Input
-                placeholder="按名称搜索"
-                prefix={<SearchOutlined />}
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onPressEnter={handleSearch}
-                className={styles.searchInput}
-                allowClear
-              />
-              <Button icon={<FilterOutlined />}>筛选 (0)</Button>
-            </Space>
-          </Col>
-          <Col>
-            <Space>
-              <Tooltip title="批量删除">
-                <Button
-                  icon={<DeleteOutlined />}
-                  disabled={selectedRowKeys.length === 0}
-                  onClick={handleBatchDelete}
-                  loading={deleting}
-                />
-              </Tooltip>
-              <Tooltip title="图表视图">
-                <Button icon={<BarChartOutlined />} />
-              </Tooltip>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
-
-      {/* 数据表格 */}
+    <PageContainer
+      description="通过定义采样过滤规则及评估指标，针对线上 Trace 数据周期性自动评测并沉淀报告。"
+      extra={
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          创建新规则
+        </Button>
+      }
+    >
       <Card>
+        <div className="eva-toolbar">
+          <div className="eva-toolbarGroup">
+            <Input
+              placeholder="按名称搜索"
+              prefix={<SearchOutlined />}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onPressEnter={handleSearch}
+              className={styles.searchInput}
+              allowClear
+            />
+            <Button icon={<FilterOutlined />}>筛选 (0)</Button>
+          </div>
+          <div className="eva-toolbarGroup">
+            <Tooltip title="批量删除">
+              <Button
+                icon={<DeleteOutlined />}
+                disabled={selectedRowKeys.length === 0}
+                onClick={handleBatchDelete}
+                loading={deleting}
+              />
+            </Tooltip>
+            <Tooltip title="图表视图">
+              <Button icon={<BarChartOutlined />} />
+            </Tooltip>
+          </div>
+        </div>
+
         <Table
           rowSelection={rowSelection}
           columns={columns}
@@ -270,7 +241,6 @@ const AutoEvalListPage = () => {
           }}
         />
 
-        {/* 分页 */}
         <Row justify="end" className={styles.paginationRow}>
           <Pagination
             current={page}
@@ -291,7 +261,7 @@ const AutoEvalListPage = () => {
           />
         </Row>
       </Card>
-    </div>
+    </PageContainer>
   );
 };
 

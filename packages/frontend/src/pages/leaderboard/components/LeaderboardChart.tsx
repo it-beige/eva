@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Empty } from 'antd';
 import { LeaderboardItem } from '../../../services/leaderboardApi';
+import styles from './LeaderboardChart.module.scss';
 
 interface LeaderboardChartProps {
   data: LeaderboardItem[];
@@ -8,7 +9,6 @@ interface LeaderboardChartProps {
 }
 
 const LeaderboardChart: React.FC<LeaderboardChartProps> = ({ data, loading }) => {
-  // 按应用聚合得分数据
   const appScores = React.useMemo(() => {
     const grouped = data.reduce((acc, item) => {
       if (!acc[item.appName]) {
@@ -22,14 +22,13 @@ const LeaderboardChart: React.FC<LeaderboardChartProps> = ({ data, loading }) =>
       return acc;
     }, {} as Record<string, { name: string; scores: number[]; avgScore: number }>);
 
-    // 计算平均分并排序
     return Object.values(grouped)
       .map((app) => ({
         ...app,
         avgScore: app.scores.reduce((a, b) => a + b, 0) / app.scores.length,
       }))
       .sort((a, b) => b.avgScore - a.avgScore)
-      .slice(0, 10); // 只显示前10
+      .slice(0, 10);
   }, [data]);
 
   const maxScore = Math.max(...appScores.map((app) => app.avgScore), 100);
@@ -42,30 +41,30 @@ const LeaderboardChart: React.FC<LeaderboardChartProps> = ({ data, loading }) =>
     );
   }
 
+  const getBarClass = (score: number) => {
+    if (score >= 90) return styles.barFillGreen;
+    if (score >= 75) return styles.barFillBlue;
+    if (score >= 60) return styles.barFillOrange;
+    return styles.barFillRed;
+  };
+
   return (
     <Card title="得分对比" loading={loading}>
-      <div className="space-y-3">
+      <div className={styles.barList}>
         {appScores.map((app, index) => {
           const percentage = (app.avgScore / maxScore) * 100;
-          let barColor = 'bg-red-500';
-          if (app.avgScore >= 90) barColor = 'bg-green-500';
-          else if (app.avgScore >= 75) barColor = 'bg-blue-500';
-          else if (app.avgScore >= 60) barColor = 'bg-orange-500';
-
           return (
-            <div key={app.name} className="flex items-center gap-3">
-              <div className="w-8 text-center font-bold text-gray-500">
-                {index + 1}
-              </div>
-              <div className="w-32 truncate text-sm" title={app.name}>
+            <div key={app.name} className={styles.barRow}>
+              <div className={styles.barRank}>{index + 1}</div>
+              <div className={styles.barName} title={app.name}>
                 {app.name}
               </div>
-              <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
+              <div className={styles.barTrack}>
                 <div
-                  className={`h-full ${barColor} transition-all duration-500 flex items-center justify-end pr-2`}
+                  className={`${styles.barFill} ${getBarClass(app.avgScore)}`}
                   style={{ width: `${percentage}%` }}
                 >
-                  <span className="text-white text-xs font-bold">
+                  <span className={styles.barScore}>
                     {app.avgScore.toFixed(1)}
                   </span>
                 </div>

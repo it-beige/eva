@@ -1,0 +1,27 @@
+.rank {
+  color: var(--eva-text-secondary);
+  font-weight: 600;
+}
+
+.appName {
+  font-weight: 500;
+}
+
+.appVersion {
+  font-size: 12px;
+  color: var(--eva-text-tertiary);
+}
+
+.scoreTag {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.timeCell {
+  color: var(--eva-text-secondary);
+  font-size: 13px;
+}
+
+.timeIcon {
+  margin-right: 4px;
+}

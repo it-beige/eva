@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
-import { Row, Col, message } from 'antd';
+import { message } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import PlaygroundConfig from './components/PlaygroundConfig';
 import StreamOutput from './components/StreamOutput';
+import PageContainer from '../../components/page/PageContainer';
 import {
   runPlaygroundStream,
   appendOutput,
@@ -14,6 +15,7 @@ import {
   addToHistory,
 } from '../../store/playgroundSlice';
 import { PlaygroundStreamEvent } from '../../services/playgroundApi';
+import styles from './PlaygroundPage.module.scss';
 
 const PlaygroundPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -91,26 +93,23 @@ const PlaygroundPage: React.FC = () => {
   };
 
   return (
-    <div className="h-full p-6">
-      <h1 className="text-2xl font-bold mb-6">Playground</h1>
-      <Row gutter={24} className="h-[calc(100%-60px)]">
-        <Col span={10} className="h-full">
-          <PlaygroundConfig
-            onSubmit={handleSubmit}
-            onClear={handleClear}
-            loading={isStreaming || loading}
-          />
-        </Col>
-        <Col span={14} className="h-full">
-          <StreamOutput
-            output={output}
-            isStreaming={isStreaming}
-            usage={usage}
-            duration={duration}
-          />
-        </Col>
-      </Row>
-    </div>
+    <PageContainer
+      description="选择 AI 应用和 Prompt，输入测试数据，实时查看模型输出结果。"
+    >
+      <div className={styles.contentGrid}>
+        <PlaygroundConfig
+          onSubmit={handleSubmit}
+          onClear={handleClear}
+          loading={isStreaming || loading}
+        />
+        <StreamOutput
+          output={output}
+          isStreaming={isStreaming}
+          usage={usage}
+          duration={duration}
+        />
+      </div>
+    </PageContainer>
   );
 };
 

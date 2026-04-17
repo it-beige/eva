@@ -1,10 +1,10 @@
 import React from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Drawer, Form, Input, Select, Button, Space } from 'antd';
 import type { ImportPublicAgentRequest } from '@eva/shared';
+import styles from './ImportPublicModal.module.scss';
 
 const { Option } = Select;
 
-// 预定义的公共 Code Agent 列表
 const PUBLIC_AGENTS = [
   {
     name: 'SWE-Agent',
@@ -85,17 +85,21 @@ const ImportPublicModal: React.FC<ImportPublicModalProps> = ({
   };
 
   return (
-    <Modal
+    <Drawer
       title="引用公共Code Agent"
       open={visible}
-      onOk={handleSubmit}
-      onCancel={handleCancel}
-      confirmLoading={loading}
-      okText="引用"
-      cancelText="取消"
+      onClose={handleCancel}
       width={560}
+      extra={
+        <Space>
+          <Button onClick={handleCancel}>取消</Button>
+          <Button type="primary" onClick={handleSubmit} loading={loading}>
+            引用
+          </Button>
+        </Space>
+      }
     >
-      <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+      <Form form={form} layout="vertical">
         <Form.Item label="选择公共Agent">
           <Select
             placeholder="请选择要引用的公共Agent"
@@ -105,10 +109,8 @@ const ImportPublicModal: React.FC<ImportPublicModalProps> = ({
             {PUBLIC_AGENTS.map((agent) => (
               <Option key={agent.name} value={agent.name}>
                 <div>
-                  <div style={{ fontWeight: 500 }}>{agent.name}</div>
-                  <div style={{ fontSize: 12, color: '#999' }}>
-                    {agent.description}
-                  </div>
+                  <div className={styles.agentName}>{agent.name}</div>
+                  <div className={styles.agentDesc}>{agent.description}</div>
                 </div>
               </Option>
             ))}
@@ -137,7 +139,7 @@ const ImportPublicModal: React.FC<ImportPublicModalProps> = ({
           <Input placeholder="请输入Git仓库地址" />
         </Form.Item>
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

@@ -8,6 +8,7 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import type { ApplicationResponse } from '@eva/shared';
+import styles from './AppCard.module.scss';
 
 const { Text } = Typography;
 
@@ -24,22 +25,20 @@ const AppCard: React.FC<AppCardProps> = ({
   onDelete,
   onEvaluate,
 }) => {
-  // 获取首字母作为头像
   const getInitial = (name: string) => {
     return name.charAt(0).toUpperCase();
   };
 
-  // 获取头像颜色
   const getAvatarColor = (name: string) => {
     const colors = [
-      '#1677ff',
-      '#52c41a',
-      '#faad14',
-      '#f5222d',
-      '#722ed1',
-      '#13c2c2',
-      '#eb2f96',
-      '#fa541c',
+      '#5A63FF',
+      '#34C759',
+      '#FAAD14',
+      '#FF4D4F',
+      '#722ED1',
+      '#13C2C2',
+      '#EB2F96',
+      '#FA541C',
     ];
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
@@ -80,46 +79,16 @@ const AppCard: React.FC<AppCardProps> = ({
   };
 
   return (
-    <Card
-      hoverable
-      style={{
-        borderRadius: 8,
-        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06)',
-        transition: 'all 0.3s ease',
-      }}
-      bodyStyle={{ padding: 16 }}
-    >
-      {/* 头部：图标 + 名称 + 更多操作 */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 12,
-        }}
-      >
+    <Card hoverable className={styles.card} styles={{ body: { padding: 16 } }}>
+      <div className={styles.cardHeader}>
         <Space>
           <Avatar
-            style={{
-              backgroundColor: getAvatarColor(application.name),
-              fontSize: 16,
-              fontWeight: 500,
-            }}
+            style={{ backgroundColor: getAvatarColor(application.name) }}
             size={40}
           >
             {getInitial(application.name)}
           </Avatar>
-          <Text
-            strong
-            style={{
-              fontSize: 16,
-              maxWidth: 140,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-            title={application.name}
-          >
+          <Text strong className={styles.appName} title={application.name}>
             {application.name}
           </Text>
         </Space>
@@ -132,36 +101,34 @@ const AppCard: React.FC<AppCardProps> = ({
         </Dropdown>
       </div>
 
-      {/* 中间：描述 + 版本 */}
-      <div style={{ marginBottom: 16, minHeight: 60 }}>
-        <div style={{ marginBottom: 8 }}>
-          <Text type="secondary" style={{ fontSize: 13 }}>
+      <div className={styles.cardBody}>
+        <div className={styles.fieldRow}>
+          <Text type="secondary" className={styles.fieldLabel}>
             应用描述:{' '}
           </Text>
           <Text
-            style={{ fontSize: 13 }}
+            className={styles.fieldValue}
             ellipsis={{ tooltip: application.description || '暂无描述' }}
           >
             {application.description || '暂无描述'}
           </Text>
         </div>
-        <div>
-          <Text type="secondary" style={{ fontSize: 13 }}>
+        <div className={styles.fieldRow}>
+          <Text type="secondary" className={styles.fieldLabel}>
             最新版本:{' '}
           </Text>
-          <Text style={{ fontSize: 13 }}>
+          <Text className={styles.fieldValue}>
             {application.latestVersion || '无'}
           </Text>
         </div>
       </div>
 
-      {/* 底部：操作按钮 */}
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div className={styles.cardFooter}>
         <Button
           type="default"
           icon={<ExperimentOutlined />}
           onClick={() => onEvaluate(application)}
-          style={{ flex: 1 }}
+          className={styles.footerButton}
         >
           评测
         </Button>
@@ -170,7 +137,7 @@ const AppCard: React.FC<AppCardProps> = ({
           icon={<LinkOutlined />}
           onClick={handleOpenRepo}
           disabled={!application.gitRepoUrl}
-          style={{ flex: 1 }}
+          className={styles.footerButton}
         >
           代码仓库
         </Button>

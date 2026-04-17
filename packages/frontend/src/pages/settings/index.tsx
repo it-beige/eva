@@ -8,6 +8,7 @@ import {
 import ProjectSettings from './components/ProjectSettings';
 import MemberManagement from './components/MemberManagement';
 import TokenManagement from './components/TokenManagement';
+import PageContainer from '../../components/page/PageContainer';
 
 const SettingsPage: React.FC = () => {
   const [activeKey, setActiveKey] = useState('project');
@@ -46,8 +47,7 @@ const SettingsPage: React.FC = () => {
   ];
 
   return (
-    <div className="h-full p-6">
-      <h1 className="text-2xl font-bold mb-6">设置</h1>
+    <PageContainer description="管理项目配置、团队成员和 API Token。">
       <Card>
         <Tabs
           activeKey={activeKey}
@@ -55,7 +55,7 @@ const SettingsPage: React.FC = () => {
           items={tabItems}
         />
       </Card>
-    </div>
+    </PageContainer>
   );
 };
 

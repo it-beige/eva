@@ -4,37 +4,137 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: linear-gradient(135deg, #f7f4ed 0%, #eef4ff 45%, #edf7f1 100%);
+  background: var(--eva-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(90, 99, 255, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -15%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(52, 199, 89, 0.04) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .card {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  max-width: 460px;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+  max-width: 440px;
+  border-radius: 16px;
+  border: 1px solid var(--eva-border);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 }
 
 .card :global(.ant-card-body) {
-  padding: 28px;
+  padding: 36px 32px;
 }
 
 .stack {
   width: 100%;
 }
 
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(90, 99, 255, 0.25);
+  flex-shrink: 0;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+}
+
 .brand {
-  color: #0f766e !important;
-  font-weight: 600;
+  color: var(--eva-text-tertiary) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 !important;
 }
 
 .title {
-  margin-top: 8px !important;
-  margin-bottom: 8px !important;
+  margin: 0 !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: var(--eva-text) !important;
+  letter-spacing: -0.02em;
 }
 
 .description {
-  margin-bottom: 0 !important;
+  margin: 8px 0 0 !important;
+  color: var(--eva-text-secondary) !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+
+.demoAlert {
+  border-radius: 10px;
+  border: 1px solid var(--eva-primary-soft-strong);
+  background: var(--eva-primary-soft);
+}
+
+.demoAlert :global(.ant-alert-message) {
+  color: var(--eva-text);
+  font-weight: 500;
+}
+
+.demoAlert :global(.ant-alert-description) {
+  color: var(--eva-text-secondary);
+}
+
+.loginButton {
+  height: 44px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 8px rgba(90, 99, 255, 0.2) !important;
+}
+
+.loginButton:hover {
+  box-shadow: 0 4px 16px rgba(90, 99, 255, 0.3) !important;
+}
+
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--eva-text-tertiary);
+  font-size: 12px;
 }
 
 @media (max-width: 768px) {
@@ -43,6 +143,6 @@
   }
 
   .card :global(.ant-card-body) {
-    padding: 24px 20px;
+    padding: 28px 20px;
   }
 }

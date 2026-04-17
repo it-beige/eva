@@ -8,6 +8,7 @@ import {
   CalendarOutlined,
 } from '@ant-design/icons';
 import { LeaderboardItem } from '../../../services/leaderboardApi';
+import styles from './LeaderboardTable.module.scss';
 
 interface LeaderboardTableProps {
   data: LeaderboardItem[];
@@ -42,7 +43,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
             />
           );
         }
-        return <span className="text-gray-500 font-medium">{rank}</span>;
+        return <span className={styles.rank}>{rank}</span>;
       },
     },
     {
@@ -51,8 +52,8 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       key: 'appName',
       render: (name: string, record) => (
         <div>
-          <div className="font-medium">{name}</div>
-          <div className="text-xs text-gray-400">{record.appVersion}</div>
+          <div className={styles.appName}>{name}</div>
+          <div className={styles.appVersion}>{record.appVersion}</div>
         </div>
       ),
     },
@@ -89,7 +90,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
         }
         return (
           <Tooltip title={`得分: ${score}`}>
-            <Tag color={color} icon={icon} className="text-base font-bold">
+            <Tag color={color} icon={icon} className={styles.scoreTag}>
               {score.toFixed(2)}
             </Tag>
           </Tooltip>
@@ -102,8 +103,8 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       key: 'lastEvalTime',
       width: 180,
       render: (time: string) => (
-        <span className="text-gray-500 text-sm">
-          <CalendarOutlined className="mr-1" />
+        <span className={styles.timeCell}>
+          <CalendarOutlined className={styles.timeIcon} />
           {new Date(time).toLocaleString('zh-CN')}
         </span>
       ),

@@ -1,37 +1,15 @@
-.page {
-  padding: 24px;
-}
-
-.header {
-  margin-bottom: 24px;
-}
-
-.title {
-  margin-bottom: 8px !important;
-}
-
 .helpLink {
   margin-left: 8px;
+  color: var(--eva-primary);
 }
 
 .toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .search {
   width: 320px;
   max-width: 100%;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
 }
 
 .importButton {
@@ -65,14 +43,6 @@
 }
 
 @media (max-width: 768px) {
-  .page {
-    padding: 20px 16px;
-  }
-
-  .toolbar {
-    align-items: stretch;
-  }
-
   .search {
     width: 100%;
   }

@@ -1,0 +1,13 @@
+.searchInput {
+  width: 240px;
+}
+
+.nameLink {
+  font-weight: 500;
+  color: var(--eva-primary);
+  cursor: pointer;
+}
+
+.nameLink:hover {
+  text-decoration: underline;
+}

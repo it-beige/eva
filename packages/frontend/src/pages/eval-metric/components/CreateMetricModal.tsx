@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Modal,
+  Drawer,
   Form,
   Card,
   Typography,
   Space,
   Radio,
+  Button,
   message,
 } from 'antd';
 import {
@@ -22,6 +23,7 @@ import {
   setEditingMetric,
 } from '../../../store/evalMetricSlice';
 import { MetricType, EvalMetric } from '@eva/shared';
+import styles from './CreateMetricModal.module.scss';
 
 const { Text } = Typography;
 
@@ -42,7 +44,6 @@ const CreateMetricModal: React.FC<CreateMetricModalProps> = ({
   const [form] = Form.useForm();
   const [metricType, setMetricType] = useState<MetricType>(MetricType.LLM);
 
-  // 当编辑时，设置表单初始值
   useEffect(() => {
     if (visible && editingMetric) {
       setMetricType(editingMetric.type);
@@ -54,7 +55,6 @@ const CreateMetricModal: React.FC<CreateMetricModalProps> = ({
         codeBranch: editingMetric.codeBranch || 'master',
       });
     } else if (visible) {
-      // 新建时重置表单
       setMetricType(MetricType.LLM);
       form.resetFields();
     }
@@ -78,20 +78,17 @@ const CreateMetricModal: React.FC<CreateMetricModalProps> = ({
       };
 
       if (editingMetric) {
-        // 更新
         await dispatch(
           updateEvalMetric({ id: editingMetric.id, data }),
         ).unwrap();
         message.success('更新成功');
       } else {
-        // 创建
         await dispatch(createEvalMetric(data)).unwrap();
         message.success('创建成功');
       }
 
       handleCancel();
     } catch (error: any) {
-      // 表单验证失败或请求失败
       if (error.message) {
         message.error(error.message);
       }
@@ -100,7 +97,6 @@ const CreateMetricModal: React.FC<CreateMetricModalProps> = ({
 
   const handleTypeChange = (type: MetricType) => {
     setMetricType(type);
-    // 切换类型时重置表单，但保留名称和描述
     const currentValues = form.getFieldsValue(['name', 'description']);
     form.resetFields();
     form.setFieldsValue(currentValues);
@@ -109,62 +105,59 @@ const CreateMetricModal: React.FC<CreateMetricModalProps> = ({
   const metricTypeCards = [
     {
       type: MetricType.LLM,
-      icon: <RobotOutlined style={{ fontSize: 24, color: '#1890ff' }} />,
+      icon: <RobotOutlined className={styles.typeIconLlm} />,
       title: 'LLM类型指标',
       description: 'LLM充当裁判对输出质量，需要配置LLM的裁判定位。',
     },
     {
       type: MetricType.CODE,
-      icon: <CodeOutlined style={{ fontSize: 24, color: '#52c41a' }} />,
+      icon: <CodeOutlined className={styles.typeIconCode} />,
       title: 'Code类型指标',
       description: '通过代码对输出进行功能性或格式性检查。',
     },
   ];
 
   return (
-    <Modal
+    <Drawer
       title={editingMetric ? '编辑评估指标' : '新建评估指标'}
       open={visible}
-      onOk={handleOk}
-      onCancel={handleCancel}
+      onClose={handleCancel}
       width={720}
-      confirmLoading={editingMetric ? updating : creating}
-      okText="确定"
-      cancelText="取消"
+      extra={
+        <Space>
+          <Button onClick={handleCancel}>取消</Button>
+          <Button
+            type="primary"
+            onClick={handleOk}
+            loading={editingMetric ? updating : creating}
+          >
+            确定
+          </Button>
+        </Space>
+      }
     >
       <Form form={form} layout="vertical" autoComplete="off">
-        {/* 指标类型选择 */}
-        <Form.Item
-          label="指标类型"
-          required
-          style={{ marginBottom: 24 }}
-        >
+        <Form.Item label="指标类型" required>
           <Radio.Group
             value={metricType}
             onChange={(e) => handleTypeChange(e.target.value)}
-            style={{ width: '100%' }}
+            className={styles.typeGroup}
           >
-            <Space direction="vertical" style={{ width: '100%' }} size="middle">
+            <Space direction="vertical" size="middle" className={styles.typeGroup}>
               {metricTypeCards.map((card) => (
                 <Card
                   key={card.type}
                   size="small"
-                  style={{
-                    cursor: 'pointer',
-                    borderColor:
-                      metricType === card.type ? '#1890ff' : '#d9d9d9',
-                    backgroundColor:
-                      metricType === card.type ? '#e6f7ff' : '#fff',
-                  }}
+                  className={`${styles.typeCard} ${metricType === card.type ? styles.typeCardActive : ''}`}
                   onClick={() => handleTypeChange(card.type)}
                 >
-                  <Radio value={card.type} style={{ width: '100%' }}>
+                  <Radio value={card.type} className={styles.typeRadio}>
                     <Space align="start">
                       {card.icon}
                       <div>
                         <Text strong>{card.title}</Text>
                         <br />
-                        <Text type="secondary" style={{ fontSize: 12 }}>
+                        <Text type="secondary" className={styles.typeDesc}>
                           {card.description}
                         </Text>
                       </div>
@@ -176,14 +169,13 @@ const CreateMetricModal: React.FC<CreateMetricModalProps> = ({
           </Radio.Group>
         </Form.Item>
 
-        {/* 根据类型显示不同的表单 */}
         {metricType === MetricType.LLM ? (
           <LlmMetricForm form={form} />
         ) : (
           <CodeMetricForm form={form} />
         )}
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

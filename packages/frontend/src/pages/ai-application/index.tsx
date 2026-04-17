@@ -5,7 +5,6 @@ import {
   Col,
   Input,
   Button,
-  Typography,
   Pagination,
   Empty,
   Spin,
@@ -26,6 +25,7 @@ import type {
 import AppCard from './components/AppCard';
 import CreateAppModal from './components/CreateAppModal';
 import ImportPublicModal from './components/ImportPublicModal';
+import PageContainer from '../../components/page/PageContainer';
 import styles from './AIApplicationPage.module.scss';
 import { useDebounce } from '../../hooks/useDebounce';
 import {
@@ -37,7 +37,6 @@ import {
 } from '../../services/applicationQueries';
 import { getQueryErrorMessage } from '../../services/evaApi';
 
-const { Title, Text } = Typography;
 const { Search } = Input;
 const { confirm } = Modal;
 
@@ -144,13 +143,10 @@ const AIApplicationPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <Title level={4} className={styles.title}>
-          AI应用
-        </Title>
-        <Text type="secondary">
-          通过gitlab管理自建AI应用及竞品AI应用，在评测任务创建中选定AI应用作为AI应用发起评测
+    <PageContainer
+      description={
+        <>
+          通过 GitLab 管理自建 AI 应用及竞品 AI 应用，在评测任务创建中选定 AI 应用发起评测。
           <a
             href="#"
             className={styles.helpLink}
@@ -161,19 +157,10 @@ const AIApplicationPage: React.FC = () => {
           >
             帮助文档 <QuestionCircleOutlined />
           </a>
-        </Text>
-      </div>
-
-      <div className={styles.toolbar}>
-        <Search
-          placeholder="按应用名称搜索"
-          allowClear
-          onSearch={handleSearch}
-          onChange={(event) => handleSearch(event.target.value)}
-          className={styles.search}
-          value={searchKeyword}
-        />
-        <div className={styles.actions}>
+        </>
+      }
+      extra={
+        <>
           <Button
             icon={<ImportOutlined />}
             onClick={() => setImportModalVisible(true)}
@@ -188,7 +175,18 @@ const AIApplicationPage: React.FC = () => {
           >
             新增AI应用
           </Button>
-        </div>
+        </>
+      }
+    >
+      <div className={styles.toolbar}>
+        <Search
+          placeholder="按应用名称搜索"
+          allowClear
+          onSearch={handleSearch}
+          onChange={(event) => handleSearch(event.target.value)}
+          className={styles.search}
+          value={searchKeyword}
+        />
       </div>
 
       {loading && applications.length === 0 ? (
@@ -245,7 +243,7 @@ const AIApplicationPage: React.FC = () => {
         onSubmit={handleSubmitImport}
         loading={actionLoading}
       />
-    </div>
+    </PageContainer>
   );
 };
 
