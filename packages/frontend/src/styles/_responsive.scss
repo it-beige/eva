@@ -1,0 +1,45 @@
+// ─────────────────────────────────────────────────────────
+// Eva Design System — Global Responsive Overrides
+// ─────────────────────────────────────────────────────────
+//
+// 全局公共类（.eva-*）的响应式规则集中在此文件管理。
+// 各组件 / 页面的私有响应式规则仍留在各自 .module.scss 中，
+// 但必须通过 @use '../styles/breakpoints' 引入 mixin。
+// ─────────────────────────────────────────────────────────
+
+@use './breakpoints' as *;
+
+/* ── lg ≤ 1200px ───────────────────────────────────────── */
+
+@include below(lg) {
+  .eva-panelGrid,
+  .eva-dashboardSplit {
+    grid-template-columns: 1fr;
+  }
+
+  .eva-page {
+    padding: 24px;
+  }
+}
+
+/* ── sm ≤ 768px ────────────────────────────────────────── */
+
+@include below(sm) {
+  .eva-page {
+    padding: 16px 16px 28px;
+  }
+
+  .eva-pageHeader {
+    flex-direction: column;
+  }
+
+  .eva-pageActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .eva-panelGrid,
+  .eva-panelGrid--4 {
+    grid-template-columns: 1fr 1fr;
+  }
+}

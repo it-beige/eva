@@ -1,6 +1,10 @@
+@use '../styles/breakpoints' as *;
+
+/* ── MainLayout — Unified with AppShell brand color system ── */
+
 .layout {
   min-height: 100vh;
-  padding: 20px;
+  padding: var(--eva-space-5);
   background: transparent;
 }
 
@@ -8,16 +12,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 16px;
+  gap: var(--eva-space-5);
+  margin-bottom: var(--eva-space-4);
   padding: 14px 18px;
-  background: rgba(18, 20, 26, 0.88);
+  background: var(--eva-surface);
   border: 1px solid var(--eva-border);
-  border-radius: 26px;
+  border-radius: var(--eva-radius-xl);
   box-shadow: var(--eva-shadow);
   backdrop-filter: blur(20px);
   position: sticky;
-  top: 16px;
+  top: var(--eva-space-4);
   z-index: 100;
 }
 
@@ -37,17 +41,15 @@
 .logoIcon {
   width: 42px;
   height: 42px;
-  border-radius: 14px;
+  border-radius: var(--eva-radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   font-weight: 800;
-  color: #fffaf6;
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.35), transparent 45%),
-    linear-gradient(135deg, #ffb36a 0%, #ff8a3d 45%, #ff5d3d 100%);
-  box-shadow: 0 18px 32px rgba(255, 122, 61, 0.24);
+  color: #fff;
+  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%);
+  box-shadow: 0 8px 24px rgba(90, 99, 255, 0.3);
 }
 
 .logoText {
@@ -75,52 +77,49 @@
 .navTabs {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px;
-  background: rgba(255, 255, 255, 0.035);
+  gap: var(--eva-space-1);
+  padding: var(--eva-space-1);
+  background: var(--eva-bg-subtle);
   border: 1px solid var(--eva-border-soft);
-  border-radius: 18px;
+  border-radius: var(--eva-radius-lg);
 }
 
 .navTab {
   border: none;
-  border-radius: 14px;
+  border-radius: var(--eva-radius-md);
   background: transparent;
   color: var(--eva-text-secondary);
   font-size: 14px;
   font-weight: 600;
-  padding: 10px 16px;
+  padding: 10px var(--eva-space-4);
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .navTab:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.04);
+  color: var(--eva-text);
+  background: var(--eva-surface);
 }
 
 .navTabActive {
-  color: #fff7f1;
-  background: linear-gradient(135deg, rgba(255, 138, 61, 0.22), rgba(255, 106, 61, 0.16));
-  box-shadow: inset 0 0 0 1px rgba(255, 138, 61, 0.18);
+  color: var(--eva-primary);
+  background: var(--eva-primary-soft);
+  box-shadow: inset 0 0 0 1px var(--eva-primary-soft-strong);
 }
 
 .userSection {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--eva-space-3);
 }
 
 .statusPill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--eva-space-2);
   padding: 9px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--eva-bg-subtle);
   border: 1px solid var(--eva-border-soft);
   color: var(--eva-text-secondary);
   font-size: 13px;
@@ -131,29 +130,28 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #4ade80;
-  box-shadow: 0 0 0 6px rgba(74, 222, 128, 0.12);
+  background: var(--eva-success);
+  box-shadow: 0 0 0 6px rgba(52, 199, 89, 0.12);
 }
 
 .avatar {
-  background: linear-gradient(135deg, #ff9b54 0%, #ff6a3d 100%) !important;
-  color: #fffaf6 !important;
-  box-shadow: 0 10px 24px rgba(255, 122, 61, 0.28);
+  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(90, 99, 255, 0.25);
 }
 
 .shellBody {
   display: flex;
-  gap: 16px;
+  gap: var(--eva-space-4);
   background: transparent;
 }
 
 .sider {
   background: var(--eva-surface) !important;
   border: 1px solid var(--eva-border);
-  border-radius: 26px;
-  overflow: hidden;
+  border-radius: var(--eva-radius-lg);
+  overflow: visible;
   box-shadow: var(--eva-shadow);
-  backdrop-filter: blur(20px);
 }
 
 .siderInner {
@@ -166,7 +164,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 18px 16px 12px;
+  padding: var(--eva-space-4) var(--eva-space-4) var(--eva-space-3);
 }
 
 .projectSelector {
@@ -175,7 +173,7 @@
 
 .projectLabel {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--eva-space-2);
   color: var(--eva-text-tertiary);
   font-size: 11px;
   font-weight: 700;
@@ -190,21 +188,21 @@
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  border-radius: 12px !important;
+  border-radius: var(--eva-radius-md) !important;
   color: var(--eva-text-secondary) !important;
 }
 
 .collapseBtn:hover {
-  color: #ffffff !important;
+  color: var(--eva-primary) !important;
 }
 
 .searchWrapper {
-  padding: 4px 16px 14px;
+  padding: var(--eva-space-1) var(--eva-space-4) 14px;
 }
 
 .menuWrapper {
   flex: 1;
-  padding: 6px 10px 12px;
+  padding: var(--eva-space-2) 10px var(--eva-space-3);
   border-right: none;
 }
 
@@ -212,6 +210,7 @@
 .menuWrapper :global(.ant-menu-submenu-title) {
   margin-inline: 0 !important;
   width: 100% !important;
+  border-radius: var(--eva-radius-md) !important;
   color: var(--eva-text-secondary);
 }
 
@@ -220,8 +219,8 @@
 }
 
 .menuWrapper :global(.ant-menu-item-selected) {
-  color: #fff7f1 !important;
-  background: linear-gradient(135deg, rgba(255, 138, 61, 0.2), rgba(255, 106, 61, 0.14)) !important;
+  color: var(--eva-primary) !important;
+  background: var(--eva-primary-soft) !important;
 }
 
 .menuWrapper :global(.ant-menu-item-selected::after) {
@@ -229,12 +228,12 @@
 }
 
 .menuWrapper :global(.ant-menu-item:hover) {
-  color: #ffffff !important;
-  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--eva-text) !important;
+  background: var(--eva-bg-subtle) !important;
 }
 
 .menuGroupTitle {
-  padding: 16px 12px 8px;
+  padding: var(--eva-space-4) var(--eva-space-3) var(--eva-space-2);
   color: var(--eva-text-tertiary);
   font-size: 11px;
   font-weight: 700;
@@ -245,12 +244,12 @@
 .siderFooter {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--eva-space-2);
   margin: 10px;
   padding: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--eva-bg-subtle);
   border: 1px solid var(--eva-border-soft);
-  border-radius: 18px;
+  border-radius: var(--eva-radius-lg);
 }
 
 .siderFooterTitle {
@@ -273,10 +272,10 @@
 
 .contentWrapper {
   min-height: calc(100vh - 128px);
-  padding: 26px;
-  background: linear-gradient(180deg, rgba(20, 24, 31, 0.92), rgba(12, 14, 19, 0.94));
+  padding: var(--eva-space-6);
+  background: var(--eva-content-bg);
   border: 1px solid var(--eva-border);
-  border-radius: 30px;
+  border-radius: var(--eva-radius-lg);
   box-shadow: var(--eva-shadow);
   position: relative;
   overflow: hidden;
@@ -289,7 +288,7 @@
   width: 320px;
   height: 320px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(255, 138, 61, 0.14), transparent 68%);
+  background: radial-gradient(circle, rgba(90, 99, 255, 0.06), transparent 68%);
   pointer-events: none;
 }
 
@@ -298,7 +297,7 @@
   z-index: 1;
 }
 
-@media (max-width: 1200px) {
+@include below(lg) {
   .header {
     flex-wrap: wrap;
   }
@@ -312,14 +311,14 @@
   }
 }
 
-@media (max-width: 768px) {
+@include below(sm) {
   .layout {
-    padding: 12px;
+    padding: var(--eva-space-3);
   }
 
   .header {
     padding: 14px;
-    border-radius: 22px;
+    border-radius: var(--eva-radius-lg);
   }
 
   .navTabs {
@@ -334,6 +333,6 @@
 
   .contentWrapper {
     padding: 18px;
-    border-radius: 24px;
+    border-radius: var(--eva-radius-lg);
   }
 }

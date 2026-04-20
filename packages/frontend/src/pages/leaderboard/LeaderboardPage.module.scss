@@ -1,18 +1,27 @@
+@use '../../styles/breakpoints' as *;
+
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: var(--eva-space-4);
+  margin-bottom: var(--eva-space-6);
 }
 
 .topAppScore {
-  color: #34C759;
+  color: var(--eva-success);
   font-size: 13px;
   margin-top: 4px;
 }
 
 .filterCard {
-  margin-bottom: 24px;
+  margin-bottom: var(--eva-space-6);
+
+  :global(.ant-card-body) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--eva-space-4);
+  }
 }
 
 .filterLabel {
@@ -31,10 +40,11 @@
 .contentGrid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 24px;
+  gap: var(--eva-space-6);
+  transition: grid-template-columns 0.3s ease;
 }
 
-@media (max-width: 1200px) {
+@include below(lg) {
   .summaryGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -44,7 +54,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@include below(sm) {
   .summaryGrid {
     grid-template-columns: 1fr;
   }

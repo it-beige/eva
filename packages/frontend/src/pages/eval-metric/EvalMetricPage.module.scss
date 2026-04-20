@@ -1,23 +1,31 @@
 .searchInput {
-  width: 280px;
+  width: 320px;
 }
 
 .nameLink {
   color: var(--eva-primary);
+  font-weight: 500;
   cursor: pointer;
+  transition: color 0.15s ease;
 }
 
 .nameLink:hover {
+  color: var(--eva-primary-hover);
   text-decoration: underline;
 }
 
 .dangerText {
-  color: #ff4d4f;
+  color: var(--eva-error);
 }
 
 .helpLink {
-  margin-left: 8px;
+  margin-left: var(--eva-space-2);
   color: var(--eva-primary);
+  transition: color 0.15s ease;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .helpIcon {

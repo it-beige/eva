@@ -1,0 +1,72 @@
+// ─────────────────────────────────────────────────────────
+// Eva Design System — Breakpoints
+// ─────────────────────────────────────────────────────────
+//
+// 统一断点定义 & 响应式 mixin。
+// 所有组件 / 页面通过 @use 引入，禁止硬编码 @media 数值。
+//
+// 断点档位（Mobile-first 思路，但实际以桌面为主，向下适配）：
+//   xl   ≤ 1400px   大屏收窄（侧边栏 / 多列网格折叠）
+//   lg   ≤ 1200px   笔记本适配
+//   md   ≤  960px   平板横屏 / 小笔记本
+//   sm   ≤  768px   平板竖屏
+//   xs   ≤  640px   手机
+// ─────────────────────────────────────────────────────────
+
+$bp-xl: 1400px;
+$bp-lg: 1200px;
+$bp-md: 960px;
+$bp-sm: 768px;
+$bp-xs: 640px;
+
+/// 最大宽度（桌面优先，向下适配）
+/// @example  @include below(lg) { ... }
+@mixin below($name) {
+  @if $name == xl {
+    @media (max-width: $bp-xl) { @content; }
+  } @else if $name == lg {
+    @media (max-width: $bp-lg) { @content; }
+  } @else if $name == md {
+    @media (max-width: $bp-md) { @content; }
+  } @else if $name == sm {
+    @media (max-width: $bp-sm) { @content; }
+  } @else if $name == xs {
+    @media (max-width: $bp-xs) { @content; }
+  }
+}
+
+/// 最小宽度（向上适配）
+/// @example  @include above(md) { ... }
+@mixin above($name) {
+  @if $name == xl {
+    @media (min-width: $bp-xl + 1) { @content; }
+  } @else if $name == lg {
+    @media (min-width: $bp-lg + 1) { @content; }
+  } @else if $name == md {
+    @media (min-width: $bp-md + 1) { @content; }
+  } @else if $name == sm {
+    @media (min-width: $bp-sm + 1) { @content; }
+  } @else if $name == xs {
+    @media (min-width: $bp-xs + 1) { @content; }
+  }
+}
+
+/// 区间
+/// @example  @include between(sm, lg) { ... }
+@mixin between($lower, $upper) {
+  $min: null;
+  $max: null;
+
+  @if $lower == xs { $min: $bp-xs + 1; }
+  @else if $lower == sm { $min: $bp-sm + 1; }
+  @else if $lower == md { $min: $bp-md + 1; }
+  @else if $lower == lg { $min: $bp-lg + 1; }
+
+  @if $upper == lg { $max: $bp-lg; }
+  @else if $upper == md { $max: $bp-md; }
+  @else if $upper == sm { $max: $bp-sm; }
+  @else if $upper == xs { $max: $bp-xs; }
+  @else if $upper == xl { $max: $bp-xl; }
+
+  @media (min-width: $min) and (max-width: $max) { @content; }
+}

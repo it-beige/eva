@@ -66,7 +66,7 @@ function EnhancedTable<T extends object>({
   pagination,
   defaultSortBy,
   defaultSortOrder = 'desc',
-  defaultDensity = 'default',
+  defaultDensity = 'compact',
   enableEllipsis = false,
   onTableChange,
   ...tableProps
@@ -102,7 +102,9 @@ function EnhancedTable<T extends object>({
   /** 处理ellipsis和tooltip */
   const processColumns = useCallback(
     (cols: ColumnsType<T>): ColumnsType<T> => {
-      if (!enableEllipsis) return cols;
+      // 紧凑模式下为列添加 ellipsis + tooltip
+      const shouldAddEllipsis = density === 'compact' || enableEllipsis;
+      if (!shouldAddEllipsis) return cols;
 
       return cols.map((col) => {
         // 如果列已经有 ellipsis 配置，跳过
@@ -134,7 +136,7 @@ function EnhancedTable<T extends object>({
         };
       });
     },
-    [enableEllipsis],
+    [density, enableEllipsis],
   );
 
   /** 过滤可见列 */
@@ -235,7 +237,8 @@ function EnhancedTable<T extends object>({
 
   /** 渲染工具栏 */
   const renderToolbar = () => {
-    if (!columnConfigs) return null;
+    const hasColumnConfigs = columnConfigs && columnConfigs.length > 0;
+    if (!hasColumnConfigs && !densityButtons) return null;
 
     return (
       <div className={styles.toolbar}>
@@ -257,33 +260,35 @@ function EnhancedTable<T extends object>({
           </div>
 
           {/* 列管理按钮 */}
-          <Popover
-            content={columnManagerContent}
-            title={
-              <div className={styles.popoverTitle}>
-                <span>列管理</span>
-                <Tooltip title="自定义表格列的显示与隐藏，拖动列名可调整显示顺序" placement="top">
-                  <QuestionCircleOutlined style={{ marginLeft: 8, color: '#8c8c8c', cursor: 'help' }} />
-                </Tooltip>
-              </div>
-            }
-            trigger="click"
-            open={columnManagerOpen}
-            onOpenChange={setColumnManagerOpen}
-            placement="bottomRight"
-            overlayClassName={styles.columnManagerPopover}
-          >
-            <Tooltip title="管理表格列的显示与隐藏" placement="top">
-              <Button
-                type={columnManagerOpen ? 'primary' : 'default'}
-                size="small"
-                icon={<SettingOutlined />}
-                className={styles.columnManagerBtn}
-              >
-                列管理
-              </Button>
-            </Tooltip>
-          </Popover>
+          {hasColumnConfigs && (
+            <Popover
+              content={columnManagerContent}
+              title={
+                <div className={styles.popoverTitle}>
+                  <span>列管理</span>
+                  <Tooltip title="自定义表格列的显示与隐藏，拖动列名可调整显示顺序" placement="top">
+                    <QuestionCircleOutlined style={{ marginLeft: 8, color: '#8c8c8c', cursor: 'help' }} />
+                  </Tooltip>
+                </div>
+              }
+              trigger="click"
+              open={columnManagerOpen}
+              onOpenChange={setColumnManagerOpen}
+              placement="bottomRight"
+              overlayClassName={styles.columnManagerPopover}
+            >
+              <Tooltip title="管理表格列的显示与隐藏" placement="top">
+                <Button
+                  type={columnManagerOpen ? 'primary' : 'default'}
+                  size="small"
+                  icon={<SettingOutlined />}
+                  className={styles.columnManagerBtn}
+                >
+                  列管理
+                </Button>
+              </Tooltip>
+            </Popover>
+          )}
         </div>
       </div>
     );
@@ -295,7 +300,7 @@ function EnhancedTable<T extends object>({
       {renderToolbar()}
 
       {/* 表格容器 */}
-      <div className={styles.tableContainer}>
+      <div className={`${styles.tableContainer} ${styles[`density-${density}`]}`}>
         <Table<T>
           {...tableProps}
           columns={visibleColumns}

@@ -1,12 +1,66 @@
+@use '../../styles/breakpoints' as *;
+
 .contentGrid {
   display: grid;
   grid-template-columns: 5fr 7fr;
-  gap: 24px;
-  min-height: calc(100vh - 220px);
+  gap: var(--eva-space-6);
+  min-height: calc(100vh - 180px);
 }
 
-@media (max-width: 1200px) {
+/* ── Stream Output Enhancements ────────────────────────── */
+
+.streamOutput {
+  background: var(--eva-surface);
+  border: 1px solid var(--eva-border);
+  border-radius: var(--eva-radius-lg);
+  padding: var(--eva-space-5);
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.streamOutput pre {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: var(--eva-space-4);
+  border-radius: var(--eva-radius-md);
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+.streamOutput code {
+  background: var(--eva-bg-subtle);
+  padding: 2px 6px;
+  border-radius: var(--eva-radius-xs);
+  font-size: 13px;
+  color: var(--eva-primary);
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.streamCursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--eva-primary);
+  animation: cursorBlink 1s step-end infinite;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+}
+
+@include below(lg) {
   .contentGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@include below(md) {
+  .contentGrid {
+    gap: var(--eva-space-4);
+    min-height: auto;
   }
 }

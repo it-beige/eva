@@ -1,10 +1,20 @@
+@use '../../styles/breakpoints' as *;
+
 .helpLink {
-  margin-left: 8px;
+  margin-left: var(--eva-space-2);
   color: var(--eva-primary);
+  transition: color 0.15s ease;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .toolbar {
-  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: var(--eva-space-3);
+  margin-bottom: var(--eva-space-4);
 }
 
 .search {
@@ -13,36 +23,32 @@
 }
 
 .importButton {
-  background-color: #722ed1 !important;
-  border-color: #722ed1 !important;
-  color: #fff !important;
+  /* Use default button style - no forced color override */
 }
 
 .importButton:hover,
 .importButton:focus {
-  background-color: #8a4cf2 !important;
-  border-color: #8a4cf2 !important;
-  color: #fff !important;
+  /* Inherits global default hover */
 }
 
 .loadingState {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 400px;
+  min-height: 50vh;
 }
 
 .emptyState {
-  margin-top: 80px;
+  margin-top: 60px;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
-  margin-top: 32px;
+  margin-top: var(--eva-space-8);
 }
 
-@media (max-width: 768px) {
+@include below(sm) {
   .search {
     width: 100%;
   }

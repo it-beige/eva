@@ -1,3 +1,5 @@
+@use '../../styles/breakpoints' as *;
+
 .page {
   min-height: 100vh;
   background: linear-gradient(180deg, #f0f2f8 0%, #e8ecf4 100%);
@@ -210,13 +212,13 @@
 
 /* ── Responsive ────────────────────────────────────────── */
 
-@media (max-width: 1200px) {
+@include below(lg) {
   .body {
     padding: 28px 24px 40px;
   }
 }
 
-@media (max-width: 768px) {
+@include below(sm) {
   .topBar {
     padding: 0 16px;
   }

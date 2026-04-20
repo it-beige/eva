@@ -24,7 +24,7 @@ const TaskStatusTag: React.FC<TaskStatusTagProps> = ({ status, progress = 0 }) =
       );
     case EvalTaskStatus.RUNNING:
       return (
-        <Tag color="processing" icon={<LoadingOutlined spin />}>
+        <Tag color="processing" icon={<LoadingOutlined spin />} className={styles.runningTag}>
           运行中 {progress > 0 ? `${progress.toFixed(2)}%` : '0%'}
         </Tag>
       );

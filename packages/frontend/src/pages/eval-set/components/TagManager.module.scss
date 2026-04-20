@@ -1,3 +1,5 @@
+@use '../../../styles/breakpoints' as *;
+
 .tagSection {
   display: flex;
   align-items: center;
@@ -81,7 +83,7 @@
   border-style: dashed;
 }
 
-@media (max-width: 768px) {
+@include below(sm) {
   .tagSection {
     align-items: flex-start;
   }

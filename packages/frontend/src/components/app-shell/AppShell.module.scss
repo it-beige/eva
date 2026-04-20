@@ -1,3 +1,5 @@
+@use '../../styles/breakpoints' as *;
+
 .layout {
   min-height: 100vh;
   background: var(--eva-bg);
@@ -9,12 +11,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: var(--eva-space-6);
   height: 56px;
-  padding: 0 24px;
+  padding: 0 var(--eva-space-6);
   background: #ffffff;
   border-bottom: 1px solid var(--eva-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--eva-shadow-sm);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -34,7 +36,7 @@
   position: relative;
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: var(--eva-radius-md);
   background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%);
   display: flex;
   align-items: center;
@@ -61,9 +63,9 @@
 }
 
 .navTab {
-  padding: 6px 14px;
+  padding: var(--eva-space-2) 14px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--eva-radius-sm);
   background: transparent;
   color: var(--eva-text-secondary);
   font-size: 14px;
@@ -144,6 +146,7 @@
   background: #ffffff !important;
   border-right: 1px solid var(--eva-border);
   box-shadow: 1px 0 4px rgba(0, 0, 0, 0.02);
+  overflow: visible;
 }
 
 .siderInner {
@@ -155,7 +158,7 @@
 
 .siderHeader {
   position: relative;
-  padding: 16px 12px 12px;
+  padding: var(--eva-space-4) var(--eva-space-3) var(--eva-space-3);
   border-bottom: 1px solid var(--eva-border-soft);
 }
 
@@ -173,7 +176,7 @@
   border: 1px solid var(--eva-border) !important;
   background: #fff !important;
   color: var(--eva-text-tertiary) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--eva-shadow-sm);
   z-index: 5;
   transition: all 0.2s ease;
 }
@@ -197,7 +200,7 @@
   width: 100% !important;
   height: 40px !important;
   line-height: 40px !important;
-  border-radius: 8px !important;
+  border-radius: var(--eva-radius-md) !important;
   color: var(--eva-text-secondary);
   padding-inline: 14px !important;
   transition: all 0.15s ease;
@@ -230,7 +233,7 @@
 }
 
 .menuGroupTitle {
-  padding: 20px 16px 8px;
+  padding: var(--eva-space-5) var(--eva-space-4) var(--eva-space-2);
   font-size: 11px;
   font-weight: 600;
   color: var(--eva-text-tertiary);
@@ -241,15 +244,16 @@
 /* ── Content ───────────────────────────────────────────── */
 
 .content {
+  flex: 1;
   min-width: 0;
   padding: 0 !important;
-  background: var(--eva-bg) !important;
+  background: var(--eva-content-bg) !important;
 }
 
 .contentWrapper {
   min-height: 100%;
   padding: 0;
-  background: var(--eva-bg);
+  background: var(--eva-content-bg);
 }
 
 .contentInner {
@@ -260,8 +264,8 @@
 
 .assistantFab {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  right: var(--eva-space-5);
+  bottom: var(--eva-space-5);
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -285,7 +289,7 @@
 
 /* ── Responsive ────────────────────────────────────────── */
 
-@media (max-width: 1200px) {
+@include below(lg) {
   .navTabs {
     gap: 2px;
     padding: 0 12px;
@@ -297,7 +301,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@include below(sm) {
   .header {
     height: auto;
     min-height: 56px;

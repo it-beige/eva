@@ -1,3 +1,12 @@
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 .pendingSpin {
-  margin-right: 4px;
+  margin-right: var(--eva-space-1);
+}
+
+.runningTag {
+  animation: statusPulse 2s ease-in-out infinite;
 }

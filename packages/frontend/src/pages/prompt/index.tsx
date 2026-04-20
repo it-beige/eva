@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
+  Card,
   Input,
-  Space,
   Dropdown,
   message,
   Popconfirm,
-  Typography,
-  Tooltip,
+  Segmented,
 } from 'antd';
 import {
   PlusOutlined,
@@ -27,10 +26,9 @@ import {
   setCurrentPrompt,
 } from '../../store/promptSlice';
 import CreatePromptModal from './components/CreatePromptModal';
+import PageContainer from '../../components/page/PageContainer';
 import EnhancedTable from '../../components/EnhancedTable';
 import styles from './Prompt.module.scss';
-
-const { Title, Text } = Typography;
 
 const PromptListPage = () => {
   const navigate = useNavigate();
@@ -163,44 +161,39 @@ const PromptListPage = () => {
   ];
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div>
-          <Title level={4} style={{ marginBottom: 4 }}>
-            Prompt管理
-          </Title>
-          <Text type="secondary">
-            支持管理不同版本Prompt，并基于此进行多版本对比调试
-          </Text>
-        </div>
-      </div>
-
-      <div className={styles.toolbar}>
-        <Space>
-          <Input
-            placeholder="按名称搜索"
-            prefix={<SearchOutlined />}
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onPressEnter={handleSearch}
-            style={{ width: 280 }}
-          />
-          <Button icon={<FilterOutlined />}>筛选 (0)</Button>
-          <Tooltip title="删除">
-            <Button icon={<DeleteOutlined />} />
-          </Tooltip>
-        </Space>
-
-        <Space>
-          <Button
-            icon={viewMode === 'table' ? <TableOutlined /> : <BarChartOutlined />}
-            onClick={() => setViewMode(viewMode === 'table' ? 'chart' : 'table')}
+    <PageContainer
+      extra={
+        <>
+          <Segmented
+            value={viewMode}
+            onChange={(value) => setViewMode(value as 'table' | 'chart')}
+            options={[
+              { value: 'table', icon: <TableOutlined /> },
+              { value: 'chart', icon: <BarChartOutlined /> },
+            ]}
           />
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            新建Prompt
+            新建 Prompt
           </Button>
-        </Space>
-      </div>
+        </>
+      }
+    >
+      <Card>
+        <div className="eva-toolbar">
+          <div className="eva-toolbarGroup">
+            <Input
+              placeholder="按名称搜索"
+              prefix={<SearchOutlined />}
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onPressEnter={handleSearch}
+              className={styles.searchInput}
+              allowClear
+            />
+            <Button icon={<FilterOutlined />}>筛选 (0)</Button>
+          </div>
+        </div>
+      </Card>
 
       <EnhancedTable
         columns={columns}
@@ -226,7 +219,7 @@ const PromptListPage = () => {
         onSuccess={handleSuccess}
         initialValues={editingPrompt}
       />
-    </div>
+    </PageContainer>
   );
 };
 

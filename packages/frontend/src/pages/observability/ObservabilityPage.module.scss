@@ -1,3 +1,21 @@
 .toolbar {
-  margin-bottom: 16px;
+  margin-bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--eva-space-3);
+  padding: var(--eva-space-3) 0;
+}
+
+.ttftLabel {
+  color: var(--eva-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.ttftValue {
+  color: var(--eva-text);
+  font-size: 14px;
+  font-weight: 600;
 }

@@ -1,7 +1,7 @@
 .enhancedTableWrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 /* ── Toolbar ────────────────────────────────────────── */
@@ -34,8 +34,8 @@
   align-items: center;
   gap: 0;
   padding: 2px;
-  background: #f5f7fa;
-  border: 1px solid #e8eaed;
+  background: var(--eva-bg-subtle);
+  border: 1px solid var(--eva-border);
   border-radius: 6px;
   box-shadow: none;
 
@@ -50,25 +50,25 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    color: #5f6368;
+    color: var(--eva-text-secondary);
 
     &:hover {
-      color: #202124;
+      color: var(--eva-text);
       background: rgba(0, 0, 0, 0.04);
     }
 
-    &.ant-btn-primary {
-      background: #5a63ff;
-      color: #ffffff;
+    &:global(.ant-btn-primary) {
+      background: var(--eva-primary) !important;
+      color: #ffffff !important;
       box-shadow: none;
 
       &:hover {
-        background: #4850e0;
-        color: #ffffff;
+        background: var(--eva-primary-hover) !important;
+        color: #ffffff !important;
       }
 
       &:active {
-        background: #3a42d0;
+        background: var(--eva-primary-hover) !important;
       }
     }
 
@@ -97,26 +97,26 @@
   border-radius: 6px;
   font-weight: 500;
   transition: all 0.2s ease;
-  background: #ffffff;
-  border: 1px solid #e8eaed;
+  background: var(--eva-surface) !important;
+  border: 1px solid var(--eva-border) !important;
   box-shadow: none;
-  color: #5f6368;
+  color: var(--eva-text-secondary) !important;
 
   &:hover {
-    border-color: #d0d5de;
-    color: #202124;
-    background: #f5f7fa;
+    border-color: var(--eva-primary) !important;
+    color: var(--eva-primary) !important;
+    background: var(--eva-primary-soft) !important;
   }
 
-  &.ant-btn-primary {
-    background: #5a63ff;
-    border: 1px solid #5a63ff;
-    color: #ffffff;
+  &:global(.ant-btn-primary) {
+    background: var(--eva-primary) !important;
+    border: 1px solid var(--eva-primary) !important;
+    color: #ffffff !important;
 
     &:hover {
-      background: #4850e0;
-      border-color: #4850e0;
-      color: #ffffff;
+      background: var(--eva-primary-hover) !important;
+      border-color: var(--eva-primary-hover) !important;
+      color: #ffffff !important;
     }
   }
 }
@@ -124,9 +124,9 @@
 /* ── Table Container ─────────────────────────────────── */
 
 .tableContainer {
-  background: #ffffff;
+  background: var(--eva-surface);
   border: 1px solid var(--eva-border);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -144,7 +144,7 @@
     }
 
     .ant-table-thead > tr > th {
-      background: #f9fafb;
+      background: var(--eva-bg-subtle);
       font-weight: 600;
       color: var(--eva-text);
       border-bottom: 1px solid var(--eva-border);
@@ -154,7 +154,7 @@
       transition: all 0.2s;
 
       &:hover {
-        background: #f5f7fa;
+        background: var(--eva-bg-subtle);
       }
     }
 
@@ -178,6 +178,82 @@
     &.ant-table-large {
       .ant-table-tbody > tr > td {
         padding: 16px 16px;
+      }
+    }
+  }
+}
+
+/* ── Density Modes ─────────────────────────────────── */
+
+/* 紧凑模式 - 列内容一行展示，超出显示 tooltip */
+.density-compact {
+  :global() {
+    .ant-table-tbody > tr > td {
+      .ant-table-cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+/* 标准模式 - 列内容 max-height: 96px，超出显示滚动条 */
+.density-default {
+  :global() {
+    .ant-table-tbody > tr > td {
+      vertical-align: top;
+
+      .ant-table-cell {
+        max-height: 96px;
+        overflow-y: auto;
+        word-break: break-word;
+        white-space: pre-wrap;
+
+        /* 自定义滚动条样式 */
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--eva-border);
+          border-radius: 2px;
+
+          &:hover {
+            background: var(--eva-text-secondary);
+          }
+        }
+      }
+    }
+  }
+}
+
+/* 宽松模式 - 列内容 max-height: 296px，超出显示滚动条 */
+.density-comfortable {
+  :global() {
+    .ant-table-tbody > tr > td {
+      vertical-align: top;
+
+      .ant-table-cell {
+        max-height: 296px;
+        overflow-y: auto;
+        word-break: break-word;
+        white-space: pre-wrap;
+
+        /* 自定义滚动条样式 */
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--eva-border);
+          border-radius: 2px;
+
+          &:hover {
+            background: var(--eva-text-secondary);
+          }
+        }
       }
     }
   }
@@ -248,7 +324,7 @@
     transition: all 0.2s;
 
     &:hover {
-      background: #f5f7fa;
+      background: var(--eva-bg-subtle);
     }
 
     .ant-checkbox + span {

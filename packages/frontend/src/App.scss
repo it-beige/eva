@@ -4,6 +4,8 @@
 
 :root {
   color-scheme: light;
+
+  /* ── Color Palette ──────────────────────────────────── */
   --eva-bg: #f0f2f5;
   --eva-bg-subtle: #f5f7fa;
   --eva-bg-panel: #f0f2f5;
@@ -18,9 +20,43 @@
   --eva-primary-hover: #4850e6;
   --eva-primary-soft: #eef0ff;
   --eva-primary-soft-strong: #e0e3ff;
+  --eva-content-bg: #f7f8fa;
+  --eva-split: #f0f1f3;
+
+  /* ── Semantic Colors ────────────────────────────────── */
+  --eva-success: #34c759;
+  --eva-success-soft: #e6f9ef;
+  --eva-warning: #faad14;
+  --eva-warning-soft: #fff7e6;
+  --eva-error: #ff4d4f;
+  --eva-error-soft: #fff2f0;
+  --eva-info: #5a63ff;
+  --eva-info-soft: #eef0ff;
+
+  /* ── Radius System ──────────────────────────────────── */
+  --eva-radius-xs: 4px;
+  --eva-radius-sm: 6px;
+  --eva-radius-md: 8px;
+  --eva-radius-lg: 12px;
+  --eva-radius-xl: 16px;
+  --eva-radius-2xl: 24px;
+
+  /* ── Spacing System (4px base) ──────────────────────── */
+  --eva-space-1: 4px;
+  --eva-space-2: 8px;
+  --eva-space-3: 12px;
+  --eva-space-4: 16px;
+  --eva-space-5: 20px;
+  --eva-space-6: 24px;
+  --eva-space-8: 32px;
+  --eva-space-10: 40px;
+  --eva-space-12: 48px;
+
+  /* ── Shadows ────────────────────────────────────────── */
   --eva-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --eva-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(71, 92, 122, 0.06);
   --eva-shadow-lg: 0 4px 16px rgba(71, 92, 122, 0.1);
+  --eva-shadow-xl: 0 8px 30px rgba(71, 92, 122, 0.14);
 }
 
 html,
@@ -80,7 +116,7 @@ a {
 
 .ant-card {
   border: 1px solid var(--eva-border);
-  border-radius: 12px;
+  border-radius: var(--eva-radius-lg);
   background: var(--eva-surface);
   box-shadow: var(--eva-shadow-sm);
   transition: box-shadow 0.25s ease;
@@ -161,7 +197,7 @@ a {
 }
 
 .ant-btn.ant-btn-default {
-  background: var(--eva-bg-subtle);
+  background: #ffffff;
   border-color: var(--eva-border);
   color: var(--eva-text);
 }
@@ -170,7 +206,7 @@ a {
 .ant-btn.ant-btn-default:focus {
   color: var(--eva-primary) !important;
   background: var(--eva-primary-soft) !important;
-  border-color: #c5caff !important;
+  border-color: var(--eva-primary) !important;
 }
 
 .ant-btn.ant-btn-primary {
@@ -193,7 +229,12 @@ a {
 }
 
 .ant-btn.ant-btn-text:hover {
-  background: var(--eva-primary-soft) !important;
+  background: var(--eva-bg-subtle) !important;
+}
+
+.ant-btn.ant-btn-link {
+  padding: 0;
+  height: auto;
 }
 
 /* ── Table ─────────────────────────────────────────────── */
@@ -257,7 +298,7 @@ a {
 .ant-pagination .ant-pagination-next {
   border-color: var(--eva-border);
   background: #fff;
-  border-radius: 6px;
+  border-radius: var(--eva-radius-sm);
 }
 
 .ant-pagination .ant-pagination-item-active {
@@ -272,14 +313,24 @@ a {
 /* ── Breadcrumb ────────────────────────────────────────── */
 
 .ant-breadcrumb,
-.ant-breadcrumb a,
 .ant-breadcrumb-link,
 .ant-breadcrumb-separator {
+  color: var(--eva-text-tertiary) !important;
+  font-size: 13px;
+}
+
+.ant-breadcrumb a {
   color: var(--eva-text-secondary) !important;
+  transition: color 0.2s ease;
 }
 
 .ant-breadcrumb a:hover {
   color: var(--eva-primary) !important;
+}
+
+.ant-breadcrumb li:last-child {
+  color: var(--eva-text) !important;
+  font-weight: 500;
 }
 
 /* ── Menu ──────────────────────────────────────────────── */
@@ -338,7 +389,7 @@ a {
 /* ── Modal ─────────────────────────────────────────────── */
 
 .ant-modal-content {
-  border-radius: 14px !important;
+  border-radius: var(--eva-radius-lg) !important;
   overflow: hidden;
 }
 
@@ -373,7 +424,7 @@ a {
 
 .ant-tag {
   font-weight: 500;
-  border-radius: 4px;
+  border-radius: var(--eva-radius-xs);
   font-size: 12px;
   padding: 1px 8px;
   line-height: 20px;
@@ -386,7 +437,7 @@ a {
 }
 
 .ant-popover-inner {
-  border-radius: 10px;
+  border-radius: var(--eva-radius-md);
   box-shadow: var(--eva-shadow-lg);
 }
 
@@ -401,14 +452,14 @@ a {
 /* ── Dropdown ──────────────────────────────────────────── */
 
 .ant-dropdown .ant-dropdown-menu {
-  border-radius: 10px;
-  padding: 6px;
+  border-radius: var(--eva-radius-md);
+  padding: var(--eva-space-1);
 }
 
 .ant-dropdown .ant-dropdown-menu-item {
-  border-radius: 6px;
+  border-radius: var(--eva-radius-sm);
   font-size: 13px;
-  padding: 6px 12px;
+  padding: var(--eva-space-2) var(--eva-space-3);
 }
 
 /* ── Eva Page System ───────────────────────────────────── */
@@ -416,8 +467,11 @@ a {
 .eva-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 28px 32px 40px;
+  gap: 20px;
+  padding: 24px 28px 40px;
+  background: var(--eva-content-bg);
+  min-height: calc(100vh - 56px);
+  border-radius: 0;
 }
 
 .eva-pageHeader {
@@ -482,9 +536,10 @@ a {
   position: relative;
   overflow: hidden;
   border: 1px solid var(--eva-border);
-  border-radius: 12px;
+  border-radius: var(--eva-radius-lg);
   background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
   transition: box-shadow 0.25s ease, transform 0.25s ease;
+  will-change: transform;
 }
 
 .eva-statCard:hover {
@@ -504,15 +559,15 @@ a {
 }
 
 .eva-statCard:nth-child(2)::before {
-  background: #34C759;
+  background: var(--eva-success);
 }
 
 .eva-statCard:nth-child(3)::before {
-  background: #FAAD14;
+  background: var(--eva-warning);
 }
 
 .eva-statCard:nth-child(4)::before {
-  background: #FF6B6B;
+  background: var(--eva-error);
 }
 
 .eva-statCard .ant-statistic-content-value {
@@ -527,9 +582,9 @@ a {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 16px 0;
-  margin-bottom: 4px;
+  gap: 12px;
+  padding: 12px 0;
+  margin-bottom: 0;
 }
 
 .eva-toolbarGroup {
@@ -562,37 +617,58 @@ a {
   font-size: 13px;
 }
 
-/* ── Responsive ────────────────────────────────────────── */
+/* ── Page Transition ──────────────────────────────────── */
 
-@media (max-width: 1200px) {
-  .eva-panelGrid,
-  .eva-dashboardSplit {
-    grid-template-columns: 1fr;
-  }
+.eva-pageTransition-enter {
+  opacity: 0;
+  transform: translateY(8px);
 }
 
-@media (max-width: 1200px) {
-  .eva-page {
-    padding: 24px;
-  }
+.eva-pageTransition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-@media (max-width: 768px) {
-  .eva-page {
-    padding: 16px 16px 28px;
-  }
-
-  .eva-pageHeader {
-    flex-direction: column;
-  }
-
-  .eva-pageActions {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .eva-panelGrid,
-  .eva-panelGrid--4 {
-    grid-template-columns: 1fr 1fr;
-  }
+.eva-pageTransition-exit {
+  opacity: 1;
 }
+
+.eva-pageTransition-exit-active {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* ── Empty State ──────────────────────────────────────── */
+
+.eva-empty {
+  padding: var(--eva-space-12) 0;
+  text-align: center;
+}
+
+.eva-empty .ant-empty-image {
+  margin-bottom: var(--eva-space-4);
+}
+
+.eva-empty .ant-empty-description {
+  color: var(--eva-text-tertiary) !important;
+  font-size: 14px;
+}
+
+/* ── Loading Skeleton ─────────────────────────────────── */
+
+@keyframes eva-skeleton-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.eva-skeleton {
+  background: linear-gradient(90deg, var(--eva-bg-subtle) 25%, var(--eva-border-soft) 50%, var(--eva-bg-subtle) 75%);
+  background-size: 200% 100%;
+  animation: eva-skeleton-pulse 1.8s ease-in-out infinite;
+  border-radius: var(--eva-radius-sm);
+}
+
+/* ── Responsive — see styles/_responsive.scss ─────────── */
+@import './styles/responsive';
