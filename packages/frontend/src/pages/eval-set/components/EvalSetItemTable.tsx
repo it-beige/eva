@@ -1,6 +1,7 @@
+import EnhancedTable from '../../../components/EnhancedTable';
 import { useState } from 'react';
 import {
-  Table,
+
   Space,
   Button,
   Popconfirm,
@@ -195,7 +196,7 @@ export const EvalSetItemTable: React.FC<EvalSetItemTableProps> = ({
   ];
 
   return (
-    <Table
+    <EnhancedTable
       rowKey="id"
       dataSource={items}
       columns={tableColumns}

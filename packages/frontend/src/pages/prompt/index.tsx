@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Input,
-  Table,
   Space,
   Dropdown,
   message,
@@ -28,6 +27,7 @@ import {
   setCurrentPrompt,
 } from '../../store/promptSlice';
 import CreatePromptModal from './components/CreatePromptModal';
+import EnhancedTable from '../../components/EnhancedTable';
 import styles from './Prompt.module.scss';
 
 const { Title, Text } = Typography;
@@ -202,7 +202,7 @@ const PromptListPage = () => {
         </Space>
       </div>
 
-      <Table
+      <EnhancedTable
         columns={columns}
         dataSource={prompts}
         rowKey="id"

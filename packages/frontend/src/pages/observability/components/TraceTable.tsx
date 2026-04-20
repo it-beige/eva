@@ -1,4 +1,5 @@
-import { Table, Tag, Tooltip, Button, Typography } from 'antd';
+import { Tag, Tooltip, Button, Typography } from 'antd';
+import EnhancedTable from '../../../components/EnhancedTable';
 import { EyeOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../../../hooks/useRedux';
 import { setPage, setPageSize } from '../../../store/observabilitySlice';
@@ -191,7 +192,7 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
   ];
 
   return (
-    <Table
+    <EnhancedTable
       columns={columns}
       dataSource={traces}
       rowKey="id"

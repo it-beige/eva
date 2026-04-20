@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Card,
-  Table,
   Button,
   Input,
   Space,
@@ -36,6 +35,7 @@ import { CreateEvalSetModal } from './components/CreateEvalSetModal';
 import PageContainer from '../../components/page/PageContainer';
 import { EvalSet, EvalSetType } from '@eva/shared';
 import { ColumnsType } from 'antd/es/table';
+import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
 import styles from './EvalSetPage.module.scss';
 
 const EVAL_SET_TYPE_COLORS: Record<string, string> = {
@@ -233,6 +233,13 @@ const EvalSetListPage = () => {
     },
   ];
 
+  const columnConfigs: ColumnConfig[] = columns
+    .filter((col: any) => col.key)
+    .map((col: any) => ({
+      key: col.key as string,
+      title: typeof col.title === 'string' ? col.title : String(col.key),
+    }));
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (keys: React.Key[]) => {
@@ -290,28 +297,29 @@ const EvalSetListPage = () => {
             )}
           </div>
         </div>
-
-        <Table
-          rowKey="id"
-          dataSource={evalSets}
-          columns={columns}
-          loading={loading}
-          rowSelection={rowSelection}
-          pagination={{
-            current: page,
-            pageSize,
-            total,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total) => `共 ${total} 条`,
-            onChange: (p, ps) => {
-              dispatch(setPage(p));
-              if (ps) dispatch(setPageSize(ps));
-            },
-          }}
-          scroll={{ x: 'max-content' }}
-        />
       </Card>
+
+      <EnhancedTable<EvalSet>
+        rowKey="id"
+        dataSource={evalSets}
+        columns={columns}
+        columnConfigs={columnConfigs}
+        loading={loading}
+        rowSelection={rowSelection}
+        pagination={{
+          current: page,
+          pageSize,
+          total,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (t) => `共 ${t} 条`,
+          onChange: (p, ps) => {
+            dispatch(setPage(p));
+            if (ps) dispatch(setPageSize(ps));
+          },
+        }}
+        scroll={{ x: 'max-content' }}
+      />
 
       <CreateEvalSetModal
         open={createModalOpen}

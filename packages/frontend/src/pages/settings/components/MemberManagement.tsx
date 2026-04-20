@@ -1,6 +1,7 @@
+import EnhancedTable from '../../../components/EnhancedTable';
 import React, { useState } from 'react';
 import {
-  Table,
+
   Button,
   Drawer,
   Form,
@@ -144,7 +145,7 @@ const MemberManagement: React.FC = () => {
         </Button>
       </div>
 
-      <Table
+      <EnhancedTable
         columns={columns}
         dataSource={members}
         rowKey="id"

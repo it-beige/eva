@@ -1,5 +1,6 @@
 import React from 'react';
-import { Table, Tag, Badge, Tooltip } from 'antd';
+import { Tag, Badge, Tooltip } from 'antd';
+import EnhancedTable from '../../../components/EnhancedTable';
 import type { ColumnsType } from 'antd/es/table';
 import {
   TrophyOutlined,
@@ -112,7 +113,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   ];
 
   return (
-    <Table
+    <EnhancedTable
       columns={columns}
       dataSource={data}
       rowKey={(record) =>

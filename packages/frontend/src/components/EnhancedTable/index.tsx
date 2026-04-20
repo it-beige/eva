@@ -1,10 +1,13 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Table, Popover, Checkbox, Button, Divider } from 'antd';
+import { Table, Popover, Checkbox, Button, Divider, Tooltip } from 'antd';
 import {
   SettingOutlined,
-  ColumnHeightOutlined,
+  UnorderedListOutlined,
+  ColumnWidthOutlined,
+  AppstoreOutlined,
   EyeOutlined,
   EyeInvisibleOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import type { TableProps, ColumnsType } from 'antd/es/table';
 import type { TablePaginationConfig } from 'antd/es/table';
@@ -36,6 +39,10 @@ export interface EnhancedTableProps<T> extends Omit<TableProps<T>, 'columns' | '
   defaultSortBy?: string;
   /** 默认排序方式 */
   defaultSortOrder?: 'asc' | 'desc';
+  /** 默认密度模式 */
+  defaultDensity?: TableDensity;
+  /** 是否启用列的 ellipsis 功能（省略号+tooltip） */
+  enableEllipsis?: boolean;
   /** 表格变化回调 */
   onTableChange?: (
     pagination: TablePaginationConfig,
@@ -59,11 +66,13 @@ function EnhancedTable<T extends object>({
   pagination,
   defaultSortBy,
   defaultSortOrder = 'desc',
+  defaultDensity = 'default',
+  enableEllipsis = false,
   onTableChange,
   ...tableProps
 }: EnhancedTableProps<T>) {
   // 密度模式状态
-  const [density, setDensity] = useState<TableDensity>('default');
+  const [density, setDensity] = useState<TableDensity>(defaultDensity);
   
   // 列可见性状态
   const [visibleColumnKeys, setVisibleColumnKeys] = useState<Set<string>>(() => {
@@ -90,14 +99,53 @@ function EnhancedTable<T extends object>({
     }
   }, [density]);
 
+  /** 处理ellipsis和tooltip */
+  const processColumns = useCallback(
+    (cols: ColumnsType<T>): ColumnsType<T> => {
+      if (!enableEllipsis) return cols;
+
+      return cols.map((col) => {
+        // 如果列已经有 ellipsis 配置，跳过
+        if (col.ellipsis !== undefined) return col;
+
+        // 为文本列添加 ellipsis
+        return {
+          ...col,
+          ellipsis: {
+            showTitle: false,
+          },
+          render: (text: any, record: T, index: number) => {
+            // 调用原始 render 函数（如果有）
+            const originalRender = (col as any).render;
+            const content = originalRender ? originalRender(text, record, index) : text;
+
+            // 如果是字符串或数字，添加 tooltip
+            if (typeof content === 'string' || typeof content === 'number') {
+              return (
+                <Tooltip title={String(content)}>
+                  <span>{content}</span>
+                </Tooltip>
+              );
+            }
+
+            // 其他类型（如 JSX）直接返回
+            return content;
+          },
+        };
+      });
+    },
+    [enableEllipsis],
+  );
+
   /** 过滤可见列 */
   const visibleColumns = useMemo(() => {
-    if (!columnConfigs) return columns;
-    return columns.filter((col: any) => {
+    if (!columnConfigs) return processColumns(columns);
+    const filtered = columns.filter((col: any) => {
       const key = col.key || col.dataIndex;
       return visibleColumnKeys.has(key as string);
     });
-  }, [columns, columnConfigs, visibleColumnKeys]);
+    return processColumns(filtered);
+  }, [columns, columnConfigs, visibleColumnKeys, processColumns]);
 
   /** 处理表格变化 */
   const handleTableChange = useCallback(
@@ -132,18 +180,18 @@ function EnhancedTable<T extends object>({
     () => [
       {
         mode: 'compact' as TableDensity,
-        icon: <ColumnHeightOutlined style={{ fontSize: 14 }} />,
-        tooltip: '紧凑',
+        icon: <UnorderedListOutlined style={{ fontSize: 16 }} />,
+        tooltip: '紧凑模式 - 适合查看大量数据',
       },
       {
         mode: 'default' as TableDensity,
-        icon: <ColumnHeightOutlined style={{ fontSize: 16 }} />,
-        tooltip: '标准',
+        icon: <ColumnWidthOutlined style={{ fontSize: 16 }} />,
+        tooltip: '标准模式 - 平衡信息显示',
       },
       {
         mode: 'comfortable' as TableDensity,
-        icon: <ColumnHeightOutlined style={{ fontSize: 18 }} />,
-        tooltip: '宽松',
+        icon: <AppstoreOutlined style={{ fontSize: 16 }} />,
+        tooltip: '宽松模式 - 适合详细数据展示',
       },
     ],
     [],
@@ -191,40 +239,52 @@ function EnhancedTable<T extends object>({
 
     return (
       <div className={styles.toolbar}>
-        {/* 密度切换按钮组 */}
-        <div className={styles.densityGroup}>
-          {densityButtons.map((btn) => (
-            <Button
-              key={btn.mode}
-              type={density === btn.mode ? 'primary' : 'default'}
-              size="small"
-              icon={btn.icon}
-              onClick={() => setDensity(btn.mode)}
-              title={btn.tooltip}
-              className={styles.densityBtn}
-            />
-          ))}
-        </div>
+        {/* 右侧：密度调节 + 列管理 */}
+        <div className={styles.toolbarRight}>
+          {/* 密度切换按钮组 */}
+          <div className={styles.densityGroup}>
+            {densityButtons.map((btn) => (
+              <Tooltip key={btn.mode} title={btn.tooltip} placement="top">
+                <Button
+                  type={density === btn.mode ? 'primary' : 'default'}
+                  size="small"
+                  icon={btn.icon}
+                  onClick={() => setDensity(btn.mode)}
+                  className={styles.densityBtn}
+                />
+              </Tooltip>
+            ))}
+          </div>
 
-        {/* 列管理按钮 */}
-        <Popover
-          content={columnManagerContent}
-          title="列管理"
-          trigger="click"
-          open={columnManagerOpen}
-          onOpenChange={setColumnManagerOpen}
-          placement="bottomRight"
-          overlayClassName={styles.columnManagerPopover}
-        >
-          <Button
-            type={columnManagerOpen ? 'primary' : 'default'}
-            size="small"
-            icon={<SettingOutlined />}
-            className={styles.columnManagerBtn}
+          {/* 列管理按钮 */}
+          <Popover
+            content={columnManagerContent}
+            title={
+              <div className={styles.popoverTitle}>
+                <span>列管理</span>
+                <Tooltip title="自定义表格列的显示与隐藏，拖动列名可调整显示顺序" placement="top">
+                  <QuestionCircleOutlined style={{ marginLeft: 8, color: '#8c8c8c', cursor: 'help' }} />
+                </Tooltip>
+              </div>
+            }
+            trigger="click"
+            open={columnManagerOpen}
+            onOpenChange={setColumnManagerOpen}
+            placement="bottomRight"
+            overlayClassName={styles.columnManagerPopover}
           >
-            列管理
-          </Button>
-        </Popover>
+            <Tooltip title="管理表格列的显示与隐藏" placement="top">
+              <Button
+                type={columnManagerOpen ? 'primary' : 'default'}
+                size="small"
+                icon={<SettingOutlined />}
+                className={styles.columnManagerBtn}
+              >
+                列管理
+              </Button>
+            </Tooltip>
+          </Popover>
+        </div>
       </div>
     );
   };

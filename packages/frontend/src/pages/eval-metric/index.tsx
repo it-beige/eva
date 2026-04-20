@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import {
   Card,
-  Table,
   Button,
   Input,
   Tabs,
@@ -36,6 +35,7 @@ import PageContainer from '../../components/page/PageContainer';
 import { MetricScope, MetricType, EvalMetric, METRIC_TYPE_LABELS } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
 import type { MenuProps } from 'antd';
+import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
 import styles from './EvalMetricPage.module.scss';
 
 const EvalMetricListPage: React.FC = () => {
@@ -211,6 +211,13 @@ const EvalMetricListPage: React.FC = () => {
     },
   ];
 
+  const columnConfigs: ColumnConfig[] = columns
+    .filter((col: any) => col.key)
+    .map((col: any) => ({
+      key: col.key as string,
+      title: typeof col.title === 'string' ? col.title : String(col.key),
+    }));
+
   const rowSelection = {
     selectedRowKeys,
     onChange: handleRowSelection,
@@ -274,25 +281,26 @@ const EvalMetricListPage: React.FC = () => {
             )}
           </div>
         </div>
-
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={items}
-          loading={loading}
-          rowSelection={rowSelection}
-          pagination={{
-            current: page,
-            pageSize,
-            total,
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total) => `共 ${total} 条`,
-            onChange: handlePageChange,
-          }}
-          scroll={{ x: 1200 }}
-        />
       </Card>
+
+      <EnhancedTable<EvalMetric>
+        rowKey="id"
+        columns={columns}
+        columnConfigs={columnConfigs}
+        dataSource={items}
+        loading={loading}
+        rowSelection={rowSelection}
+        pagination={{
+          current: page,
+          pageSize,
+          total,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (t) => `共 ${t} 条`,
+          onChange: handlePageChange,
+        }}
+        scroll={{ x: 1200 }}
+      />
 
       <CreateMetricModal
         visible={createModalVisible}

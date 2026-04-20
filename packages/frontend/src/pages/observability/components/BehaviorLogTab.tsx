@@ -1,4 +1,5 @@
-import { Table, Tag, Typography } from 'antd';
+import { Tag, Typography } from 'antd';
+import EnhancedTable from '../../../components/EnhancedTable';
 import { useAppSelector } from '../../../hooks/useRedux';
 import dayjs from 'dayjs';
 import styles from './BehaviorLogTab.module.scss';
@@ -117,7 +118,7 @@ const BehaviorLogTab = () => {
   ];
 
   return (
-    <Table
+    <EnhancedTable
       columns={columns}
       dataSource={behaviorLogs}
       rowKey="id"

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Card,
-  Table,
   Button,
   Input,
   Select,
@@ -43,6 +42,7 @@ import { EvalTaskStatus, EVAL_TASK_STATUS_LABELS } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
 import type { EvalTaskWithEvalSet } from '../../services/evalTaskApi';
 import PageContainer from '../../components/page/PageContainer';
+import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
 import styles from './EvalTaskListPage.module.scss';
 
 const { Text, Link } = Typography;
@@ -243,6 +243,13 @@ const EvalTaskListPage: React.FC = () => {
     },
   ];
 
+  const columnConfigs: ColumnConfig[] = columns
+    .filter((col: any) => col.key)
+    .map((col: any) => ({
+      key: col.key as string,
+      title: typeof col.title === 'string' ? col.title : String(col.key),
+    }));
+
   const rowSelection = {
     selectedRowKeys: selectedTaskIds,
     onChange: (selectedRowKeys: React.Key[]) => {
@@ -350,26 +357,25 @@ const EvalTaskListPage: React.FC = () => {
         </div>
       </Card>
 
-      <Card>
-        <Table
-          rowKey="id"
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={tasks}
-          loading={loading}
-          pagination={{
-            current: page,
-            pageSize,
-            total,
-            showSizeChanger: true,
-            showTotal: (total) => `共 ${total} 条`,
-            onChange: (page, pageSize) => {
-              dispatch(setPage(page));
-              dispatch(setPageSize(pageSize));
-            },
-          }}
-        />
-      </Card>
+      <EnhancedTable<EvalTaskWithEvalSet>
+        rowKey="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        columnConfigs={columnConfigs}
+        dataSource={tasks}
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize,
+          total,
+          showSizeChanger: true,
+          showTotal: (total) => `共 ${total} 条`,
+          onChange: (p, ps) => {
+            dispatch(setPage(p));
+            dispatch(setPageSize(ps));
+          },
+        }}
+      />
     </PageContainer>
   );
 };

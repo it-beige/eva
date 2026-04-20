@@ -1,13 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
   Card,
-  Table,
   Button,
   Input,
   Tag,
   Dropdown,
-  Pagination,
-  Row,
   Tooltip,
   Empty,
   Modal,
@@ -38,6 +35,7 @@ import PageContainer from '../../components/page/PageContainer';
 import { AutoEvalStatus } from '@eva/shared';
 import type { AutoEval } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
+import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
 import styles from './AutoEvalListPage.module.scss';
 
 const statusMap: Record<AutoEvalStatus, { color: string; text: string }> = {
@@ -179,6 +177,13 @@ const AutoEvalListPage = () => {
     },
   ];
 
+  const columnConfigs: ColumnConfig[] = columns
+    .filter((col: any) => col.key)
+    .map((col: any) => ({
+      key: col.key as string,
+      title: typeof col.title === 'string' ? col.title : String(col.key),
+    }));
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
@@ -223,44 +228,38 @@ const AutoEvalListPage = () => {
             </Tooltip>
           </div>
         </div>
-
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={items}
-          rowKey="id"
-          loading={loading}
-          pagination={false}
-          locale={{
-            emptyText: (
-              <Empty
-                description="暂无数据"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
-            ),
-          }}
-        />
-
-        <Row justify="end" className={styles.paginationRow}>
-          <Pagination
-            current={page}
-            pageSize={pageSize}
-            total={total}
-            showSizeChanger
-            showQuickJumper
-            showTotal={(total) => `共 ${total} 条`}
-            onChange={(newPage, newPageSize) => {
-              dispatch(setPage(newPage));
-              if (newPageSize !== pageSize) {
-                dispatch(setPageSize(newPageSize));
-              }
-            }}
-            onShowSizeChange={(_, newSize) => {
-              dispatch(setPageSize(newSize));
-            }}
-          />
-        </Row>
       </Card>
+
+      <EnhancedTable<AutoEval>
+        rowSelection={rowSelection}
+        columns={columns}
+        columnConfigs={columnConfigs}
+        dataSource={items}
+        rowKey="id"
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize,
+          total,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (t) => `共 ${t} 条`,
+          onChange: (newPage, newPageSize) => {
+            dispatch(setPage(newPage));
+            if (newPageSize !== pageSize) {
+              dispatch(setPageSize(newPageSize));
+            }
+          },
+        }}
+        locale={{
+          emptyText: (
+            <Empty
+              description="暂无数据"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
+        }}
+      />
     </PageContainer>
   );
 };

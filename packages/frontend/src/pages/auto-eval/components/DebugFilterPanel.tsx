@@ -1,8 +1,9 @@
+import EnhancedTable from '../../../components/EnhancedTable';
 import { useState } from 'react';
 import {
   DatePicker,
   Button,
-  Table,
+
   Empty,
   Spin,
   message,
@@ -112,11 +113,11 @@ const DebugFilterPanel = ({
       {/* 结果表格 */}
       <Spin spinning={debugLoading}>
         {debugFilterResults.length > 0 ? (
-          <Table
+          <EnhancedTable
             columns={columns}
             dataSource={debugFilterResults}
             rowKey="traceId"
-            size="small"
+            defaultDensity="compact"
             pagination={false}
             scroll={{ y: 200 }}
           />

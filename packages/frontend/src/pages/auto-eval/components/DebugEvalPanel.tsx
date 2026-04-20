@@ -1,6 +1,7 @@
+import EnhancedTable from '../../../components/EnhancedTable';
 import {
   Button,
-  Table,
+
   Empty,
   Spin,
   message,
@@ -109,11 +110,11 @@ const DebugEvalPanel = ({ filterRules, sampleRate, dateRange }: DebugEvalPanelPr
       {/* 结果表格 */}
       <Spin spinning={debugLoading}>
         {debugEvalResults.length > 0 ? (
-          <Table
+          <EnhancedTable
             columns={columns}
             dataSource={debugEvalResults}
             rowKey={(_, index) => `eval-${index}`}
-            size="small"
+            defaultDensity="compact"
             pagination={false}
             scroll={{ y: 200 }}
           />

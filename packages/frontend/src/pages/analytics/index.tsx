@@ -1,4 +1,5 @@
-import { Button, Card, Progress, Space, Statistic, Table, Tag, Typography } from 'antd';
+import { Button, Card, Progress, Space, Statistic, Tag, Typography } from 'antd';
+import EnhancedTable from '../../components/EnhancedTable';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import PageContainer from '../../components/page/PageContainer';
@@ -82,7 +83,7 @@ const AnalyticsPage = () => {
               </Title>
             </div>
             <Progress percent={93} strokeColor="#ff8a3d" railColor="rgba(255,255,255,0.06)" />
-            <Table columns={qualityColumns} dataSource={qualityData} pagination={false} />
+            <EnhancedTable columns={qualityColumns} dataSource={qualityData} pagination={false} />
           </Space>
         </Card>
 

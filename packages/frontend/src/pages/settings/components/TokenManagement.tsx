@@ -1,6 +1,7 @@
+import EnhancedTable from '../../../components/EnhancedTable';
 import React, { useEffect, useState } from 'react';
 import {
-  Table,
+
   Button,
   Drawer,
   Modal,
@@ -189,7 +190,7 @@ const TokenManagement: React.FC = () => {
         </Button>
       </div>
 
-      <Table
+      <EnhancedTable
         columns={columns}
         dataSource={tokens}
         rowKey="id"
