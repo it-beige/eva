@@ -48,12 +48,6 @@ export const topNavItems = [
   { key: 'evaluation', label: '应用评测', path: '/eval/tasks' },
 ] as const;
 
-export const workspaceOptions = [
-  { value: 'project1', label: 'AI评测 · 战略部项目' },
-  { value: 'project2', label: 'AI评测 · 产品部项目' },
-  { value: 'project3', label: 'AI评测 · 公共能力平台' },
-];
-
 export const evaluationMenuItems: ShellMenuItem[] = [
   {
     type: 'group',

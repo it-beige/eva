@@ -10,12 +10,12 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { LoginOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import type { SorterResult } from 'antd/es/table/interface';
 import { ProjectSource } from '@eva/shared';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
-import { fetchProjects, deleteProject, setPage, setPageSize } from '../../store/projectSlice';
+import { fetchProjects, deleteProject, selectProject, setPage, setPageSize } from '../../store/projectSlice';
 import type { ProjectItem } from '../../services/projectApi';
 import { getCurrentUser } from '../../auth/session';
 import styles from './ProjectList.module.scss';
@@ -96,6 +96,11 @@ const ProjectListPage = () => {
         }
       },
     });
+  };
+
+  const handleEnterProject = (project: ProjectItem) => {
+    dispatch(selectProject(project));
+    navigate('/eval/tasks');
   };
 
   const canManageProject = (project: ProjectItem): boolean => {
@@ -209,31 +214,40 @@ const ProjectListPage = () => {
     {
       title: '操作',
       key: 'action',
-      width: 120,
+      width: 180,
       fixed: 'right',
-      render: (_: unknown, record: ProjectItem) => {
-        if (!canManageProject(record)) return null;
-        return (
-          <Space>
-            <Button
-              type="link"
-              size="small"
-              className={styles.actionLink}
-              onClick={() => navigate(`/projects/${record.projectId}/edit`)}
-            >
-              编辑
-            </Button>
-            <Button
-              type="link"
-              size="small"
-              className={styles.deleteLink}
-              onClick={() => handleDelete(record)}
-            >
-              删除
-            </Button>
-          </Space>
-        );
-      },
+      render: (_: unknown, record: ProjectItem) => (
+        <Space>
+          <Button
+            type="link"
+            size="small"
+            icon={<LoginOutlined />}
+            onClick={() => handleEnterProject(record)}
+          >
+            进入
+          </Button>
+          {canManageProject(record) && (
+            <>
+              <Button
+                type="link"
+                size="small"
+                className={styles.actionLink}
+                onClick={() => navigate(`/projects/${record.projectId}/edit`)}
+              >
+                编辑
+              </Button>
+              <Button
+                type="link"
+                size="small"
+                className={styles.deleteLink}
+                onClick={() => handleDelete(record)}
+              >
+                删除
+              </Button>
+            </>
+          )}
+        </Space>
+      ),
     },
   ];
 

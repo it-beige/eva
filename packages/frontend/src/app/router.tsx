@@ -6,6 +6,7 @@ import ObservabilityLayout from '../layouts/ObservabilityLayout';
 import PageLoading from '../components/feedback/PageLoading';
 import AuthGuard from '../auth/AuthGuard';
 import PermissionGuard from '../auth/PermissionGuard';
+import ProjectGuard from '../auth/ProjectGuard';
 
 // Lazy load all page components
 const EvalTaskListPage = lazy(() => import('../pages/eval-task/index'));
@@ -74,7 +75,9 @@ export const router = createBrowserRouter(
       path: '/eval',
       element: (
         <AuthGuard>
-          <MainLayout />
+          <ProjectGuard>
+            <MainLayout />
+          </ProjectGuard>
         </AuthGuard>
       ),
       children: [
@@ -148,7 +151,9 @@ export const router = createBrowserRouter(
       path: '/observability',
       element: (
         <AuthGuard>
-          <ObservabilityLayout />
+          <ProjectGuard>
+            <ObservabilityLayout />
+          </ProjectGuard>
         </AuthGuard>
       ),
       children: [
@@ -166,7 +171,9 @@ export const router = createBrowserRouter(
       path: '/analytics',
       element: (
         <AuthGuard>
-          <MainLayout />
+          <ProjectGuard>
+            <MainLayout />
+          </ProjectGuard>
         </AuthGuard>
       ),
       children: [

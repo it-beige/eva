@@ -4,6 +4,17 @@ import projectApi, {
   type ProjectItem,
 } from '../services/projectApi';
 
+const SELECTED_PROJECT_KEY = 'eva_selected_project';
+
+function loadSelectedProject(): ProjectItem | null {
+  try {
+    const raw = localStorage.getItem(SELECTED_PROJECT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 interface ProjectState {
   list: ProjectItem[];
   total: number;
@@ -13,6 +24,7 @@ interface ProjectState {
   error: string | null;
   currentProject: ProjectItem | null;
   currentProjectLoading: boolean;
+  selectedProject: ProjectItem | null;
 }
 
 const initialState: ProjectState = {
@@ -24,6 +36,7 @@ const initialState: ProjectState = {
   error: null,
   currentProject: null,
   currentProjectLoading: false,
+  selectedProject: loadSelectedProject(),
 };
 
 export const fetchProjects = createAsyncThunk(
@@ -54,6 +67,14 @@ const projectSlice = createSlice({
   reducers: {
     clearCurrentProject(state) {
       state.currentProject = null;
+    },
+    selectProject(state, action: PayloadAction<ProjectItem>) {
+      state.selectedProject = action.payload;
+      localStorage.setItem(SELECTED_PROJECT_KEY, JSON.stringify(action.payload));
+    },
+    clearSelectedProject(state) {
+      state.selectedProject = null;
+      localStorage.removeItem(SELECTED_PROJECT_KEY);
     },
     setPage(state, action: PayloadAction<number>) {
       state.page = action.payload;
@@ -96,5 +117,5 @@ const projectSlice = createSlice({
   },
 });
 
-export const { clearCurrentProject, setPage, setPageSize } = projectSlice.actions;
+export const { clearCurrentProject, selectProject, clearSelectedProject, setPage, setPageSize } = projectSlice.actions;
 export default projectSlice.reducer;

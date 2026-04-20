@@ -1,4 +1,4 @@
-import { Button, Layout, Menu, Select } from 'antd';
+import { Button, Layout, Menu } from 'antd';
 import {
   LeftOutlined,
   RightOutlined,
@@ -6,6 +6,7 @@ import {
   BookOutlined,
   SmileOutlined,
   CustomerServiceOutlined,
+  SwapOutlined,
 } from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import type { MenuProps } from 'antd';
@@ -13,10 +14,10 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { setActiveTopNav, toggleSidebar } from '../../store/uiSlice';
 import {
   topNavItems,
-  workspaceOptions,
   getTopNavFromPath,
   type ShellMenuItem,
 } from '../../app/navigation';
+import { clearSelectedProject } from '../../store/projectSlice';
 import { clearSession, getCurrentUser, hasRole } from '../../auth/session';
 import styles from './AppShell.module.scss';
 
@@ -31,6 +32,7 @@ const AppShell = ({ menuItems }: AppShellProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { sidebarCollapsed } = useAppSelector((state) => state.ui);
+  const selectedProject = useAppSelector((state) => state.project.selectedProject);
   const activeTopNav = getTopNavFromPath(location.pathname);
   const currentUser = getCurrentUser();
 
@@ -150,7 +152,28 @@ const AppShell = ({ menuItems }: AppShellProps) => {
             <div className={styles.siderHeader}>
               {!sidebarCollapsed && (
                 <div className={styles.projectSelector}>
-                  <Select defaultValue="project1" options={workspaceOptions} />
+                  {selectedProject ? (
+                    <Button
+                      type="text"
+                      block
+                      className={styles.projectSwitchBtn}
+                      icon={<SwapOutlined />}
+                      onClick={() => {
+                        dispatch(clearSelectedProject());
+                        navigate('/projects');
+                      }}
+                    >
+                      {selectedProject.projectName}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="text"
+                      block
+                      onClick={() => navigate('/projects')}
+                    >
+                      选择项目
+                    </Button>
+                  )}
                 </div>
               )}
               <Button
