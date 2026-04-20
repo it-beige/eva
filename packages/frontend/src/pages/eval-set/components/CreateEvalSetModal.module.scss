@@ -1,59 +1,72 @@
 .sourceGrid {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .sourceCard {
-  width: 130px;
   cursor: pointer;
   text-align: center;
   transition: all 0.2s ease;
-  border: 1px solid var(--eva-border);
-}
+  border: 2px solid var(--eva-border) !important;
+  border-radius: 10px !important;
+  padding: 16px 12px !important;
 
-.sourceCard:hover {
-  border-color: var(--eva-primary);
+  &:hover {
+    border-color: var(--eva-primary) !important;
+    box-shadow: 0 2px 8px rgba(90, 99, 255, 0.1);
+    transform: translateY(-1px);
+  }
 }
 
 .sourceCardActive {
   border: 2px solid var(--eva-primary) !important;
-  background: var(--eva-primary-soft);
+  background: var(--eva-primary-soft) !important;
+  box-shadow: 0 0 0 1px var(--eva-primary), 0 2px 8px rgba(90, 99, 255, 0.15) !important;
 }
 
 .sourceIcon {
-  font-size: 24px;
-  margin-bottom: 8px;
+  font-size: 28px;
+  margin-bottom: 10px;
   color: var(--eva-primary);
 }
 
 .sourceLabel {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--eva-text);
+  margin-bottom: 4px;
 }
 
 .sourceDescription {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--eva-text-tertiary);
+  line-height: 1.4;
 }
 
 .typeCard {
   cursor: pointer;
   text-align: center;
   transition: all 0.2s ease;
-  border: 1px solid var(--eva-border);
-}
+  border: 2px solid var(--eva-border) !important;
+  border-radius: 10px !important;
+  padding: 20px 16px !important;
 
-.typeCard:hover {
-  border-color: var(--eva-primary);
+  &:hover {
+    border-color: var(--eva-primary) !important;
+  }
 }
 
 .typeCardActive {
   border: 2px solid var(--eva-primary) !important;
-  background: var(--eva-primary-soft);
+  background: var(--eva-primary-soft) !important;
+  box-shadow: 0 0 0 1px var(--eva-primary) !important;
 }
 
 .typeLabel {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--eva-text);
 }
 
 .codeSourceOption {
@@ -62,6 +75,7 @@
   display: flex;
   align-items: center;
   padding: 0 16px;
+  border-radius: 8px !important;
 }
 
 .codeSourceIcon {
@@ -74,4 +88,8 @@
   margin-bottom: 16px;
   color: var(--eva-text-secondary);
   font-size: 13px;
+  padding: 10px 14px;
+  background: #f8f9fc;
+  border-radius: 8px;
+  border-left: 3px solid var(--eva-primary);
 }

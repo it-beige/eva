@@ -1,13 +1,15 @@
 .searchInput {
-  width: 240px;
+  width: 260px;
 }
 
 .nameLink {
-  font-weight: 500;
   color: var(--eva-primary);
+  font-weight: 500;
   cursor: pointer;
-}
+  transition: color 0.15s ease;
 
-.nameLink:hover {
-  text-decoration: underline;
+  &:hover {
+    color: var(--eva-primary-hover);
+    text-decoration: underline;
+  }
 }

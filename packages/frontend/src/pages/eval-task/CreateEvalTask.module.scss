@@ -1,58 +1,79 @@
+.page {
+  padding: 24px;
+}
+
 .breadcrumb {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .breadcrumbLink {
+  color: var(--eva-primary);
   cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .breadcrumbSeparator {
   margin: 0 8px;
+  color: var(--eva-text-tertiary);
 }
 
 .section {
   margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--eva-border-soft);
+
+  &:last-of-type {
+    border-bottom: none;
+    margin-bottom: 16px;
+  }
 }
 
 .sectionHeader {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .sectionIndex {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--eva-primary);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
-  border-radius: 999px;
-  background: var(--eva-primary);
-  color: #fff;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .sectionTitle {
   margin: 0 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--eva-text) !important;
 }
 
 .fullWidthInput {
-  width: 100%;
+  width: 100% !important;
+}
+
+.footerActions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--eva-border-soft);
 }
 
 .collapseContent {
-  padding: 8px 0;
+  padding: 12px 0;
 }
 
 .audioConfigRow {
   margin-top: 16px;
 }
-
-.footerActions {
-  margin-top: 32px;
-  margin-bottom: 0 !important;
-}
-
-

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Breadcrumb, Space, Typography } from 'antd';
+import { Breadcrumb, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { usePageMeta } from '../../hooks/usePageMeta';
 
@@ -40,14 +40,12 @@ const PageContainer = ({ title, description, extra, content, children }: PageCon
           <div className="eva-pageEyebrow">
             <Breadcrumb items={breadcrumbItems} />
           </div>
-          <Space orientation="vertical" size={10}>
-            <Title level={1} className="eva-pageTitle">
-              {title ?? meta.title}
-            </Title>
-            <Paragraph className="eva-pageDescription">
-              {description ?? meta.description}
-            </Paragraph>
-          </Space>
+          <Title level={1} className="eva-pageTitle">
+            {title ?? meta.title}
+          </Title>
+          <Paragraph className="eva-pageDescription">
+            {description ?? meta.description}
+          </Paragraph>
         </div>
         {extra ? <div className="eva-pageActions">{extra}</div> : null}
       </div>

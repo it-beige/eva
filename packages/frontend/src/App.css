@@ -80,14 +80,18 @@ a {
 
 .ant-card {
   border: 1px solid var(--eva-border);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--eva-surface);
   box-shadow: var(--eva-shadow-sm);
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.25s ease;
 }
 
 .ant-card:hover {
   box-shadow: var(--eva-shadow);
+}
+
+.ant-card .ant-card-body {
+  padding: 20px 24px;
 }
 
 .ant-select-dropdown,
@@ -196,25 +200,54 @@ a {
 
 .ant-table {
   background: transparent !important;
+  font-size: 13px;
 }
 
 .ant-table-thead > tr > th,
 .ant-table-thead > tr > td {
   color: var(--eva-text-secondary) !important;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  background: var(--eva-bg-subtle) !important;
+  letter-spacing: 0.04em;
+  background: #f8f9fc !important;
   border-bottom: 1px solid var(--eva-border) !important;
+  padding: 12px 16px !important;
 }
 
 .ant-table-tbody > tr > td {
   border-bottom-color: var(--eva-border-soft) !important;
+  padding: 14px 16px !important;
+  color: var(--eva-text);
 }
 
 .ant-table-tbody > tr.ant-table-row:hover > td {
-  background: #f0f3ff !important;
+  background: #f5f7ff !important;
+}
+
+.ant-table-tbody > tr.ant-table-row:last-child > td {
+  border-bottom-color: transparent !important;
+}
+
+/* Table inside Card — seamless integration */
+.ant-card .ant-table-wrapper {
+  margin: -1px -1px 0;
+}
+
+.ant-card .ant-table {
+  border-radius: 0 !important;
+}
+
+.ant-card .ant-table-container {
+  border-radius: 0 !important;
+}
+
+.ant-card .ant-table-thead > tr > th:first-child {
+  border-start-start-radius: 0 !important;
+}
+
+.ant-card .ant-table-thead > tr > th:last-child {
+  border-start-end-radius: 0 !important;
 }
 
 /* ── Pagination ────────────────────────────────────────── */
@@ -283,6 +316,23 @@ a {
   padding: 10px 4px;
   font-size: 14px;
   font-weight: 500;
+  color: var(--eva-text-secondary);
+  transition: color 0.2s ease;
+}
+
+.ant-tabs .ant-tabs-tab:hover {
+  color: var(--eva-primary);
+}
+
+.ant-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--eva-primary) !important;
+  font-weight: 600;
+}
+
+.ant-tabs .ant-tabs-ink-bar {
+  background: var(--eva-primary);
+  height: 2.5px !important;
+  border-radius: 2px;
 }
 
 /* ── Modal ─────────────────────────────────────────────── */
@@ -324,6 +374,41 @@ a {
 .ant-tag {
   font-weight: 500;
   border-radius: 4px;
+  font-size: 12px;
+  padding: 1px 8px;
+  line-height: 20px;
+}
+
+/* ── Popconfirm / Popover ──────────────────────────────── */
+
+.ant-popconfirm .ant-popconfirm-title {
+  font-weight: 600;
+}
+
+.ant-popover-inner {
+  border-radius: 10px;
+  box-shadow: var(--eva-shadow-lg);
+}
+
+/* ── Badge ─────────────────────────────────────────────── */
+
+.ant-badge .ant-badge-count {
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+/* ── Dropdown ──────────────────────────────────────────── */
+
+.ant-dropdown .ant-dropdown-menu {
+  border-radius: 10px;
+  padding: 6px;
+}
+
+.ant-dropdown .ant-dropdown-menu-item {
+  border-radius: 6px;
+  font-size: 13px;
+  padding: 6px 12px;
 }
 
 /* ── Eva Page System ───────────────────────────────────── */
@@ -331,15 +416,16 @@ a {
 .eva-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px;
+  gap: 24px;
+  padding: 28px 32px 40px;
 }
 
 .eva-pageHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 24px;
+  margin-bottom: 4px;
 }
 
 .eva-pageTitleBlock {
@@ -347,25 +433,26 @@ a {
 }
 
 .eva-pageEyebrow {
-  margin-bottom: 6px;
-  color: var(--eva-text-secondary);
-  font-size: 13px;
+  margin-bottom: 8px;
+  color: var(--eva-text-tertiary);
+  font-size: 12px;
 }
 
 .eva-pageTitle {
   margin: 0 !important;
   color: var(--eva-text) !important;
-  font-size: 20px !important;
-  line-height: 1.35 !important;
+  font-size: 22px !important;
+  line-height: 1.3 !important;
   font-weight: 700 !important;
-  letter-spacing: -0.01em !important;
+  letter-spacing: -0.02em !important;
 }
 
 .eva-pageDescription {
-  margin: 4px 0 0 !important;
+  margin: 6px 0 0 !important;
   color: var(--eva-text-secondary) !important;
-  font-size: 13px !important;
-  line-height: 1.75 !important;
+  font-size: 13.5px !important;
+  line-height: 1.7 !important;
+  max-width: 720px;
 }
 
 .eva-pageActions {
@@ -374,6 +461,8 @@ a {
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+  padding-top: 4px;
 }
 
 /* ── Stat Cards ────────────────────────────────────────── */
@@ -384,13 +473,23 @@ a {
   gap: 16px;
 }
 
+.eva-panelGrid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .eva-statCard {
   min-height: 110px;
   position: relative;
   overflow: hidden;
   border: 1px solid var(--eva-border);
-  border-radius: 10px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.eva-statCard:hover {
+  box-shadow: var(--eva-shadow);
+  transform: translateY(-1px);
 }
 
 .eva-statCard::before {
@@ -429,6 +528,8 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  padding: 16px 0;
+  margin-bottom: 4px;
 }
 
 .eva-toolbarGroup {
@@ -470,9 +571,15 @@ a {
   }
 }
 
+@media (max-width: 1200px) {
+  .eva-page {
+    padding: 24px;
+  }
+}
+
 @media (max-width: 768px) {
   .eva-page {
-    padding: 16px;
+    padding: 16px 16px 28px;
   }
 
   .eva-pageHeader {
@@ -482,5 +589,10 @@ a {
   .eva-pageActions {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .eva-panelGrid,
+  .eva-panelGrid--4 {
+    grid-template-columns: 1fr 1fr;
   }
 }

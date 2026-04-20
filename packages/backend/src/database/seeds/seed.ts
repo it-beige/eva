@@ -9,12 +9,14 @@ import {
   EvalMetric,
   Prompt,
 } from '../entities';
+import * as allEntities from '../entities';
 import {
   EvalSetType,
   EvalSetSourceType,
   MetricType,
   MetricScope,
   UserRole,
+  ProjectSource,
 } from '@eva/shared';
 
 // 生成6位shortId
@@ -30,7 +32,7 @@ async function seed() {
     username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || 'postgres',
     database: process.env.DB_DATABASE || 'eva',
-    entities: [Project, AIApplication, AppVersion, User, EvalSet, EvalMetric, Prompt],
+    entities: Object.values(allEntities),
     synchronize: false,
   });
 
@@ -63,6 +65,26 @@ async function seed() {
       console.log('Admin user already exists:', adminUser.name);
     }
 
+    // Create additional demo users
+    const demoUsers: User[] = [adminUser];
+    const demoUserData = [
+      { name: '张三', employeeId: 'user001', role: UserRole.USER },
+      { name: '李四', employeeId: 'user002', role: UserRole.USER },
+      { name: '王五', employeeId: 'user003', role: UserRole.USER },
+      { name: '赵六', employeeId: 'user004', role: UserRole.USER },
+    ];
+    for (const u of demoUserData) {
+      const existing = await userRepository.findOne({ where: { employeeId: u.employeeId } });
+      if (!existing) {
+        const user = userRepository.create(u);
+        await userRepository.save(user);
+        demoUsers.push(user);
+        console.log('Created user:', user.name);
+      } else {
+        demoUsers.push(existing);
+      }
+    }
+
     // 2. 创建默认项目
     const projectRepository = dataSource.getRepository(Project);
     const existingProject = await projectRepository.findOne({
@@ -73,13 +95,51 @@ async function seed() {
     if (!existingProject) {
       defaultProject = projectRepository.create({
         name: '默认项目',
+        pid: crypto.randomBytes(4).toString('hex'),
         description: '系统自动创建的默认项目',
+        source: ProjectSource.DIRECT,
+        createMode: 'direct',
+        userCount: 2,
+        encryption: {
+          keyName: crypto.randomUUID(),
+          issueCode: crypto.randomBytes(16).toString('hex'),
+          generated: true,
+        },
+        admins: [adminUser],
+        users: [demoUsers[1]],
       });
       await projectRepository.save(defaultProject);
       console.log('Created default project:', defaultProject.name);
     } else {
       defaultProject = existingProject;
       console.log('Default project already exists:', defaultProject.name);
+    }
+
+    // Create additional demo projects
+    const demoProjects = [
+      { name: '智能客服评测项目', description: '用于智能客服系统的评测与优化', source: ProjectSource.IDEALAB, createMode: 'linked', appCode: 'smart-cs' as string | null, platform: 'IDEALAB' as string | null, linkedApp: 'smart-cs' as string | null, jointApps: null as string[] | null },
+      { name: '代码生成评测项目', description: '代码生成Agent的评测与对比', source: ProjectSource.DIRECT, createMode: 'direct', appCode: null as string | null, platform: null as string | null, linkedApp: null as string | null, jointApps: null as string[] | null },
+      { name: '文档分析联合项目', description: '文档分析与摘要生成的联合评测', source: ProjectSource.JOINT, createMode: 'joint', appCode: null as string | null, platform: null as string | null, linkedApp: null as string | null, jointApps: ['doc-summary', 'smart-cs'] as string[] | null },
+      { name: 'Demo演示项目', description: '用于演示和测试的项目', source: ProjectSource.DEMO, createMode: 'direct', appCode: null as string | null, platform: null as string | null, linkedApp: null as string | null, jointApps: null as string[] | null },
+    ];
+    for (const pd of demoProjects) {
+      const existing = await projectRepository.findOne({ where: { name: pd.name } });
+      if (!existing) {
+        const p = projectRepository.create({
+          ...pd,
+          pid: crypto.randomBytes(4).toString('hex'),
+          userCount: 3,
+          encryption: {
+            keyName: crypto.randomUUID(),
+            issueCode: crypto.randomBytes(16).toString('hex'),
+            generated: true,
+          },
+          admins: [adminUser, demoUsers[1]],
+          users: [demoUsers[2], demoUsers[3]],
+        });
+        await projectRepository.save(p);
+        console.log('Created project:', p.name);
+      }
     }
 
     // 3. 创建示例 AI Application

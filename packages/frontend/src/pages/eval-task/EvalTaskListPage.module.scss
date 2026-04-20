@@ -1,22 +1,9 @@
-.shortIdBadge :global(.ant-badge-count) {
-  background: #f0f0f0;
-  color: var(--eva-text-secondary);
-  font-size: 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-}
-
-.codeBadge :global(.ant-badge-count) {
-  background: #e6f7ff;
-  color: #1890ff;
-  font-size: 11px;
-}
-
 .toolbar {
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
 .searchInput {
-  width: 240px;
+  width: 260px;
 }
 
 .evalSetSelect {
@@ -24,5 +11,29 @@
 }
 
 .statusSelect {
-  width: 160px;
+  width: 140px;
+}
+
+.shortIdBadge {
+  :global(.ant-badge-count) {
+    background: var(--eva-primary-soft);
+    color: var(--eva-primary);
+    font-weight: 600;
+    font-size: 11px;
+    box-shadow: none;
+    border-radius: 4px;
+    padding: 0 6px;
+  }
+}
+
+.codeBadge {
+  :global(.ant-badge-count) {
+    background: #e6f9ef;
+    color: #34c759;
+    font-weight: 600;
+    font-size: 11px;
+    box-shadow: none;
+    border-radius: 4px;
+    padding: 0 6px;
+  }
 }

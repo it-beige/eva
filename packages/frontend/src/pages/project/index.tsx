@@ -1,17 +1,25 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   App as AntdApp,
   Button,
-  Card,
   Input,
+  Select,
   Space,
-  Table,
   Tag,
   Tooltip,
   Typography,
 } from 'antd';
-import { LoginOutlined, LogoutOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  AppstoreOutlined,
+  FolderOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+  PlusOutlined,
+  ProjectOutlined,
+  SearchOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import type { SorterResult } from 'antd/es/table/interface';
 import { ProjectSource } from '@eva/shared';
@@ -19,6 +27,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchProjects, deleteProject, selectProject, setPage, setPageSize } from '../../store/projectSlice';
 import type { ProjectItem } from '../../services/projectApi';
 import { clearSession, getCurrentUser } from '../../auth/session';
+import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
 import styles from './ProjectList.module.scss';
 
 const { Title, Text } = Typography;
@@ -41,6 +50,7 @@ const ProjectListPage = () => {
   const currentUser = getCurrentUser();
 
   const [keyword, setKeyword] = useState('');
+  const [sourceFilter, setSourceFilter] = useState<string | undefined>();
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
@@ -50,15 +60,27 @@ const ProjectListPage = () => {
         page,
         pageSize,
         keyword: keyword || undefined,
+        source: sourceFilter as ProjectSource | undefined,
         sortBy,
         sortOrder,
       }),
     );
-  }, [dispatch, page, pageSize, keyword, sortBy, sortOrder]);
+  }, [dispatch, page, pageSize, keyword, sourceFilter, sortBy, sortOrder]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Stats
+  const stats = useMemo(() => {
+    const sourceCount: Record<string, number> = {};
+    let totalUsers = 0;
+    for (const p of list) {
+      sourceCount[p.source] = (sourceCount[p.source] || 0) + 1;
+      totalUsers += p.userCount;
+    }
+    return { sourceCount, totalUsers };
+  }, [list]);
 
   const handleSearch = (value: string) => {
     setKeyword(value);
@@ -83,7 +105,7 @@ const ProjectListPage = () => {
   const handleDelete = (project: ProjectItem) => {
     modal.confirm({
       title: '确认删除项目？',
-      content: '删除后将无法恢复，是否继续？',
+      content: `删除项目「${project.projectName}」后将无法恢复，是否继续？`,
       okText: '确认删除',
       okType: 'danger',
       cancelText: '取消',
@@ -111,12 +133,12 @@ const ProjectListPage = () => {
   };
 
   const renderAdmins = (admins: ProjectItem['admins']) => {
-    if (!admins || admins.length === 0) return '-';
-    const display = admins.slice(0, 3).map((a) => a.name).join(', ');
-    if (admins.length > 3) {
+    if (!admins || admins.length === 0) return <Text type="secondary">-</Text>;
+    const display = admins.slice(0, 2).map((a) => a.name).join('、');
+    if (admins.length > 2) {
       const fullList = admins.map((a) => `${a.name}(${a.employeeId})`).join('\n');
       return (
-        <Tooltip title={<pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{fullList}</pre>}>
+        <Tooltip title={<pre style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: 12 }}>{fullList}</pre>}>
           <span className={styles.adminList}>
             {display}
             <span className={styles.moreAdmins}> 等{admins.length}人</span>
@@ -129,98 +151,99 @@ const ProjectListPage = () => {
 
   const columns: ColumnsType<ProjectItem> = [
     {
-      title: '项目ID',
-      dataIndex: 'projectId',
-      key: 'projectId',
-      width: 120,
-      sorter: true,
-      ellipsis: true,
-      render: (id: string) => (
-        <span className={styles.projectIdLink} onClick={() => navigate(`/projects/${id}`)}>
-          {id.slice(0, 8)}...
-        </span>
-      ),
-    },
-    {
       title: '项目名称',
       dataIndex: 'projectName',
       key: 'projectName',
-      width: 160,
-      sorter: true,
+      width: 200,
       ellipsis: true,
-    },
-    {
-      title: 'pid/统一身份',
-      dataIndex: 'pid',
-      key: 'pid',
-      width: 120,
-    },
-    {
-      title: '应用code',
-      dataIndex: 'appCode',
-      key: 'appCode',
-      width: 120,
-      render: (v: string | null) => v || '-',
+      render: (name: string, record: ProjectItem) => (
+        <Space direction="vertical" size={0}>
+          <a
+            className={styles.projectIdLink}
+            style={{ background: 'none', padding: 0, fontFamily: 'inherit', fontSize: 14, fontWeight: 500 }}
+            onClick={() => handleEnterProject(record)}
+          >
+            {name}
+          </a>
+          <Text type="secondary" style={{ fontSize: 12 }}>{record.pid}</Text>
+        </Space>
+      ),
     },
     {
       title: '项目来源',
       dataIndex: 'source',
       key: 'source',
-      width: 140,
+      width: 130,
       render: (source: string) => {
         const config = sourceTagConfig[source] || { label: source, className: styles.direct };
         return <Tag className={`${styles.sourceTag} ${config.className}`}>{config.label}</Tag>;
       },
     },
     {
+      title: '应用Code',
+      dataIndex: 'appCode',
+      key: 'appCode',
+      width: 120,
+      render: (v: string | null) => v ? <code style={{ fontSize: 12, padding: '2px 6px', background: '#f5f7fa', borderRadius: 4 }}>{v}</code> : <Text type="secondary">-</Text>,
+    },
+    {
       title: '项目描述',
       dataIndex: 'description',
       key: 'description',
-      width: 180,
+      width: 220,
       ellipsis: true,
-      render: (v: string | null) => v || '-',
+      render: (v: string | null) => v || <Text type="secondary">-</Text>,
     },
     {
       title: '管理员',
       dataIndex: 'admins',
       key: 'admins',
-      width: 160,
+      width: 140,
       render: renderAdmins,
     },
     {
       title: '用户数',
       dataIndex: 'userCount',
       key: 'userCount',
-      width: 80,
+      width: 120,
+      align: 'center',
       sorter: true,
+      render: (count: number) => (
+        <span style={{ fontWeight: 600, color: count > 0 ? 'var(--eva-text)' : 'var(--eva-text-tertiary)' }}>
+          {count}
+        </span>
+      ),
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
-      width: 180,
+      width: 170,
       sorter: true,
       render: (v: string) => {
         if (!v) return '-';
-        return new Date(v).toLocaleString('zh-CN', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        });
+        return (
+          <Text style={{ fontSize: 13, color: 'var(--eva-text-secondary)' }}>
+            {new Date(v).toLocaleString('zh-CN', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+        );
       },
     },
     {
       title: '操作',
       key: 'action',
-      width: 180,
+      width: 200,
       fixed: 'right',
       render: (_: unknown, record: ProjectItem) => (
-        <Space>
+        <Space size={4}>
           <Button
-            type="primary"
+            type="link"
             size="small"
             icon={<LoginOutlined />}
             className={styles.enterBtn}
@@ -258,6 +281,29 @@ const ProjectListPage = () => {
     navigate('/login', { replace: true });
   };
 
+  const sourceOptions = [
+    { value: ProjectSource.IDEALAB, label: 'IDEALAB' },
+    { value: ProjectSource.IDEALAB_WORKSPACE, label: 'IDEALAB Workspace' },
+    { value: ProjectSource.DIRECT, label: '直接创建' },
+    { value: ProjectSource.JOINT, label: '联合创建' },
+    { value: ProjectSource.DEMO, label: 'Demo' },
+  ];
+
+  // 列配置
+  const columnConfigs: ColumnConfig[] = useMemo(
+    () => [
+      { key: 'projectName', title: '项目名称', defaultVisible: true },
+      { key: 'source', title: '项目来源', defaultVisible: true },
+      { key: 'appCode', title: '应用Code', defaultVisible: true },
+      { key: 'description', title: '项目描述', defaultVisible: true },
+      { key: 'admins', title: '管理员', defaultVisible: true },
+      { key: 'userCount', title: '用户数', defaultVisible: true },
+      { key: 'createTime', title: '创建时间', defaultVisible: true },
+      { key: 'action', title: '操作', defaultVisible: true },
+    ],
+    [],
+  );
+
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
@@ -279,52 +325,106 @@ const ProjectListPage = () => {
 
       <div className={styles.body}>
         <div className={styles.header}>
-          <div className={styles.headerInfo}>
+          <div>
             <Title level={3} className={styles.title}>
-              选择项目
+              项目管理
             </Title>
-            <Text className={styles.subtitle}>请选择一个项目进入工作台，开始评测、观测与分析</Text>
+            <Text className={styles.subtitle}>选择一个项目进入工作台，或创建新项目开始评测</Text>
           </div>
           <Button
             type="primary"
             icon={<PlusOutlined />}
+            size="large"
             onClick={() => navigate('/projects/create')}
           >
             创建项目
           </Button>
         </div>
 
+        {/* Stats Row */}
+        <div className={styles.statsRow}>
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.statIconBlue}`}>
+              <ProjectOutlined />
+            </div>
+            <div className={styles.statInfo}>
+              <div className={styles.statValue}>{total}</div>
+              <div className={styles.statLabel}>项目总数</div>
+            </div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.statIconGreen}`}>
+              <TeamOutlined />
+            </div>
+            <div className={styles.statInfo}>
+              <div className={styles.statValue}>{stats.totalUsers}</div>
+              <div className={styles.statLabel}>总用户数</div>
+            </div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.statIconOrange}`}>
+              <AppstoreOutlined />
+            </div>
+            <div className={styles.statInfo}>
+              <div className={styles.statValue}>{stats.sourceCount[ProjectSource.IDEALAB] || 0}</div>
+              <div className={styles.statLabel}>关联应用</div>
+            </div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.statIconPurple}`}>
+              <FolderOutlined />
+            </div>
+            <div className={styles.statInfo}>
+              <div className={styles.statValue}>{stats.sourceCount[ProjectSource.JOINT] || 0}</div>
+              <div className={styles.statLabel}>联合项目</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Search & Filter */}
         <div className={styles.searchBar}>
           <Input.Search
-            placeholder="搜索项目ID、pid 或项目名称"
+            placeholder="搜索项目ID、pid、项目名称..."
             allowClear
             enterButton={<SearchOutlined />}
             onSearch={handleSearch}
             onChange={(e) => {
               if (!e.target.value) handleSearch('');
             }}
+            style={{ maxWidth: 400 }}
+          />
+          <Select
+            placeholder="项目来源"
+            allowClear
+            style={{ width: 160 }}
+            options={sourceOptions}
+            value={sourceFilter}
+            onChange={(v) => {
+              setSourceFilter(v);
+              dispatch(setPage(1));
+            }}
           />
         </div>
 
-        <Card className={styles.tableCard} bordered={false}>
-          <Table<ProjectItem>
-            rowKey="projectId"
-            columns={columns}
-            dataSource={list}
-            loading={loading}
-            scroll={{ x: 1400 }}
-            onChange={handleTableChange}
-            pagination={{
-              current: page,
-              pageSize,
-              total,
-              showSizeChanger: true,
-              pageSizeOptions: ['10', '20', '50', '100'],
-              showTotal: (t) => `共 ${t} 条`,
-              style: { padding: '12px 16px', margin: 0 },
-            }}
-          />
-        </Card>
+        {/* Table */}
+        <EnhancedTable<ProjectItem>
+          rowKey="projectId"
+          columns={columns}
+          columnConfigs={columnConfigs}
+          dataSource={list}
+          loading={loading}
+          scroll={{ x: 1200 }}
+          onTableChange={handleTableChange}
+          pagination={{
+            current: page,
+            pageSize,
+            total,
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50'],
+            showTotal: (t) => `共 ${t} 个项目`,
+            style: { padding: '12px 16px', margin: 0 },
+          }}
+        />
       </div>
     </div>
   );
