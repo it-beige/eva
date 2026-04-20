@@ -197,16 +197,18 @@ export class ProjectService {
     return null;
   }
 
-  async searchUsers(keyword: string, limit = 20) {
+  async searchUsers(keyword: string, limit?: number | string) {
     if (!keyword) return [];
+
+    const takeLimit = Math.min(Number(limit) || 20, 100);
 
     const users = await this.userRepo
       .createQueryBuilder('user')
       .where(
-        'user.name ILIKE :kw OR user.employee_id ILIKE :kw',
+        'user.name ILIKE :kw OR "user"."employee_id" ILIKE :kw',
         { kw: `%${keyword}%` },
       )
-      .take(limit)
+      .take(takeLimit)
       .getMany();
 
     return users.map((u) => ({
