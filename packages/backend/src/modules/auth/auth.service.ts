@@ -38,7 +38,7 @@ export class AuthService {
   async login(dto: LoginDto): Promise<LoginResponse> {
     const demoPassword = this.configService.get<string>(
       'DEMO_LOGIN_PASSWORD',
-      'admin123',
+      'eva2026',
     );
 
     if (dto.password !== demoPassword) {
@@ -49,10 +49,11 @@ export class AuthService {
       where: { employeeId: dto.employeeId },
     });
 
-    if (!user && dto.employeeId === 'admin001') {
+    // 自动创建演示账号（首次登录时）
+    if (!user && dto.employeeId === 'demo') {
       user = this.userRepository.create({
-        name: '系统管理员',
-        employeeId: 'admin001',
+        name: 'Demo User',
+        employeeId: 'demo',
         role: UserRole.ADMIN,
         avatar: null,
       });

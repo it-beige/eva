@@ -44,25 +44,25 @@ async function seed() {
   await queryRunner.startTransaction();
 
   try {
-    // 1. 创建默认用户 (admin)
+    // 1. 创建演示用户 (demo)
     const userRepository = dataSource.getRepository(User);
-    const existingAdmin = await userRepository.findOne({
-      where: { employeeId: 'admin001' },
+    const existingDemo = await userRepository.findOne({
+      where: { employeeId: 'demo' },
     });
 
     let adminUser: User;
-    if (!existingAdmin) {
+    if (!existingDemo) {
       adminUser = userRepository.create({
-        name: '系统管理员',
-        employeeId: 'admin001',
+        name: 'Demo User',
+        employeeId: 'demo',
         role: UserRole.ADMIN,
         avatar: null,
       });
       await userRepository.save(adminUser);
-      console.log('Created admin user:', adminUser.name);
+      console.log('Created demo user:', adminUser.name);
     } else {
-      adminUser = existingAdmin;
-      console.log('Admin user already exists:', adminUser.name);
+      adminUser = existingDemo;
+      console.log('Demo user already exists:', adminUser.name);
     }
 
     // Create additional demo users

@@ -4,18 +4,22 @@ import {
   App as AntdApp,
   Alert,
   Button,
-  Card,
   Form,
   Input,
-  Space,
   Typography,
 } from 'antd';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  LockOutlined,
+  UserOutlined,
+  ExperimentOutlined,
+  BarChartOutlined,
+  SafetyCertificateOutlined,
+} from '@ant-design/icons';
 import authApi from '../../services/authApi';
 import { getAccessToken, persistSession } from '../../auth/session';
 import styles from './LoginPage.module.scss';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 interface LoginFormValues {
   employeeId: string;
@@ -55,27 +59,117 @@ const LoginPage = () => {
 
   const handleFillDemo = () => {
     form.setFieldsValue({
-      employeeId: 'admin001',
-      password: 'admin123',
+      employeeId: 'demo',
+      password: 'eva2026',
     });
   };
 
   return (
     <div className={styles.page}>
-      <Card className={styles.card}>
-        <Space direction="vertical" size={24} className={styles.stack}>
-          <div>
-            <div className={styles.logoRow}>
-              <div className={styles.logoIcon}>E</div>
-              <div className={styles.logoText}>
-                <Text className={styles.brand}>Eva Platform</Text>
-                <Title level={2} className={styles.title}>
-                  登录评测平台
-                </Title>
+      {/* ── Left Brand Panel ──────────────────────────── */}
+      <div className={styles.brandPanel}>
+        <div className={styles.glowOrb} />
+        <div className={styles.glowOrbSmall} />
+
+        <div className={styles.brandContent}>
+          <div className={styles.brandLogo}>
+            <div className={styles.brandLogoIcon}>E</div>
+            <span className={styles.brandLogoName}>Eva+</span>
+          </div>
+
+          <h1 className={styles.brandHeadline}>
+            企业级 AI 模型
+            <br />
+            <span className={styles.brandHeadlineAccent}>评测与质量管理平台</span>
+          </h1>
+
+          <p className={styles.brandSubtitle}>
+            构建标准化的 AI 评测体系，覆盖 Prompt 管理、自动化评测、模型对比、
+            可观测性分析等全链路能力，助力团队高效交付高质量 AI 应用。
+          </p>
+
+          <div className={styles.features}>
+            <div className={styles.featureItem}>
+              <div className={styles.featureIcon}>
+                <ExperimentOutlined />
+              </div>
+              <div className={styles.featureText}>
+                <span className={styles.featureTitle}>自动化评测</span>
+                <span className={styles.featureDesc}>
+                  支持多维度指标体系，自动运行评测任务并生成量化报告
+                </span>
               </div>
             </div>
-            <Paragraph className={styles.description}>
-              使用工号和密码登录 Eva AI 评测平台，管理您的评测任务与数据。
+            <div className={styles.featureItem}>
+              <div className={styles.featureIcon}>
+                <BarChartOutlined />
+              </div>
+              <div className={styles.featureText}>
+                <span className={styles.featureTitle}>模型排行榜</span>
+                <span className={styles.featureDesc}>
+                  多模型横向对比，数据驱动决策，快速定位最优方案
+                </span>
+              </div>
+            </div>
+            <div className={styles.featureItem}>
+              <div className={styles.featureIcon}>
+                <SafetyCertificateOutlined />
+              </div>
+              <div className={styles.featureText}>
+                <span className={styles.featureTitle}>质量守护</span>
+                <span className={styles.featureDesc}>
+                  全链路可观测性，实时监控模型表现与应用健康度
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Decorative SVG illustration */}
+        <svg
+          className={styles.illustration}
+          viewBox="0 0 280 200"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Bar chart */}
+          <rect x="20" y="120" width="24" height="60" rx="4" fill="#5a63ff" />
+          <rect x="54" y="80" width="24" height="100" rx="4" fill="#7c87ff" />
+          <rect x="88" y="100" width="24" height="80" rx="4" fill="#5a63ff" />
+          <rect x="122" y="60" width="24" height="120" rx="4" fill="#7c87ff" />
+          <rect x="156" y="90" width="24" height="90" rx="4" fill="#5a63ff" />
+          {/* Trend line */}
+          <polyline
+            points="32,110 66,70 100,90 134,50 168,80 210,40 250,55"
+            stroke="#a5adff"
+            strokeWidth="2.5"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* Dots */}
+          <circle cx="32" cy="110" r="4" fill="#a5adff" />
+          <circle cx="66" cy="70" r="4" fill="#a5adff" />
+          <circle cx="100" cy="90" r="4" fill="#a5adff" />
+          <circle cx="134" cy="50" r="4" fill="#a5adff" />
+          <circle cx="168" cy="80" r="4" fill="#a5adff" />
+          <circle cx="210" cy="40" r="5" fill="#fff" stroke="#a5adff" strokeWidth="2" />
+          <circle cx="250" cy="55" r="4" fill="#a5adff" />
+          {/* Axis */}
+          <line x1="10" y1="180" x2="270" y2="180" stroke="#5a63ff" strokeWidth="1" opacity="0.5" />
+          <line x1="10" y1="20" x2="10" y2="180" stroke="#5a63ff" strokeWidth="1" opacity="0.5" />
+        </svg>
+      </div>
+
+      {/* ── Right Form Panel ─────────────────────────── */}
+      <div className={styles.formPanel}>
+        <div className={styles.formWrapper}>
+          <div className={styles.formHeader}>
+            <Title level={2} className={styles.formTitle}>
+              登录
+            </Title>
+            <Paragraph className={styles.formSubtitle}>
+              使用工号和密码登录 Eva 评测平台
             </Paragraph>
           </div>
 
@@ -84,7 +178,7 @@ const LoginPage = () => {
             showIcon
             className={styles.demoAlert}
             message="演示账号"
-            description="工号：admin001，密码：admin123"
+            description="工号：demo，密码：eva2026"
             action={
               <Button size="small" type="link" onClick={handleFillDemo}>
                 一键填充
@@ -92,56 +186,59 @@ const LoginPage = () => {
             }
           />
 
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-            initialValues={{
-              employeeId: 'admin001',
-              password: 'admin123',
-            }}
-            requiredMark={false}
-          >
-            <Form.Item
-              label="工号"
-              name="employeeId"
-              rules={[{ required: true, message: '请输入工号' }]}
+          <div className={styles.formBody}>
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              initialValues={{
+                employeeId: 'demo',
+                password: 'eva2026',
+              }}
+              requiredMark={false}
             >
-              <Input
-                prefix={<UserOutlined />}
-                placeholder="请输入工号"
-                size="large"
-              />
-            </Form.Item>
+              <Form.Item
+                label="工号"
+                name="employeeId"
+                rules={[{ required: true, message: '请输入工号' }]}
+              >
+                <Input
+                  prefix={<UserOutlined />}
+                  placeholder="请输入工号"
+                  size="large"
+                />
+              </Form.Item>
 
-            <Form.Item
-              label="密码"
-              name="password"
-              rules={[{ required: true, message: '请输入密码' }]}
-            >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder="请输入密码"
-                size="large"
-              />
-            </Form.Item>
+              <Form.Item
+                label="密码"
+                name="password"
+                rules={[{ required: true, message: '请输入密码' }]}
+              >
+                <Input.Password
+                  prefix={<LockOutlined />}
+                  placeholder="请输入密码"
+                  size="large"
+                />
+              </Form.Item>
 
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              loading={loading}
-              className={styles.loginButton}
-            >
-              登录
-            </Button>
-          </Form>
-
-          <div className={styles.footer}>
-            Eva AI Evaluation Platform v1.0
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                loading={loading}
+                className={styles.loginButton}
+              >
+                登录
+              </Button>
+            </Form>
           </div>
-        </Space>
-      </Card>
+
+          <div className={styles.formFooter}>
+            <div>Eva AI Evaluation Platform</div>
+            <div className={styles.formFooterVersion}>v1.0.0</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
