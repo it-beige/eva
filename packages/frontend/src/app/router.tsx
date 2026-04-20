@@ -53,23 +53,25 @@ export const router = createBrowserRouter(
       path: '/projects',
       element: (
         <AuthGuard>
-          <MainLayout />
+          {withSuspense(ProjectListPage)}
         </AuthGuard>
       ),
-      children: [
-        {
-          path: '',
-          element: withSuspense(ProjectListPage),
-        },
-        {
-          path: 'create',
-          element: withSuspense(CreateProjectPage),
-        },
-        {
-          path: ':id/edit',
-          element: withSuspense(EditProjectPage),
-        },
-      ],
+    },
+    {
+      path: '/projects/create',
+      element: (
+        <AuthGuard>
+          {withSuspense(CreateProjectPage)}
+        </AuthGuard>
+      ),
+    },
+    {
+      path: '/projects/:id/edit',
+      element: (
+        <AuthGuard>
+          {withSuspense(EditProjectPage)}
+        </AuthGuard>
+      ),
     },
     {
       path: '/eval',

@@ -1,30 +1,147 @@
 .page {
-  padding: 0;
+  min-height: 100vh;
+  background: var(--eva-bg);
+  display: flex;
+  flex-direction: column;
 }
+
+/* ── Top Bar ───────────────────────────────────────────── */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 32px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--eva-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.topBarLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(90, 99, 255, 0.25);
+}
+
+.logoName {
+  color: var(--eva-text);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userName {
+  color: var(--eva-text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+/* ── Body ──────────────────────────────────────────────── */
+
+.body {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 36px 48px 48px;
+}
+
+/* ── Header ────────────────────────────────────────────── */
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #000000d9;
-  margin: 0;
+  margin: 0 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: var(--eva-text) !important;
+  letter-spacing: -0.02em !important;
 }
 
+.subtitle {
+  color: var(--eva-text-secondary) !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+
+/* ── Search ────────────────────────────────────────────── */
+
 .searchBar {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 
   :global(.ant-input-search) {
-    max-width: 400px;
+    max-width: 420px;
   }
 }
 
+/* ── Table Card ────────────────────────────────────────── */
+
+.tableCard {
+  border-radius: 12px;
+  border: 1px solid var(--eva-border);
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(71, 92, 122, 0.04);
+  overflow: hidden;
+}
+
+.tableCard :global(.ant-card-body) {
+  padding: 0 !important;
+}
+
+.tableCard :global(.ant-table-wrapper) {
+  border-radius: 0;
+}
+
+.tableCard :global(.ant-table) {
+  border-radius: 0 !important;
+}
+
+/* ── Tags ──────────────────────────────────────────────── */
+
 .sourceTag {
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 1px 8px;
+  line-height: 20px;
+
   &.idealab {
     color: #1677ff;
     background: #e6f4ff;
@@ -56,37 +173,72 @@
   }
 }
 
+/* ── Enter Button ──────────────────────────────────────── */
+
+.enterBtn {
+  font-weight: 600 !important;
+}
+
+/* ── Table Helpers ─────────────────────────────────────── */
+
 .adminList {
   display: inline;
 }
 
 .moreAdmins {
-  color: #00000073;
+  color: var(--eva-text-tertiary);
   cursor: pointer;
 }
 
 .actionLink {
-  padding: 0;
-  height: auto;
-  line-height: 1;
+  padding: 0 !important;
+  height: auto !important;
+  line-height: 1 !important;
+  font-size: 13px !important;
 }
 
 .deleteLink {
-  padding: 0;
-  height: auto;
-  line-height: 1;
-  color: #ff4d4f;
+  padding: 0 !important;
+  height: auto !important;
+  line-height: 1 !important;
+  font-size: 13px !important;
+  color: #ff4d4f !important;
 
   &:hover {
-    color: #ff7875;
+    color: #ff7875 !important;
   }
 }
 
 .projectIdLink {
-  color: #1677ff;
+  color: var(--eva-primary);
   cursor: pointer;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  font-size: 12px;
 
   &:hover {
     text-decoration: underline;
+  }
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+
+@media (max-width: 1200px) {
+  .body {
+    padding: 28px 24px 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .topBar {
+    padding: 0 16px;
+  }
+
+  .body {
+    padding: 20px 16px 28px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
   }
 }

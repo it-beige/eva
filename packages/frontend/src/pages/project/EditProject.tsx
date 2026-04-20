@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   App as AntdApp,
   Button,
+  Card,
   Form,
   Input,
   Select,
@@ -21,7 +22,7 @@ import projectApi, {
 } from '../../services/projectApi';
 import styles from './CreateProject.module.scss';
 
-const { Title, Text, Link } = Typography;
+const { Text, Link } = Typography;
 const { TextArea } = Input;
 
 const EditProjectPage = () => {
@@ -45,7 +46,6 @@ const EditProjectPage = () => {
         const data = await projectApi.getProject(id);
         setProject(data);
 
-        // Populate form
         form.setFieldsValue({
           pid: data.pid,
           projectName: data.projectName,
@@ -54,7 +54,6 @@ const EditProjectPage = () => {
           userIds: data.users.map((u) => u.id),
         });
 
-        // Seed user search results with existing admins and users
         const allUsers: SearchUserItem[] = [
           ...data.admins.map((a) => ({
             id: a.id,
@@ -69,7 +68,6 @@ const EditProjectPage = () => {
             displayName: `${u.name}(${u.employeeId})`,
           })),
         ];
-        // Deduplicate
         const seen = new Set<string>();
         const unique = allUsers.filter((u) => {
           if (seen.has(u.id)) return false;
@@ -140,132 +138,157 @@ const EditProjectPage = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: 100 }}>
-        <Spin size="large" />
+      <div className={styles.page}>
+        <div className={styles.topBar}>
+          <div className={styles.topBarLeft}>
+            <div className={styles.topBarLogo}>
+              <div className={styles.logoIcon}>E</div>
+              <span className={styles.logoName}>Eva+</span>
+            </div>
+            <div className={styles.topBarDivider} />
+            <Text className={styles.topBarTitle}>编辑项目</Text>
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <Spin size="large" />
+        </div>
       </div>
     );
   }
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
+      <div className={styles.topBar}>
+        <div className={styles.topBarLeft}>
+          <div className={styles.topBarLogo}>
+            <div className={styles.logoIcon}>E</div>
+            <span className={styles.logoName}>Eva+</span>
+          </div>
+          <div className={styles.topBarDivider} />
+          <Text className={styles.topBarTitle}>编辑项目</Text>
+        </div>
         <Button
           type="link"
           icon={<ArrowLeftOutlined />}
           className={styles.backBtn}
           onClick={() => navigate('/projects')}
         >
-          返回
+          返回项目列表
         </Button>
-        <Title level={4} className={styles.title}>
-          编辑项目
-        </Title>
       </div>
 
-      <div className={styles.content}>
-        <div className={styles.formSection}>
-          <div className={styles.sectionTitle}>项目基础信息</div>
+      <div className={styles.body}>
+        <div className={styles.content}>
+          <div className={styles.formSection}>
+            <div className={styles.sectionTitle}>项目基础信息</div>
 
-          <Form form={form} layout="vertical" onFinish={handleSubmit}>
-            <Form.Item label="pid" name="pid" required>
-              <Input disabled style={{ background: '#f5f5f5' }} />
-            </Form.Item>
-
-            <Form.Item
-              label="项目名称"
-              name="projectName"
-              rules={[
-                { required: true, message: '项目名称不能为空' },
-                { max: 50, message: '项目名称不能超过50个字符' },
-              ]}
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              requiredMark="optional"
             >
-              <Input placeholder="请输入项目名称" />
-            </Form.Item>
+              <Form.Item label="pid" name="pid" required>
+                <Input disabled style={{ background: '#f9fafb' }} />
+              </Form.Item>
 
-            <Form.Item
-              label="项目描述"
-              name="description"
-              rules={[{ max: 200, message: '项目描述不能超过200个字符' }]}
-            >
-              <TextArea rows={3} placeholder="请填写项目描述" />
-            </Form.Item>
+              <Form.Item
+                label="项目名称"
+                name="projectName"
+                rules={[
+                  { required: true, message: '项目名称不能为空' },
+                  { max: 50, message: '项目名称不能超过50个字符' },
+                ]}
+              >
+                <Input placeholder="请输入项目名称" />
+              </Form.Item>
 
-            {/* Encryption info */}
-            {project?.encryption?.generated && (
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ marginBottom: 8 }}>
-                  <Text strong>生产加密方案：</Text>
-                  <Tag color="success" icon={<CheckCircleOutlined />} style={{ marginLeft: 8 }}>
-                    已生成
-                  </Tag>
-                  <Link style={{ marginLeft: 8 }}>使用说明</Link>
-                </div>
-                <div style={{ marginBottom: 8 }}>
-                  <Text type="secondary">密钥名称：</Text>
-                  <Text code>{project.encryption.keyName}</Text>
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<CopyOutlined />}
-                    onClick={() => handleCopy(project.encryption!.keyName)}
-                  />
-                </div>
-                <div>
-                  <Text type="secondary">发放码：</Text>
-                  <Text code>{project.encryption.issueCode}</Text>
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<CopyOutlined />}
-                    onClick={() => handleCopy(project.encryption!.issueCode)}
-                  />
-                </div>
+              <Form.Item
+                label="项目描述"
+                name="description"
+                rules={[{ max: 200, message: '项目描述不能超过200个字符' }]}
+              >
+                <TextArea rows={3} placeholder="请填写项目描述（选填）" />
+              </Form.Item>
+
+              {project?.encryption?.generated && (
+                <Card className={styles.encryptionCard} bordered={false}>
+                  <div className={styles.encryptionRow}>
+                    <Text strong>生产加密方案：</Text>
+                    <Tag color="success" icon={<CheckCircleOutlined />}>
+                      已生成
+                    </Tag>
+                    <Link>使用说明</Link>
+                  </div>
+                  <div className={styles.encryptionRow}>
+                    <Text type="secondary">密钥名称：</Text>
+                    <Text code>{project.encryption.keyName}</Text>
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<CopyOutlined />}
+                      onClick={() => handleCopy(project.encryption!.keyName)}
+                    />
+                  </div>
+                  <div className={styles.encryptionRow}>
+                    <Text type="secondary">发放码：</Text>
+                    <Text code>{project.encryption.issueCode}</Text>
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<CopyOutlined />}
+                      onClick={() => handleCopy(project.encryption!.issueCode)}
+                    />
+                  </div>
+                </Card>
+              )}
+
+              <Form.Item
+                label="管理员"
+                name="adminIds"
+                rules={[{ required: true, message: '至少选择1个管理员' }]}
+              >
+                <Select
+                  mode="multiple"
+                  placeholder="搜索并添加管理员"
+                  showSearch
+                  filterOption={false}
+                  loading={userSearchLoading}
+                  onSearch={handleUserSearch}
+                  options={userOptions}
+                  notFoundContent={userSearchLoading ? '搜索中...' : '无结果'}
+                />
+              </Form.Item>
+
+              <Form.Item label="普通用户" name="userIds">
+                <Select
+                  mode="multiple"
+                  placeholder="搜索并添加用户（选填）"
+                  showSearch
+                  filterOption={false}
+                  loading={userSearchLoading}
+                  onSearch={handleUserSearch}
+                  options={userOptions}
+                  notFoundContent={userSearchLoading ? '搜索中...' : '无结果'}
+                />
+              </Form.Item>
+
+              <div className={styles.submitRow}>
+                <Button type="primary" htmlType="submit" loading={submitting}>
+                  保存项目
+                </Button>
+                <Button onClick={() => navigate('/projects')}>
+                  取消
+                </Button>
               </div>
-            )}
+            </Form>
+          </div>
 
-            <Form.Item
-              label="管理员"
-              name="adminIds"
-              rules={[{ required: true, message: '至少选择1个管理员' }]}
-            >
-              <Select
-                mode="multiple"
-                placeholder="搜索并添加管理员"
-                showSearch
-                filterOption={false}
-                loading={userSearchLoading}
-                onSearch={handleUserSearch}
-                options={userOptions}
-                notFoundContent={userSearchLoading ? '搜索中...' : '无结果'}
-              />
-            </Form.Item>
-
-            <Form.Item label="普通用户" name="userIds">
-              <Select
-                mode="multiple"
-                placeholder="搜索并添加用户"
-                showSearch
-                filterOption={false}
-                loading={userSearchLoading}
-                onSearch={handleUserSearch}
-                options={userOptions}
-                notFoundContent={userSearchLoading ? '搜索中...' : '无结果'}
-              />
-            </Form.Item>
-
-            <Form.Item className={styles.submitBtn}>
-              <Button type="primary" htmlType="submit" loading={submitting}>
-                保存项目
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-
-        <div className={styles.stepSection}>
-          <div className={styles.stepItem}>
-            <span className={styles.stepNumber}>01</span>
-            <span className={styles.stepDivider} />
-            <span className={styles.stepLabel}>填写项目基础信息</span>
+          <div className={styles.stepSection}>
+            <div className={styles.stepItem}>
+              <span className={styles.stepNumber}>1</span>
+              <span className={styles.stepLabel}>填写项目基础信息</span>
+            </div>
           </div>
         </div>
       </div>

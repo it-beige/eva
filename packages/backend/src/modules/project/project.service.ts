@@ -50,15 +50,17 @@ export class ProjectService {
       qb.andWhere('project.source = :source', { source });
     }
 
+    // Use entity property names (not raw column names) for orderBy
+    // This is required by TypeORM 0.3.x when using take/skip with ManyToMany relations
     const allowedSortFields: Record<string, string> = {
       projectId: 'project.id',
       projectName: 'project.name',
-      userCount: 'project.user_count',
-      createTime: 'project.created_at',
-      createdAt: 'project.created_at',
+      userCount: 'project.userCount',
+      createTime: 'project.createdAt',
+      createdAt: 'project.createdAt',
     };
 
-    const sortColumn = allowedSortFields[sortBy] || 'project.created_at';
+    const sortColumn = allowedSortFields[sortBy] || 'project.createdAt';
     qb.orderBy(sortColumn, sortOrder === 'asc' ? 'ASC' : 'DESC');
 
     const total = await qb.getCount();

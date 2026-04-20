@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   App as AntdApp,
   Button,
+  Card,
   Input,
   Space,
   Table,
@@ -10,17 +11,17 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { LoginOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { LoginOutlined, LogoutOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import type { SorterResult } from 'antd/es/table/interface';
 import { ProjectSource } from '@eva/shared';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchProjects, deleteProject, selectProject, setPage, setPageSize } from '../../store/projectSlice';
 import type { ProjectItem } from '../../services/projectApi';
-import { getCurrentUser } from '../../auth/session';
+import { clearSession, getCurrentUser } from '../../auth/session';
 import styles from './ProjectList.module.scss';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const sourceTagConfig: Record<string, { label: string; className: string }> = {
   [ProjectSource.IDEALAB]: { label: 'IDEALAB', className: styles.idealab },
@@ -219,9 +220,10 @@ const ProjectListPage = () => {
       render: (_: unknown, record: ProjectItem) => (
         <Space>
           <Button
-            type="link"
+            type="primary"
             size="small"
             icon={<LoginOutlined />}
+            className={styles.enterBtn}
             onClick={() => handleEnterProject(record)}
           >
             进入
@@ -251,49 +253,79 @@ const ProjectListPage = () => {
     },
   ];
 
+  const handleLogout = () => {
+    clearSession();
+    navigate('/login', { replace: true });
+  };
+
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <Title level={4} className={styles.title}>
-          项目列表
-        </Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => navigate('/projects/create')}
-        >
-          创建项目
-        </Button>
+      <div className={styles.topBar}>
+        <div className={styles.topBarLogo}>
+          <div className={styles.logoIcon}>E</div>
+          <span className={styles.logoName}>Eva+</span>
+        </div>
+        <div className={styles.topBarRight}>
+          {currentUser && <Text className={styles.userName}>{currentUser.name}</Text>}
+          <Button
+            type="text"
+            icon={<LogoutOutlined />}
+            onClick={handleLogout}
+          >
+            退出
+          </Button>
+        </div>
       </div>
 
-      <div className={styles.searchBar}>
-        <Input.Search
-          placeholder="支持项目ID、pid、项目名称搜索"
-          allowClear
-          enterButton={<SearchOutlined />}
-          onSearch={handleSearch}
-          onChange={(e) => {
-            if (!e.target.value) handleSearch('');
-          }}
-        />
-      </div>
+      <div className={styles.body}>
+        <div className={styles.header}>
+          <div className={styles.headerInfo}>
+            <Title level={3} className={styles.title}>
+              选择项目
+            </Title>
+            <Text className={styles.subtitle}>请选择一个项目进入工作台，开始评测、观测与分析</Text>
+          </div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/projects/create')}
+          >
+            创建项目
+          </Button>
+        </div>
 
-      <Table<ProjectItem>
-        rowKey="projectId"
-        columns={columns}
-        dataSource={list}
-        loading={loading}
-        scroll={{ x: 1400 }}
-        onChange={handleTableChange}
-        pagination={{
-          current: page,
-          pageSize,
-          total,
-          showSizeChanger: true,
-          pageSizeOptions: ['10', '20', '50', '100'],
-          showTotal: (t) => `共 ${t} 条`,
-        }}
-      />
+        <div className={styles.searchBar}>
+          <Input.Search
+            placeholder="搜索项目ID、pid 或项目名称"
+            allowClear
+            enterButton={<SearchOutlined />}
+            onSearch={handleSearch}
+            onChange={(e) => {
+              if (!e.target.value) handleSearch('');
+            }}
+          />
+        </div>
+
+        <Card className={styles.tableCard} bordered={false}>
+          <Table<ProjectItem>
+            rowKey="projectId"
+            columns={columns}
+            dataSource={list}
+            loading={loading}
+            scroll={{ x: 1400 }}
+            onChange={handleTableChange}
+            pagination={{
+              current: page,
+              pageSize,
+              total,
+              showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '50', '100'],
+              showTotal: (t) => `共 ${t} 条`,
+              style: { padding: '12px 16px', margin: 0 },
+            }}
+          />
+        </Card>
+      </div>
     </div>
   );
 };

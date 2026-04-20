@@ -1,91 +1,229 @@
 .page {
-  padding: 0;
+  min-height: 100vh;
+  background: var(--eva-bg);
+  display: flex;
+  flex-direction: column;
 }
 
-.header {
+/* ── Top Bar ───────────────────────────────────────────── */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 32px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--eva-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.topBarLeft {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+}
+
+.topBarLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(90, 99, 255, 0.25);
+}
+
+.logoName {
+  color: var(--eva-text);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.topBarDivider {
+  width: 1px;
+  height: 20px;
+  background: var(--eva-border);
+}
+
+.topBarTitle {
+  color: var(--eva-text) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
 }
 
 .backBtn {
-  padding: 0;
+  color: var(--eva-text-secondary) !important;
+  font-size: 13px !important;
+  padding: 4px 0 !important;
 }
 
-.title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #000000d9;
-  margin: 0;
+.backBtn:hover {
+  color: var(--eva-primary) !important;
 }
+
+/* ── Body ──────────────────────────────────────────────── */
+
+.body {
+  flex: 1;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 48px 60px;
+}
+
+/* ── Content ───────────────────────────────────────────── */
 
 .content {
   display: flex;
-  gap: 24px;
+  gap: 28px;
+  align-items: flex-start;
 }
 
 .formSection {
-  flex: 7;
-  background: #fff;
-  border-radius: 8px;
-  padding: 24px;
-  border: 1px solid #f0f0f0;
+  flex: 1;
+  min-width: 0;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid var(--eva-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(71, 92, 122, 0.04);
 }
 
 .stepSection {
-  flex: 3;
-  background: #fafafa;
-  border-radius: 8px;
+  width: 200px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-radius: 12px;
   padding: 24px;
-  border: 1px solid #f0f0f0;
-  height: fit-content;
+  border: 1px solid var(--eva-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  position: sticky;
+  top: 80px;
 }
 
 .sectionTitle {
   font-size: 16px;
-  font-weight: 500;
-  color: #000000d9;
-  margin-bottom: 24px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+  color: var(--eva-text);
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--eva-border-soft);
 }
 
 .tipBox {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
 }
 
-.submitBtn {
-  margin-top: 24px;
+.submitRow {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--eva-border-soft);
+  display: flex;
+  gap: 12px;
 }
+
+/* ── Steps ─────────────────────────────────────────────── */
 
 .stepItem {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 0;
+  padding: 10px 0;
 }
 
 .stepNumber {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1677ff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--eva-primary-soft);
+  color: var(--eva-primary);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .stepLabel {
-  font-size: 14px;
-  color: #000000d9;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--eva-text);
+  line-height: 1.4;
 }
 
 .stepDivider {
-  width: 2px;
-  height: 20px;
-  background: #e8e8e8;
-  margin-left: 8px;
+  display: none;
 }
 
-.fieldHint {
-  margin-top: 4px;
-  font-size: 12px;
-  color: #00000073;
+/* ── Encryption Info ───────────────────────────────────── */
+
+.encryptionCard {
+  margin-bottom: 24px;
+  border-radius: 10px;
+  border: 1px solid var(--eva-border-soft);
+  background: var(--eva-bg-subtle);
+}
+
+.encryptionCard :global(.ant-card-body) {
+  padding: 16px 20px;
+}
+
+.encryptionRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.encryptionRow:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+
+@media (max-width: 1200px) {
+  .body {
+    padding: 28px 24px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .topBar {
+    padding: 0 16px;
+  }
+
+  .body {
+    padding: 20px 16px 32px;
+  }
+
+  .content {
+    flex-direction: column;
+  }
+
+  .stepSection {
+    width: 100%;
+    position: static;
+  }
+
+  .formSection {
+    padding: 20px;
+  }
 }

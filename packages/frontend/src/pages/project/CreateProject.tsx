@@ -20,7 +20,7 @@ import projectApi, {
 import { getCurrentUser } from '../../auth/session';
 import styles from './CreateProject.module.scss';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const tipMessages: Record<string, string> = {
@@ -51,7 +51,6 @@ const CreateProjectPage = () => {
   const [apps, setApps] = useState<AppItem[]>([]);
   const [appsLoading, setAppsLoading] = useState(false);
 
-  // Generate PID on mount for direct mode
   useEffect(() => {
     const loadPid = async () => {
       try {
@@ -65,7 +64,6 @@ const CreateProjectPage = () => {
     loadPid();
   }, [form]);
 
-  // Load platforms
   useEffect(() => {
     const loadPlatforms = async () => {
       try {
@@ -78,11 +76,9 @@ const CreateProjectPage = () => {
     loadPlatforms();
   }, []);
 
-  // Set default admin as current user
   useEffect(() => {
     if (currentUser) {
       form.setFieldValue('adminIds', [currentUser.id]);
-      // Seed search results with current user
       setUserSearchResults([
         {
           id: currentUser.id,
@@ -117,25 +113,22 @@ const CreateProjectPage = () => {
     }
   };
 
-  const handleUserSearch = useCallback(
-    async (keyword: string) => {
-      if (!keyword || keyword.length < 1) return;
-      setUserSearchLoading(true);
-      try {
-        const result = await projectApi.searchUsers(keyword);
-        setUserSearchResults((prev) => {
-          const existingIds = new Set(prev.map((u) => u.id));
-          const newUsers = result.filter((u) => !existingIds.has(u.id));
-          return [...prev, ...newUsers];
-        });
-      } catch {
-        // ignore
-      } finally {
-        setUserSearchLoading(false);
-      }
-    },
-    [],
-  );
+  const handleUserSearch = useCallback(async (keyword: string) => {
+    if (!keyword || keyword.length < 1) return;
+    setUserSearchLoading(true);
+    try {
+      const result = await projectApi.searchUsers(keyword);
+      setUserSearchResults((prev) => {
+        const existingIds = new Set(prev.map((u) => u.id));
+        const newUsers = result.filter((u) => !existingIds.has(u.id));
+        return [...prev, ...newUsers];
+      });
+    } catch {
+      // ignore
+    } finally {
+      setUserSearchLoading(false);
+    }
+  }, []);
 
   const handleSubmit = async (values: any) => {
     setSubmitting(true);
@@ -162,7 +155,6 @@ const CreateProjectPage = () => {
     }
   };
 
-  // Load all apps for joint mode
   useEffect(() => {
     if (mode === ProjectCreateMode.JOINT) {
       const loadAllApps = async () => {
@@ -187,83 +179,129 @@ const CreateProjectPage = () => {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
+      <div className={styles.topBar}>
+        <div className={styles.topBarLeft}>
+          <div className={styles.topBarLogo}>
+            <div className={styles.logoIcon}>E</div>
+            <span className={styles.logoName}>Eva+</span>
+          </div>
+          <div className={styles.topBarDivider} />
+          <Text className={styles.topBarTitle}>创建项目</Text>
+        </div>
         <Button
           type="link"
           icon={<ArrowLeftOutlined />}
           className={styles.backBtn}
           onClick={() => navigate('/projects')}
         >
-          返回
+          返回项目列表
         </Button>
-        <Title level={4} className={styles.title}>
-          创建项目
-        </Title>
       </div>
 
-      <div className={styles.content}>
-        <div className={styles.formSection}>
-          <div className={styles.sectionTitle}>项目基础信息</div>
+      <div className={styles.body}>
+        <div className={styles.content}>
+          <div className={styles.formSection}>
+            <div className={styles.sectionTitle}>项目基础信息</div>
 
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-            initialValues={{
-              createMode: mode,
-              pid,
-            }}
-          >
-            <Form.Item
-              label="新建方式"
-              name="createMode"
-              required
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              initialValues={{
+                createMode: mode,
+                pid,
+              }}
+              requiredMark="optional"
             >
-              <Radio.Group
-                value={mode}
-                onChange={(e) => handleModeChange(e.target.value)}
-              >
-                <Radio value={ProjectCreateMode.LINKED}>关联应用/场景</Radio>
-                <Radio value={ProjectCreateMode.DIRECT}>直接创建</Radio>
-                <Radio value={ProjectCreateMode.JOINT}>联合创建</Radio>
-              </Radio.Group>
-            </Form.Item>
-
-            <Alert
-              type="info"
-              showIcon
-              message={tipMessages[mode]}
-              className={styles.tipBox}
-            />
-
-            {/* Direct mode: show pid */}
-            {mode === ProjectCreateMode.DIRECT && (
-              <Form.Item label="pid" name="pid" required>
-                <Input value={pid} disabled style={{ background: '#f5f5f5' }} />
-              </Form.Item>
-            )}
-
-            {/* Linked mode: platform + app */}
-            {mode === ProjectCreateMode.LINKED && (
-              <>
-                <Form.Item
-                  label="平台选择"
-                  name="platform"
-                  rules={[{ required: true, message: '请选择平台' }]}
+              <Form.Item label="新建方式" name="createMode" required>
+                <Radio.Group
+                  value={mode}
+                  onChange={(e) => handleModeChange(e.target.value)}
                 >
-                  <Select
-                    placeholder="请选择平台"
-                    options={platforms.map((p) => ({
-                      value: p.platformCode,
-                      label: p.platformName,
-                    }))}
-                    onChange={handlePlatformChange}
-                  />
+                  <Radio value={ProjectCreateMode.LINKED}>关联应用/场景</Radio>
+                  <Radio value={ProjectCreateMode.DIRECT}>直接创建</Radio>
+                  <Radio value={ProjectCreateMode.JOINT}>联合创建</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              <Alert
+                type="info"
+                showIcon
+                message={tipMessages[mode]}
+                className={styles.tipBox}
+              />
+
+              {mode === ProjectCreateMode.DIRECT && (
+                <Form.Item label="pid" name="pid" required>
+                  <Input value={pid} disabled style={{ background: '#f9fafb' }} />
                 </Form.Item>
+              )}
+
+              {mode === ProjectCreateMode.LINKED && (
+                <>
+                  <Form.Item
+                    label="平台选择"
+                    name="platform"
+                    rules={[{ required: true, message: '请选择平台' }]}
+                  >
+                    <Select
+                      placeholder="请选择平台"
+                      options={platforms.map((p) => ({
+                        value: p.platformCode,
+                        label: p.platformName,
+                      }))}
+                      onChange={handlePlatformChange}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="关联应用"
+                    name="linkedApp"
+                    rules={[{ required: true, message: '请选择关联应用' }]}
+                    extra={
+                      <Text type="secondary" style={{ fontSize: 12 }}>
+                        只展示有权限的应用/场景，加权限请到对应平台上操作
+                      </Text>
+                    }
+                  >
+                    <Select
+                      placeholder="请选择应用"
+                      showSearch
+                      loading={appsLoading}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '')
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={apps.map((a) => ({
+                        value: a.appCode,
+                        label: `${a.appName} (${a.appCode})`,
+                      }))}
+                      onChange={(_, option: any) => {
+                        if (!form.getFieldValue('projectName')) {
+                          const app = apps.find((a) => a.appCode === option?.value);
+                          if (app) {
+                            form.setFieldValue('projectName', app.appName);
+                          }
+                        }
+                      }}
+                    />
+                  </Form.Item>
+                </>
+              )}
+
+              {mode === ProjectCreateMode.JOINT && (
                 <Form.Item
-                  label="关联应用"
-                  name="linkedApp"
-                  rules={[{ required: true, message: '请选择关联应用' }]}
+                  label="联合范围"
+                  name="jointApps"
+                  rules={[
+                    { required: true, message: '请选择联合范围' },
+                    {
+                      validator: (_, value) =>
+                        value && value.length >= 2
+                          ? Promise.resolve()
+                          : Promise.reject('联合创建至少选择2个应用'),
+                    },
+                  ]}
                   extra={
                     <Text type="secondary" style={{ fontSize: 12 }}>
                       只展示有权限的应用/场景，加权限请到对应平台上操作
@@ -271,7 +309,8 @@ const CreateProjectPage = () => {
                   }
                 >
                   <Select
-                    placeholder="请选择应用"
+                    mode="multiple"
+                    placeholder="请选择要联合的应用/场景"
                     showSearch
                     loading={appsLoading}
                     filterOption={(input, option) =>
@@ -283,120 +322,75 @@ const CreateProjectPage = () => {
                       value: a.appCode,
                       label: `${a.appName} (${a.appCode})`,
                     }))}
-                    onChange={(_, option: any) => {
-                      // Auto fill project name
-                      if (!form.getFieldValue('projectName')) {
-                        const app = apps.find((a) => a.appCode === option?.value);
-                        if (app) {
-                          form.setFieldValue('projectName', app.appName);
-                        }
-                      }
-                    }}
                   />
                 </Form.Item>
-              </>
-            )}
+              )}
 
-            {/* Joint mode: joint scope */}
-            {mode === ProjectCreateMode.JOINT && (
               <Form.Item
-                label="联合范围"
-                name="jointApps"
+                label="项目名称"
+                name="projectName"
                 rules={[
-                  { required: true, message: '请选择联合范围' },
-                  {
-                    validator: (_, value) =>
-                      value && value.length >= 2
-                        ? Promise.resolve()
-                        : Promise.reject('联合创建至少选择2个应用'),
-                  },
+                  { required: true, message: '项目名称不能为空' },
+                  { max: 50, message: '项目名称不能超过50个字符' },
                 ]}
-                extra={
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    只展示有权限的应用/场景，加权限请到对应平台上操作
-                  </Text>
-                }
+              >
+                <Input placeholder="请输入项目名称" />
+              </Form.Item>
+
+              <Form.Item
+                label="项目描述"
+                name="description"
+                rules={[{ max: 200, message: '项目描述不能超过200个字符' }]}
+              >
+                <TextArea rows={3} placeholder="请填写项目描述（选填）" />
+              </Form.Item>
+
+              <Form.Item
+                label="管理员"
+                name="adminIds"
+                rules={[{ required: true, message: '至少选择1个管理员' }]}
               >
                 <Select
                   mode="multiple"
-                  placeholder="请选择要联合的应用/场景"
+                  placeholder="搜索并添加管理员"
                   showSearch
-                  loading={appsLoading}
-                  filterOption={(input, option) =>
-                    (option?.label ?? '')
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  options={apps.map((a) => ({
-                    value: a.appCode,
-                    label: `${a.appName} (${a.appCode})`,
-                  }))}
+                  filterOption={false}
+                  loading={userSearchLoading}
+                  onSearch={handleUserSearch}
+                  options={userOptions}
+                  notFoundContent={userSearchLoading ? '搜索中...' : '无结果'}
                 />
               </Form.Item>
-            )}
 
-            <Form.Item
-              label="项目名称"
-              name="projectName"
-              rules={[
-                { required: true, message: '项目名称不能为空' },
-                { max: 50, message: '项目名称不能超过50个字符' },
-              ]}
-            >
-              <Input placeholder="请输入项目名称" />
-            </Form.Item>
+              <Form.Item label="普通用户" name="userIds">
+                <Select
+                  mode="multiple"
+                  placeholder="搜索并添加用户（选填）"
+                  showSearch
+                  filterOption={false}
+                  loading={userSearchLoading}
+                  onSearch={handleUserSearch}
+                  options={userOptions}
+                  notFoundContent={userSearchLoading ? '搜索中...' : '无结果'}
+                />
+              </Form.Item>
 
-            <Form.Item
-              label="项目描述"
-              name="description"
-              rules={[{ max: 200, message: '项目描述不能超过200个字符' }]}
-            >
-              <TextArea rows={3} placeholder="请填写项目描述" />
-            </Form.Item>
+              <div className={styles.submitRow}>
+                <Button type="primary" htmlType="submit" loading={submitting}>
+                  创建项目
+                </Button>
+                <Button onClick={() => navigate('/projects')}>
+                  取消
+                </Button>
+              </div>
+            </Form>
+          </div>
 
-            <Form.Item
-              label="管理员"
-              name="adminIds"
-              rules={[{ required: true, message: '至少选择1个管理员' }]}
-            >
-              <Select
-                mode="multiple"
-                placeholder="搜索并添加管理员"
-                showSearch
-                filterOption={false}
-                loading={userSearchLoading}
-                onSearch={handleUserSearch}
-                options={userOptions}
-                notFoundContent={userSearchLoading ? '搜索中...' : '无结果'}
-              />
-            </Form.Item>
-
-            <Form.Item label="普通用户" name="userIds">
-              <Select
-                mode="multiple"
-                placeholder="搜索并添加用户"
-                showSearch
-                filterOption={false}
-                loading={userSearchLoading}
-                onSearch={handleUserSearch}
-                options={userOptions}
-                notFoundContent={userSearchLoading ? '搜索中...' : '无结果'}
-              />
-            </Form.Item>
-
-            <Form.Item className={styles.submitBtn}>
-              <Button type="primary" htmlType="submit" loading={submitting}>
-                创建项目
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-
-        <div className={styles.stepSection}>
-          <div className={styles.stepItem}>
-            <span className={styles.stepNumber}>01</span>
-            <span className={styles.stepDivider} />
-            <span className={styles.stepLabel}>填写项目基础信息</span>
+          <div className={styles.stepSection}>
+            <div className={styles.stepItem}>
+              <span className={styles.stepNumber}>1</span>
+              <span className={styles.stepLabel}>填写项目基础信息</span>
+            </div>
           </div>
         </div>
       </div>
