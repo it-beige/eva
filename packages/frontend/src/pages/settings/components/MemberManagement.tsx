@@ -37,7 +37,7 @@ const ROLE_CONFIG: Record<string, { label: string; className: string; icon: Reac
 };
 
 const AVATAR_COLORS = [
-  '#5a63ff', '#34c759', '#ff6b6b', '#ffa940', '#36cfc9',
+  '#6366f1', '#10b981', '#ff6b6b', '#ffa940', '#36cfc9',
   '#9254de', '#597ef7', '#f759ab', '#73d13d', '#40a9ff',
 ];
 

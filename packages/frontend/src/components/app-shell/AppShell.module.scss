@@ -15,9 +15,10 @@
   gap: var(--eva-space-6);
   height: 56px;
   padding: 0 var(--eva-space-6);
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid var(--eva-border);
   box-shadow: var(--eva-shadow-sm);
+  backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -38,14 +39,14 @@
   width: 30px;
   height: 30px;
   border-radius: var(--eva-radius-md);
-  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-size: 14px;
   font-weight: 800;
-  box-shadow: 0 2px 8px rgba(90, 99, 255, 0.25);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
 }
 
 .logoName {
@@ -105,11 +106,15 @@
   gap: 5px;
   color: var(--eva-text-secondary) !important;
   font-size: 13px;
-  transition: color 0.2s ease;
+  padding: 6px 10px;
+  border-radius: var(--eva-radius-sm);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 .headerLink:hover {
   color: var(--eva-primary) !important;
+  background: var(--eva-primary-soft);
 }
 
 .avatarButton {
@@ -130,7 +135,7 @@
 
 .avatarButton:hover {
   border-color: var(--eva-primary);
-  box-shadow: 0 0 0 2px rgba(90, 99, 255, 0.1);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
 }
 
 /* ── Shell Body ────────────────────────────────────────── */
@@ -149,8 +154,8 @@
   height: 100%;
   background: #ffffff !important;
   border-right: 1px solid var(--eva-border);
-  box-shadow: 1px 0 4px rgba(0, 0, 0, 0.02);
   overflow: hidden;
+  transition: width 0.2s ease;
 }
 
 .siderInner {
@@ -264,8 +269,8 @@
   padding: 0;
   overflow: hidden;
   background:
-    radial-gradient(circle at top right, rgba(90, 99, 255, 0.08), transparent 26%),
-    linear-gradient(180deg, #f7f8fb 0%, #f3f5f9 100%);
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 30%),
+    var(--eva-content-bg);
 }
 
 .contentInner {
@@ -291,15 +296,15 @@
   justify-content: center;
   color: #fff;
   font-size: 18px;
-  box-shadow: 0 4px 16px rgba(90, 99, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
   z-index: 30;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .assistantFab:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 24px rgba(90, 99, 255, 0.4);
+  background: var(--eva-primary-hover);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
 }
 
 /* ── Responsive ────────────────────────────────────────── */

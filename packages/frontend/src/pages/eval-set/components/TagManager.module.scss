@@ -15,7 +15,7 @@
   border-radius: 999px;
   background: linear-gradient(135deg, #fbfcff 0%, #f2f6ff 100%);
   border: 1px solid #e1e8f7;
-  box-shadow: 0 10px 22px rgba(90, 99, 255, 0.08);
+  box-shadow: 0 10px 22px rgba(99, 102, 241, 0.08);
 }
 
 .sectionLead {
@@ -63,7 +63,7 @@
 
 .tagSurface:hover,
 .addTagSurface:hover {
-  transform: translateY(-1px);
+  border-color: var(--eva-border-strong);
 }
 
 .tagSurface :global(.ant-tag-close-icon),

@@ -133,11 +133,11 @@ const LoginPage = () => {
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* Bar chart */}
-          <rect x="20" y="120" width="24" height="60" rx="4" fill="#5a63ff" />
-          <rect x="54" y="80" width="24" height="100" rx="4" fill="#7c87ff" />
-          <rect x="88" y="100" width="24" height="80" rx="4" fill="#5a63ff" />
-          <rect x="122" y="60" width="24" height="120" rx="4" fill="#7c87ff" />
-          <rect x="156" y="90" width="24" height="90" rx="4" fill="#5a63ff" />
+          <rect x="20" y="120" width="24" height="60" rx="4" fill="#6366f1" />
+          <rect x="54" y="80" width="24" height="100" rx="4" fill="#818cf8" />
+          <rect x="88" y="100" width="24" height="80" rx="4" fill="#6366f1" />
+          <rect x="122" y="60" width="24" height="120" rx="4" fill="#818cf8" />
+          <rect x="156" y="90" width="24" height="90" rx="4" fill="#6366f1" />
           {/* Trend line */}
           <polyline
             points="32,110 66,70 100,90 134,50 168,80 210,40 250,55"
@@ -156,8 +156,8 @@ const LoginPage = () => {
           <circle cx="210" cy="40" r="5" fill="#fff" stroke="#a5adff" strokeWidth="2" />
           <circle cx="250" cy="55" r="4" fill="#a5adff" />
           {/* Axis */}
-          <line x1="10" y1="180" x2="270" y2="180" stroke="#5a63ff" strokeWidth="1" opacity="0.5" />
-          <line x1="10" y1="20" x2="10" y2="180" stroke="#5a63ff" strokeWidth="1" opacity="0.5" />
+          <line x1="10" y1="180" x2="270" y2="180" stroke="#6366f1" strokeWidth="1" opacity="0.5" />
+          <line x1="10" y1="20" x2="10" y2="180" stroke="#6366f1" strokeWidth="1" opacity="0.5" />
         </svg>
       </div>
 

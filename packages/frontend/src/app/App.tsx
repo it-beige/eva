@@ -66,7 +66,7 @@ function App() {
               cellPaddingBlock: 14,
             },
             Button: {
-              primaryShadow: '0 2px 6px rgba(90, 99, 255, 0.2)',
+              primaryShadow: '0 2px 6px rgba(99, 102, 241, 0.2)',
               defaultShadow: 'none',
               defaultBg: '#F5F7FA',
               defaultBorderColor: '#DDE3EE',
@@ -78,7 +78,7 @@ function App() {
             Input: {
               activeBorderColor: '#5A63FF',
               hoverBorderColor: '#BFC8FF',
-              activeShadow: '0 0 0 2px rgba(90, 99, 255, 0.08)',
+              activeShadow: '0 0 0 2px rgba(99, 102, 241, 0.08)',
               colorBgContainer: '#FFFFFF',
             },
             Select: {

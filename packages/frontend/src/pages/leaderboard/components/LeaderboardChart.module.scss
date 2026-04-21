@@ -16,6 +16,7 @@
   font-weight: 700;
   color: var(--eva-text-secondary);
   font-size: 13px;
+  font-family: var(--eva-font-mono);
 }
 
 .barName {
@@ -42,27 +43,28 @@
   align-items: center;
   justify-content: flex-end;
   padding-right: 8px;
-  transition: width 0.5s ease;
+  transition: width 0.4s ease;
 }
 
 .barFillGreen {
-  background: linear-gradient(90deg, #34c759, #30d158);
+  background: linear-gradient(90deg, #10b981, #34d399);
 }
 
 .barFillBlue {
-  background: linear-gradient(90deg, #5a63ff, #7c87ff);
+  background: linear-gradient(90deg, #6366f1, #818cf8);
 }
 
 .barFillOrange {
-  background: linear-gradient(90deg, #faad14, #ffc53d);
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
 }
 
 .barFillRed {
-  background: linear-gradient(90deg, #ff4d4f, #ff7875);
+  background: linear-gradient(90deg, #ef4444, #f87171);
 }
 
 .barScore {
   color: #fff;
   font-size: 11px;
   font-weight: 700;
+  font-family: var(--eva-font-mono);
 }

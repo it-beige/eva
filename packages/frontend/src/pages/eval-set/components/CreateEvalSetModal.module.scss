@@ -14,15 +14,15 @@
 
   &:hover {
     border-color: var(--eva-primary) !important;
-    box-shadow: 0 2px 8px rgba(90, 99, 255, 0.1);
-    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+    border-color: var(--eva-border-strong);
   }
 }
 
 .sourceCardActive {
   border: 2px solid var(--eva-primary) !important;
   background: var(--eva-primary-soft) !important;
-  box-shadow: 0 0 0 1px var(--eva-primary), 0 2px 8px rgba(90, 99, 255, 0.15) !important;
+  box-shadow: 0 0 0 1px var(--eva-primary), 0 2px 8px rgba(99, 102, 241, 0.15) !important;
 }
 
 .sourceIcon {

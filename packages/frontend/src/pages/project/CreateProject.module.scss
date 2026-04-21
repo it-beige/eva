@@ -42,14 +42,14 @@
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-size: 14px;
   font-weight: 800;
-  box-shadow: 0 2px 8px rgba(90, 99, 255, 0.25);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
 }
 
 .logoName {
@@ -105,7 +105,7 @@
   border-radius: 12px;
   padding: 28px 32px;
   border: 1px solid var(--eva-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(71, 92, 122, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(99, 102, 241, 0.04);
 }
 
 .stepSection {

@@ -70,7 +70,7 @@
 
 .versionItem:hover {
   background: var(--eva-bg-subtle);
-  transform: translateY(-1px);
+  border-color: var(--eva-border-strong);
 }
 
 .versionItemActive {
@@ -100,7 +100,7 @@
 
 .compareContent {
   white-space: pre-wrap;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-family: var(--eva-font-mono);
   font-size: 13px;
   line-height: 1.6;
   background: var(--eva-bg-subtle);
@@ -151,7 +151,7 @@
   border-radius: var(--eva-radius-md);
   white-space: pre-wrap;
   word-break: break-word;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-family: var(--eva-font-mono);
   font-size: 13px;
   line-height: 1.6;
   max-height: 400px;

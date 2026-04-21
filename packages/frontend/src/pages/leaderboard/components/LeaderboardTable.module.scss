@@ -1,10 +1,13 @@
 .rank {
   color: var(--eva-text-secondary);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 15px;
+  font-family: var(--eva-font-mono);
 }
 
 .appName {
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--eva-text);
 }
 
 .appVersion {
@@ -15,11 +18,13 @@
 .scoreTag {
   font-size: 14px;
   font-weight: 700;
+  font-family: var(--eva-font-mono);
 }
 
 .timeCell {
   color: var(--eva-text-secondary);
   font-size: 13px;
+  font-family: var(--eva-font-mono);
 }
 
 .timeIcon {

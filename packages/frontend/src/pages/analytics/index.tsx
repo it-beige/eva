@@ -82,7 +82,7 @@ const AnalyticsPage = () => {
                 核心业务健康度
               </Title>
             </div>
-            <Progress percent={93} strokeColor="#ff8a3d" railColor="rgba(255,255,255,0.06)" />
+            <Progress percent={93} strokeColor="var(--eva-warning)" railColor="var(--eva-border-soft)" />
             <EnhancedTable columns={qualityColumns} dataSource={qualityData} pagination={false} />
           </Space>
         </Card>

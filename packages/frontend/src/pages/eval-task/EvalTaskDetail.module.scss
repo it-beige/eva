@@ -50,7 +50,7 @@
   padding: var(--eva-space-4) var(--eva-space-5);
   max-height: min(600px, 60vh);
   overflow-y: auto;
-  font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-family: var(--eva-font-mono);
   font-size: 12px;
   line-height: 1.8;
   color: #cdd6f4;

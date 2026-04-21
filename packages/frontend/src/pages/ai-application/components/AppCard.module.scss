@@ -5,7 +5,7 @@
 
 .card:hover {
   box-shadow: var(--eva-shadow);
-  transform: translateY(-2px);
+  border-color: var(--eva-border-strong);
 }
 
 .cardHeader {

@@ -48,8 +48,8 @@
   font-size: 18px;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%);
-  box-shadow: 0 8px 24px rgba(90, 99, 255, 0.3);
+  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
 }
 
 .logoText {
@@ -131,13 +131,13 @@
   height: 8px;
   border-radius: 999px;
   background: var(--eva-success);
-  box-shadow: 0 0 0 6px rgba(52, 199, 89, 0.12);
+  box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
 }
 
 .avatar {
-  background: linear-gradient(135deg, #5a63ff 0%, #7c87ff 100%) !important;
+  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%) !important;
   color: #fff !important;
-  box-shadow: 0 4px 16px rgba(90, 99, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
 }
 
 .shellBody {
@@ -288,7 +288,7 @@
   width: 320px;
   height: 320px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(90, 99, 255, 0.06), transparent 68%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.06), transparent 68%);
   pointer-events: none;
 }
 
