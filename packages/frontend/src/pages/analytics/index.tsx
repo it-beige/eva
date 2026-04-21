@@ -30,7 +30,7 @@ const qualityColumns: ColumnsType<QualityItem> = [
     title: '趋势',
     dataIndex: 'trend',
     key: 'trend',
-    render: (value: string) => <Tag color={value === '上升' ? 'success' : 'warning'}>{value}</Tag>,
+    render: (value: string) => <Tag className={value === '上升' ? 'eva-pillTagGreen' : 'eva-pillTagOrange'}>{value}</Tag>,
   },
   {
     title: '负责人',
@@ -98,7 +98,7 @@ const AnalyticsPage = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {pendingItems.map((item, index) => (
                 <Space key={item} align="start">
-                  <Tag color="orange">{index + 1}</Tag>
+                  <Tag className="eva-pillTagOrange">{index + 1}</Tag>
                   <Text>{item}</Text>
                 </Space>
               ))}

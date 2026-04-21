@@ -30,10 +30,10 @@ import styles from '../SettingsPage.module.scss';
 
 const { Option } = Select;
 
-const ROLE_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  owner: { label: '所有者', color: 'gold', icon: <CrownOutlined /> },
-  admin: { label: '管理员', color: 'blue', icon: <UserOutlined /> },
-  member: { label: '成员', color: 'default', icon: <UserOutlined /> },
+const ROLE_CONFIG: Record<string, { label: string; className: string; icon: React.ReactNode }> = {
+  owner: { label: '所有者', className: 'eva-pillTagOrange', icon: <CrownOutlined /> },
+  admin: { label: '管理员', className: 'eva-pillTagBlue', icon: <UserOutlined /> },
+  member: { label: '成员', className: '', icon: <UserOutlined /> },
 };
 
 const AVATAR_COLORS = [
@@ -160,7 +160,7 @@ const MemberManagement: React.FC = () => {
                   </div>
 
                   <Space size="middle">
-                    <Tag color={roleConfig.color} icon={roleConfig.icon}>
+                    <Tag className={roleConfig.className} icon={roleConfig.icon}>
                       {roleConfig.label}
                     </Tag>
                     {member.role !== 'owner' && (

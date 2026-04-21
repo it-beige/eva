@@ -76,7 +76,7 @@ const PromptDetailPage = () => {
             {currentPrompt.name}
           </Descriptions.Item>
           <Descriptions.Item label="版本号">
-            <Tag color="blue">v{currentPrompt.version}</Tag>
+            <Tag className="eva-pillTagBlue">v{currentPrompt.version}</Tag>
           </Descriptions.Item>
           <Descriptions.Item label="描述">
             {currentPrompt.description || '-'}

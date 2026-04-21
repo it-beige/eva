@@ -19,21 +19,6 @@ import styles from './TraceDetail.module.scss';
 
 const { Title, Text, Paragraph } = Typography;
 
-const getStatusColor = (status: string | null): string => {
-  switch (status) {
-    case 'success':
-      return 'success';
-    case 'error':
-      return 'error';
-    case 'pending':
-      return 'processing';
-    case 'timeout':
-      return 'warning';
-    default:
-      return 'default';
-  }
-};
-
 const getStatusText = (status: string | null): string => {
   switch (status) {
     case 'success':
@@ -140,7 +125,19 @@ const TraceDetailPage = () => {
             {selectedTrace.sourceProject || '-'}
           </Descriptions.Item>
           <Descriptions.Item label="状态">
-            <Tag color={getStatusColor(selectedTrace.status)}>
+            <Tag
+              className={
+                selectedTrace.status === 'success'
+                  ? 'eva-pillTagGreen'
+                  : selectedTrace.status === 'error'
+                    ? 'eva-pillTagRed'
+                    : selectedTrace.status === 'timeout'
+                      ? 'eva-pillTagOrange'
+                      : selectedTrace.status === 'pending'
+                        ? 'eva-pillTagBlue'
+                        : undefined
+              }
+            >
               {getStatusText(selectedTrace.status)}
             </Tag>
           </Descriptions.Item>

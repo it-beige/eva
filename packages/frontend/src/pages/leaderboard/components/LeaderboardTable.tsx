@@ -71,7 +71,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       ellipsis: { showTitle: false },
       render: (name: string) => (
         <Tooltip title={name} placement="topLeft">
-          <Tag color="blue" style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</Tag>
+          <Tag className="eva-pillTagBlue" style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</Tag>
         </Tooltip>
       ),
     },
@@ -83,7 +83,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       ellipsis: { showTitle: false },
       render: (name: string) => (
         <Tooltip title={name} placement="topLeft">
-          <Tag color="green" style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</Tag>
+          <Tag className="eva-pillTagGreen" style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</Tag>
         </Tooltip>
       ),
     },

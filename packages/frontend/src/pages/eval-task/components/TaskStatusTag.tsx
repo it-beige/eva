@@ -18,32 +18,32 @@ const TaskStatusTag: React.FC<TaskStatusTagProps> = ({ status, progress = 0 }) =
   switch (status) {
     case EvalTaskStatus.SUCCESS:
       return (
-        <Tag color="success" icon={<CheckCircleOutlined />}>
+        <Tag className="eva-pillTagGreen" icon={<CheckCircleOutlined />}>
           成功
         </Tag>
       );
     case EvalTaskStatus.RUNNING:
       return (
-        <Tag color="processing" icon={<LoadingOutlined spin />} className={styles.runningTag}>
+        <Tag className={`eva-pillTagBlue ${styles.runningTag}`} icon={<LoadingOutlined spin />}>
           运行中 {progress > 0 ? `${progress.toFixed(2)}%` : '0%'}
         </Tag>
       );
     case EvalTaskStatus.FAILED:
       return (
-        <Tag color="error" icon={<CloseCircleOutlined />}>
+        <Tag className="eva-pillTagRed" icon={<CloseCircleOutlined />}>
           失败
         </Tag>
       );
     case EvalTaskStatus.ABORTED:
       return (
-        <Tag color="warning" icon={<PauseCircleOutlined />}>
+        <Tag className="eva-pillTagOrange" icon={<PauseCircleOutlined />}>
           中止
         </Tag>
       );
     case EvalTaskStatus.PENDING:
     default:
       return (
-        <Tag color="default">
+        <Tag>
           <Spin size="small" className={styles.pendingSpin} />
           待执行
         </Tag>

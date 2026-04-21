@@ -83,7 +83,7 @@ const DebugEvalPanel = ({ filterRules, sampleRate, dateRange }: DebugEvalPanelPr
         <div>
           {record.metrics?.map((metric) => (
             <div key={metric.metricId} className={styles.metricLine}>
-              <Tag color={metric.score >= 0.8 ? 'success' : metric.score >= 0.6 ? 'warning' : 'error'}>
+              <Tag className={metric.score >= 0.8 ? 'eva-pillTagGreen' : metric.score >= 0.6 ? 'eva-pillTagOrange' : 'eva-pillTagRed'}>
                 {metric.metricName}: {(metric.score * 100).toFixed(1)}%
               </Tag>
             </div>

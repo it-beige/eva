@@ -187,7 +187,9 @@ const ProjectListPage = () => {
       dataIndex: 'appCode',
       key: 'appCode',
       width: 120,
-      render: (v: string | null) => v ? <code style={{ fontSize: 12, padding: '2px 6px', background: '#f5f7fa', borderRadius: 4 }}>{v}</code> : <Text type="secondary">-</Text>,
+      render: (v: string | null) => v
+        ? <code className={styles.codeBlock}>{v}</code>
+        : <Text type="secondary">未绑定</Text>,
     },
     {
       title: '项目描述',
@@ -242,7 +244,7 @@ const ProjectListPage = () => {
       width: 200,
       fixed: 'right',
       render: (_: unknown, record: ProjectItem) => (
-        <Space size={4}>
+        <Space size={12}>
           <Button
             type="link"
             size="small"
@@ -266,6 +268,7 @@ const ProjectListPage = () => {
                 type="link"
                 size="small"
                 className={styles.deleteLink}
+                danger
                 onClick={() => handleDelete(record)}
               >
                 删除
@@ -326,7 +329,7 @@ const ProjectListPage = () => {
 
       <div className={styles.body}>
         <div className={styles.header}>
-          <div>
+          <div className={styles.headerInfo}>
             <Title level={3} className={styles.title}>
               项目管理
             </Title>
@@ -337,6 +340,7 @@ const ProjectListPage = () => {
             icon={<PlusOutlined />}
             size="large"
             onClick={() => navigate('/projects/create')}
+            className={styles.createBtn}
           >
             创建项目
           </Button>

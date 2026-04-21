@@ -150,7 +150,7 @@ const MetricSelector = ({
                           <InfoCircleOutlined className={styles.infoIcon} />
                         </Tooltip>
                         {metric.scope === MetricScope.PUBLIC && (
-                          <Tag color="blue">
+                          <Tag className="eva-pillTagBlue">
                             公共
                           </Tag>
                         )}

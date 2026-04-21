@@ -80,7 +80,7 @@ const TokenManagement: React.FC = () => {
   const getTokenStatus = (expiresAt: string | null): { tag: React.ReactNode; iconClass: string } => {
     if (!expiresAt) {
       return {
-        tag: <Tag color="green">永不过期</Tag>,
+        tag: <Tag className="eva-pillTagGreen">永不过期</Tag>,
         iconClass: styles.tokenIconDefault,
       };
     }
@@ -90,18 +90,18 @@ const TokenManagement: React.FC = () => {
 
     if (isExpired) {
       return {
-        tag: <Tag color="red">已过期</Tag>,
+        tag: <Tag className="eva-pillTagRed">已过期</Tag>,
         iconClass: styles.tokenIconExpired,
       };
     }
     if (isExpiringSoon) {
       return {
-        tag: <Tag color="orange" icon={<WarningOutlined />}>即将过期</Tag>,
+        tag: <Tag className="eva-pillTagOrange" icon={<WarningOutlined />}>即将过期</Tag>,
         iconClass: styles.tokenIconWarning,
       };
     }
     return {
-      tag: <Tag color="green">{formatDate(expiresAt)} 到期</Tag>,
+      tag: <Tag className="eva-pillTagGreen">{formatDate(expiresAt)} 到期</Tag>,
       iconClass: styles.tokenIconDefault,
     };
   };

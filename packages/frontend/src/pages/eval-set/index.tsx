@@ -38,11 +38,6 @@ import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable
 import { formatDateTime } from '../../utils/format';
 import styles from './EvalSetPage.module.scss';
 
-const EVAL_SET_TYPE_COLORS: Record<string, string> = {
-  [EvalSetType.TEXT]: 'blue',
-  [EvalSetType.CODE]: 'green',
-};
-
 const EVAL_SET_TYPE_LABELS: Record<string, string> = {
   [EvalSetType.TEXT]: '文本',
   [EvalSetType.CODE]: 'Code',
@@ -148,7 +143,7 @@ const EvalSetListPage = () => {
       key: 'type',
       width: 100,
       render: (type: string) => (
-        <Tag color={EVAL_SET_TYPE_COLORS[type]}>
+        <Tag className={type === EvalSetType.CODE ? 'eva-pillTagGreen' : 'eva-pillTagBlue'}>
           {EVAL_SET_TYPE_LABELS[type]}
         </Tag>
       ),

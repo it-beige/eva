@@ -38,9 +38,9 @@ import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable
 import { formatDateTime } from '../../utils/format';
 import styles from './AutoEvalListPage.module.scss';
 
-const statusMap: Record<AutoEvalStatus, { color: string; text: string }> = {
-  [AutoEvalStatus.ENABLED]: { color: 'success', text: '已启用' },
-  [AutoEvalStatus.DISABLED]: { color: 'default', text: '已禁用' },
+const statusConfig: Record<AutoEvalStatus, { className: string; text: string }> = {
+  [AutoEvalStatus.ENABLED]: { className: 'eva-pillTagGreen', text: '已启用' },
+  [AutoEvalStatus.DISABLED]: { className: '', text: '已禁用' },
 };
 
 const AutoEvalListPage = () => {
@@ -139,7 +139,7 @@ const AutoEvalListPage = () => {
       key: 'status',
       width: 100,
       render: (status: AutoEvalStatus) => (
-        <Tag color={statusMap[status].color}>{statusMap[status].text}</Tag>
+        <Tag className={statusConfig[status].className}>{statusConfig[status].text}</Tag>
       ),
     },
     {

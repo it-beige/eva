@@ -9,18 +9,18 @@ const { Text } = Typography;
 const BehaviorLogTab = () => {
   const { behaviorLogs, logsLoading } = useAppSelector((state) => state.observability);
 
-  const getStatusColor = (status: string | null): string => {
+  const getStatusClassName = (status: string | null): string | undefined => {
     switch (status) {
       case 'success':
-        return 'success';
+        return 'eva-pillTagGreen';
       case 'error':
-        return 'error';
+        return 'eva-pillTagRed';
       case 'pending':
-        return 'processing';
+        return 'eva-pillTagBlue';
       case 'timeout':
-        return 'warning';
+        return 'eva-pillTagOrange';
       default:
-        return 'default';
+        return undefined;
     }
   };
 
@@ -93,7 +93,7 @@ const BehaviorLogTab = () => {
       key: 'status',
       width: 90,
       render: (status: string | null) => (
-        <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+        <Tag className={getStatusClassName(status)}>{getStatusText(status)}</Tag>
       ),
     },
     {
