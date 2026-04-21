@@ -223,6 +223,7 @@ export class AIApplicationService {
     }
 
     const project = await this.projectRepository.findOne({
+      where: {},
       order: { createdAt: 'ASC' },
     });
 
