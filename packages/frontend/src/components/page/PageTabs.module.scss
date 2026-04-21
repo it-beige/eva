@@ -1,0 +1,170 @@
+@use '../../styles/breakpoints' as *;
+
+.tabsBar {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 var(--eva-space-3);
+  background: #fff;
+  border-bottom: 1px solid var(--eva-border);
+  overflow: hidden;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.tabsList {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  min-width: 0;
+  gap: 2px;
+
+  /* 隐藏滚动条 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 12px;
+  border: none;
+  background: transparent;
+  color: var(--eva-text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s ease, background 0.15s ease;
+  flex-shrink: 0;
+  max-width: 180px;
+  border-radius: var(--eva-radius-sm) var(--eva-radius-sm) 0 0;
+
+  &:hover {
+    color: var(--eva-text);
+    background: var(--eva-bg-subtle);
+  }
+}
+
+.tabActive {
+  color: var(--eva-primary) !important;
+  background: var(--eva-primary-soft) !important;
+  font-weight: 600;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--eva-primary);
+    border-radius: 2px 2px 0 0;
+  }
+}
+
+.tabTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.tabClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--eva-text-tertiary);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: all 0.15s ease;
+
+  .tab:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--eva-text);
+  }
+}
+
+/* 当前激活标签的关闭按钮始终可见 */
+.tabActive .tabClose {
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+    background: rgba(90, 99, 255, 0.12);
+    color: var(--eva-primary);
+  }
+}
+
+/* 不可关闭标签不显示关闭按钮的占位 */
+.tabUnclosable {
+  padding-right: 14px;
+}
+
+.tabActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: var(--eva-space-1);
+  padding-left: var(--eva-space-2);
+  border-left: 1px solid var(--eva-border-soft);
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: var(--eva-radius-sm);
+  background: transparent;
+  color: var(--eva-text-tertiary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--eva-bg-subtle);
+    color: var(--eva-text);
+  }
+}
+
+/* ── 响应式 ─────────────────────────────────────── */
+@include below(sm) {
+  .tabsBar {
+    height: 34px;
+    padding: 0 var(--eva-space-2);
+  }
+
+  .tab {
+    padding: 0 8px;
+    font-size: 12px;
+    max-width: 140px;
+  }
+
+  .tabActions {
+    display: none;
+  }
+}

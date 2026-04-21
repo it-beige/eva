@@ -8,6 +8,7 @@ import evalTaskReducer from '../store/evalTaskSlice';
 import playgroundReducer from '../store/playgroundSlice';
 import autoEvalReducer from '../store/autoEvalSlice';
 import projectReducer from '../store/projectSlice';
+import tabsReducer from '../store/tabsSlice';
 import { evaApi } from '../services/evaApi';
 
 export const store = configureStore({
@@ -21,6 +22,7 @@ export const store = configureStore({
     playground: playgroundReducer,
     autoEval: autoEvalReducer,
     project: projectReducer,
+    tabs: tabsReducer,
     [evaApi.reducerPath]: evaApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

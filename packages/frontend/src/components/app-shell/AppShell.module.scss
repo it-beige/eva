@@ -254,10 +254,12 @@
   padding: 0 !important;
   overflow: hidden;
   background: var(--eva-content-bg) !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .contentWrapper {
-  height: 100%;
+  flex: 1;
   min-height: 0;
   padding: 0;
   overflow: hidden;

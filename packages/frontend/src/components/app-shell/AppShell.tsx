@@ -19,6 +19,7 @@ import {
 } from '../../app/navigation';
 import { clearSelectedProject } from '../../store/projectSlice';
 import { clearSession, getCurrentUser, hasRole } from '../../auth/session';
+import PageTabs from '../page/PageTabs';
 import styles from './AppShell.module.scss';
 
 const { Header, Sider, Content } = Layout;
@@ -197,6 +198,7 @@ const AppShell = ({ menuItems }: AppShellProps) => {
         </Sider>
 
         <Content className={styles.content}>
+          <PageTabs />
           <div className={styles.contentWrapper}>
             <div className={styles.contentInner}>
               <Outlet />

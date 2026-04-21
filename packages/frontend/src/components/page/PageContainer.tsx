@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
-import { Breadcrumb, Typography } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, type ReactNode } from 'react';
+import { Typography } from 'antd';
+import { useLocation } from 'react-router-dom';
 import { usePageMeta } from '../../hooks/usePageMeta';
+import { useAppDispatch } from '../../hooks/useRedux';
+import { addTab } from '../../store/tabsSlice';
 
 const { Paragraph, Title } = Typography;
 
@@ -14,32 +16,28 @@ type PageContainerProps = {
 };
 
 const PageContainer = ({ title, description, extra, content, children }: PageContainerProps) => {
-  const navigate = useNavigate();
   const meta = usePageMeta();
+  const location = useLocation();
+  const dispatch = useAppDispatch();
 
-  const breadcrumbItems = meta.breadcrumbs.map((item) => ({
-    title: item.path ? (
-      <a
-        onClick={(event) => {
-          event.preventDefault();
-          navigate(item.path!);
-        }}
-        href={item.path}
-      >
-        {item.title}
-      </a>
-    ) : (
-      item.title
-    ),
-  }));
+  // 页面挂载时自动注册到标签页
+  const pageTitle = (title ?? meta.title) as string;
+  const pagePath = location.pathname;
+
+  useEffect(() => {
+    dispatch(
+      addTab({
+        key: pagePath,
+        title: pageTitle,
+        closable: true,
+      }),
+    );
+  }, [dispatch, pagePath, pageTitle]);
 
   return (
     <div className="eva-page">
       <div className="eva-pageHeader">
         <div className="eva-pageTitleBlock">
-          <div className="eva-pageEyebrow">
-            <Breadcrumb items={breadcrumbItems} />
-          </div>
           <Title level={1} className="eva-pageTitle">
             {title ?? meta.title}
           </Title>

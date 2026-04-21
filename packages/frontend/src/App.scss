@@ -151,7 +151,6 @@ a {
 .ant-typography,
 .ant-table,
 .ant-menu,
-.ant-breadcrumb,
 .ant-statistic,
 .ant-form,
 .ant-tabs {
@@ -240,8 +239,22 @@ a {
 }
 
 .ant-btn.ant-btn-link {
-  padding: 0;
-  height: auto;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 8px;
+  color: var(--eva-primary);
+}
+
+.ant-btn.ant-btn-link:hover {
+  background: var(--eva-primary-soft) !important;
+}
+
+.ant-btn.ant-btn-link.ant-btn-dangerous {
+  color: var(--eva-error) !important;
+}
+
+.ant-btn.ant-btn-link.ant-btn-dangerous:hover {
+  background: var(--eva-error-soft) !important;
 }
 
 /* ── Table ─────────────────────────────────────────────── */
@@ -327,27 +340,11 @@ a {
   color: var(--eva-primary);
 }
 
-/* ── Breadcrumb ────────────────────────────────────────── */
-
-.ant-breadcrumb,
-.ant-breadcrumb-link,
-.ant-breadcrumb-separator {
-  color: var(--eva-text-tertiary) !important;
-  font-size: 13px;
-}
-
-.ant-breadcrumb a {
-  color: var(--eva-text-secondary) !important;
-  transition: color 0.2s ease;
-}
-
-.ant-breadcrumb a:hover {
-  color: var(--eva-primary) !important;
-}
-
-.ant-breadcrumb li:last-child {
-  color: var(--eva-text) !important;
-  font-weight: 500;
+.ant-pagination .ant-pagination-item:hover,
+.ant-pagination .ant-pagination-prev:hover,
+.ant-pagination .ant-pagination-next:hover {
+  border-color: var(--eva-primary);
+  color: var(--eva-primary);
 }
 
 /* ── Menu ──────────────────────────────────────────────── */
@@ -440,17 +437,22 @@ a {
 /* ── Tag ───────────────────────────────────────────────── */
 
 .ant-tag {
-  font-weight: 500;
-  border-radius: var(--eva-radius-xs);
+  font-weight: 600;
+  border-radius: 999px;
   font-size: 12px;
-  padding: 1px 8px;
+  padding: 2px 10px;
   line-height: 20px;
+  border: none;
 }
 
 /* ── Popconfirm / Popover ──────────────────────────────── */
 
 .ant-popconfirm .ant-popconfirm-title {
   font-weight: 600;
+}
+
+.ant-popconfirm .ant-popconfirm-description {
+  color: var(--eva-text-secondary);
 }
 
 .ant-popover-inner {
@@ -462,8 +464,9 @@ a {
 
 .ant-badge .ant-badge-count {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   box-shadow: none;
+  border-radius: 999px;
 }
 
 /* ── Dropdown ──────────────────────────────────────────── */
@@ -515,12 +518,6 @@ a {
 
 .eva-pageTitleBlock {
   max-width: 980px;
-}
-
-.eva-pageEyebrow {
-  margin-bottom: 8px;
-  color: var(--eva-text-tertiary);
-  font-size: 12px;
 }
 
 .eva-pageTitle {
@@ -753,6 +750,14 @@ a {
 
 /* ── Empty State ──────────────────────────────────────── */
 
+.ant-empty {
+  padding: 24px 0;
+}
+
+.ant-empty .ant-empty-description {
+  color: var(--eva-text-tertiary);
+}
+
 .eva-empty {
   padding: var(--eva-space-12) 0;
   text-align: center;
@@ -806,5 +811,60 @@ a {
   }
 }
 
-/* ── Responsive — see styles/_responsive.scss ─────────── */
-@import './styles/responsive';
+.eva-pillTagBlue {
+  color: #1677ff;
+  background: #e6f4ff;
+}
+
+.eva-pillTagGreen {
+  color: #389e0d;
+  background: #f6ffed;
+}
+
+.eva-pillTagOrange {
+  color: #d48806;
+  background: #fff7e6;
+}
+
+.eva-pillTagRed {
+  color: #cf1322;
+  background: #fff1f0;
+}
+
+.eva-pillTagPurple {
+  color: #722ed1;
+  background: #f9f0ff;
+}
+
+/* ── Responsive (inlined from styles/_responsive.scss) ── */
+
+@media (max-width: 1200px) {
+  .eva-panelGrid,
+  .eva-dashboardSplit {
+    grid-template-columns: 1fr;
+  }
+
+  .eva-page {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .eva-page {
+    padding: 16px 16px 28px;
+  }
+
+  .eva-pageHeader {
+    flex-direction: column;
+  }
+
+  .eva-pageActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .eva-panelGrid,
+  .eva-panelGrid--4 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
