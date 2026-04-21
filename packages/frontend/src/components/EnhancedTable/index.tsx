@@ -254,7 +254,7 @@ function EnhancedTable<T extends object>({
       {
         mode: 'compact' as TableDensity,
         icon: <UnorderedListOutlined style={{ fontSize: 16 }} />,
-        tooltip: '紧凑模式 - 适合查看大量数据',
+        tooltip: '紧凑模式 - 适合查看少量数据',
       },
       {
         mode: 'default' as TableDensity,

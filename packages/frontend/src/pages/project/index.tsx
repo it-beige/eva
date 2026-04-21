@@ -418,26 +418,27 @@ const ProjectListPage = () => {
           </div>
         </div>
 
-        <div className="eva-contentCard">
+        <div className={`eva-contentCard ${styles.tableSection}`}>
           <div className="eva-contentCardBody">
             <EnhancedTable<ProjectItem>
-          rowKey="projectId"
-          columns={columns}
-          columnConfigs={columnConfigs}
-          dataSource={list}
-          loading={loading}
-          scroll={{ x: 1200 }}
-          onTableChange={handleTableChange}
-          pagination={{
-            current: page,
-            pageSize,
-            total,
-            showSizeChanger: true,
-            pageSizeOptions: ['10', '20', '50'],
-            showTotal: (t) => `共 ${t} 个项目`,
-            style: { padding: '12px 16px', margin: 0 },
-          }}
-        />
+              rowKey="projectId"
+              columns={columns}
+              columnConfigs={columnConfigs}
+              dataSource={list}
+              loading={loading}
+              fillHeight
+              scroll={{ x: 1200 }}
+              onTableChange={handleTableChange}
+              pagination={{
+                current: page,
+                pageSize,
+                total,
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50'],
+                showTotal: (t) => `共 ${t} 个项目`,
+                style: { padding: '12px 16px', margin: 0 },
+              }}
+            />
           </div>
         </div>
       </div>
