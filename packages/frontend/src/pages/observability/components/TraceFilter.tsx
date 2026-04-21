@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Row, Col, Select, DatePicker, Input, Button, Space } from 'antd';
+import { Select, DatePicker, Input, Button } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { TRACE_STATUS_OPTIONS, TIME_RANGE_OPTIONS } from '../../../types/observability';
@@ -99,99 +99,84 @@ const TraceFilter = ({ onSearch }: TraceFilterProps) => {
 
   return (
     <div className={styles.container}>
-      <Row gutter={[16, 16]} align="middle">
-        <Col flex="auto">
-          <Space size="middle" wrap>
-            <Space>
-              <span className={styles.fieldLabel}>时间范围:</span>
-              <Select
-                value={localFilters.timeRange}
-                onChange={handleTimeRangeChange}
-                options={TIME_RANGE_OPTIONS}
-                className={styles.timeRangeSelect}
-                placeholder="选择时间"
-              />
-              <RangePicker
-                value={dateRange as any}
-                onChange={handleDateRangeChange}
-                showTime={{ format: 'HH:mm' }}
-                format="YYYY-MM-DD HH:mm"
-                className={styles.rangePicker}
-              />
-            </Space>
-            
-            <Space>
-              <span className={styles.fieldLabel}>ID搜索:</span>
-              <Input
-                value={localFilters.idSearch}
-                onChange={(e) => setLocalFilters((prev) => ({ ...prev, idSearch: e.target.value }))}
-                placeholder="支持TraceId、会话ID、节点ID、messageId的搜索"
-                className={styles.idSearchInput}
-                allowClear
-              />
-            </Space>
+      <div className={styles.mainFields}>
+        <div className="eva-filterField">
+          <span className="eva-filterFieldLabel">时间范围</span>
+          <Select
+            value={localFilters.timeRange}
+            onChange={handleTimeRangeChange}
+            options={TIME_RANGE_OPTIONS}
+            className={styles.timeRangeSelect}
+            placeholder="选择时间"
+          />
+          <RangePicker
+            value={dateRange as any}
+            onChange={handleDateRangeChange}
+            showTime={{ format: 'HH:mm' }}
+            format="YYYY-MM-DD HH:mm"
+            className={styles.rangePicker}
+          />
+        </div>
 
-            <Space>
-              <span className={styles.fieldLabel}>状态:</span>
-              <Select
-                value={localFilters.status}
-                onChange={(value) => setLocalFilters((prev) => ({ ...prev, status: value }))}
-                options={TRACE_STATUS_OPTIONS}
-                className={styles.statusSelect}
-              />
-            </Space>
+        <div className="eva-filterField">
+          <span className="eva-filterFieldLabel">ID 搜索</span>
+          <Input
+            value={localFilters.idSearch}
+            onChange={(e) => setLocalFilters((prev) => ({ ...prev, idSearch: e.target.value }))}
+            placeholder="支持 TraceId、会话ID、节点ID、messageId"
+            className={styles.idSearchInput}
+            allowClear
+          />
+        </div>
 
-            <Space>
-              <span className={styles.fieldLabel}>输入/输出:</span>
-              <Input
-                value={localFilters.inputKeyword || localFilters.outputKeyword}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setLocalFilters((prev) => ({ 
-                    ...prev, 
-                    inputKeyword: value,
-                    outputKeyword: value 
-                  }));
-                }}
-                placeholder="请输入输入/输出关键词"
-                className={styles.keywordInput}
-                allowClear
-              />
-            </Space>
-          </Space>
-        </Col>
-      </Row>
+        <div className="eva-filterField">
+          <span className="eva-filterFieldLabel">状态</span>
+          <Select
+            value={localFilters.status}
+            onChange={(value) => setLocalFilters((prev) => ({ ...prev, status: value }))}
+            options={TRACE_STATUS_OPTIONS}
+            className={styles.statusSelect}
+          />
+        </div>
 
-      <Row gutter={[16, 16]} align="middle" className={styles.actionsRow}>
-        <Col flex="auto">
-          <Space size="middle">
-            <Space>
-              <span className={styles.fieldLabel}>用户ID:</span>
-              <Input
-                value={localFilters.userId}
-                onChange={(e) => setLocalFilters((prev) => ({ ...prev, userId: e.target.value }))}
-                placeholder="请输入用户ID"
-                className={styles.userIdInput}
-                allowClear
-              />
-            </Space>
+        <div className="eva-filterField">
+          <span className="eva-filterFieldLabel">输入 / 输出</span>
+          <Input
+            value={localFilters.inputKeyword || localFilters.outputKeyword}
+            onChange={(e) => {
+              const value = e.target.value;
+              setLocalFilters((prev) => ({
+                ...prev,
+                inputKeyword: value,
+                outputKeyword: value,
+              }));
+            }}
+            placeholder="请输入关键词"
+            className={styles.keywordInput}
+            allowClear
+          />
+        </div>
 
-            <Button
-              type="primary"
-              icon={<SearchOutlined />}
-              onClick={handleSearch}
-            >
-              查询
-            </Button>
-            <Button
-              icon={<ReloadOutlined />}
-              onClick={handleReset}
-            >
-              重置
-            </Button>
-          </Space>
-        </Col>
-      </Row>
+        <div className="eva-filterField">
+          <span className="eva-filterFieldLabel">用户 ID</span>
+          <Input
+            value={localFilters.userId}
+            onChange={(e) => setLocalFilters((prev) => ({ ...prev, userId: e.target.value }))}
+            placeholder="请输入用户 ID"
+            className={styles.userIdInput}
+            allowClear
+          />
+        </div>
+      </div>
+
+      <div className={styles.actions}>
+        <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
+          查询
+        </Button>
+        <Button icon={<ReloadOutlined />} onClick={handleReset}>
+          重置
+        </Button>
+      </div>
     </div>
   );
 };

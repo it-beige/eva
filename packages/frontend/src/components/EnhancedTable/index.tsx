@@ -72,6 +72,7 @@ function EnhancedTable<T extends object>({
   enableEllipsis = true,
   onTableChange,
   fillHeight = true,
+  scroll,
   ...tableProps
 }: EnhancedTableProps<T>) {
   // 密度模式状态
@@ -89,6 +90,12 @@ function EnhancedTable<T extends object>({
 
   // 列管理弹窗状态
   const [columnManagerOpen, setColumnManagerOpen] = useState(false);
+
+  /** 合并 scroll 配置——默认开启横向滚动 */
+  const mergedScroll = useMemo(() => {
+    if (scroll) return scroll;
+    return { x: 'max-content' };
+  }, [scroll]);
 
   /** 获取密度对应的 size */
   const tableSize = useMemo(() => {
@@ -372,6 +379,7 @@ function EnhancedTable<T extends object>({
           size={tableSize}
           pagination={pagination}
           onChange={handleTableChange}
+          scroll={mergedScroll}
           className={styles.enhancedTable}
         />
       </div>

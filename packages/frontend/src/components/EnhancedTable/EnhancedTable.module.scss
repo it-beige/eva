@@ -1,7 +1,13 @@
 .enhancedTableWrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
+  width: 100%;
+}
+
+.fillHeight {
+  flex: 1;
+  min-height: 0;
 }
 
 /* ── Toolbar ────────────────────────────────────────── */
@@ -11,7 +17,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  padding: 0;
+  padding: 12px 18px 0;
 }
 
 .toolbarLeft {
@@ -124,18 +130,60 @@
 /* ── Table Container ─────────────────────────────────── */
 
 .tableContainer {
-  background: var(--eva-surface);
-  border: 1px solid var(--eva-border);
-  border-radius: 10px;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 251, 255, 0.98) 100%);
+  border: 1px solid rgba(224, 228, 238, 0.95);
+  border-radius: 18px;
   overflow: hidden;
+  box-shadow: 0 12px 32px rgba(71, 92, 122, 0.08);
+}
+
+.tableContainerFill {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 /* ── Table Styles ─────────────────────────────────────── */
 
 .enhancedTable {
+  width: 100%;
+  min-height: 0;
+
   :global() {
+    .ant-spin-nested-loading,
+    .ant-spin-container,
+    .ant-table,
+    .ant-table-container {
+      height: 100%;
+    }
+
     .ant-table {
+      display: flex;
+      flex-direction: column;
       border-radius: 0;
+      background: transparent;
+    }
+
+    .ant-table-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .ant-table-header {
+      flex-shrink: 0;
+      overflow: hidden !important;
+      border-bottom: 1px solid var(--eva-border-soft);
+    }
+
+    .ant-table-body {
+      flex: 1;
+      min-height: 0;
+      overflow: auto !important;
+      scrollbar-gutter: stable;
     }
 
     // 移除表头和数据之间的间隙
@@ -144,22 +192,39 @@
     }
 
     .ant-table-thead > tr > th {
-      background: var(--eva-bg-subtle);
-      font-weight: 600;
-      color: var(--eva-text);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: rgba(248, 250, 253, 0.96);
+      backdrop-filter: blur(10px);
+      font-weight: 700;
+      color: var(--eva-text-secondary);
       border-bottom: 1px solid var(--eva-border);
     }
 
     .ant-table-tbody > tr {
       transition: all 0.2s;
 
-      &:hover {
-        background: var(--eva-bg-subtle);
+      &:nth-child(even) > td {
+        background: rgba(250, 251, 254, 0.7);
+      }
+
+      &:hover > td {
+        background: #f5f7ff !important;
       }
     }
 
     .ant-table-tbody > tr > td {
       border-bottom: 1px solid var(--eva-split);
+      background: transparent;
+    }
+
+    .ant-table-pagination {
+      flex-shrink: 0;
+      margin: 0 !important;
+      padding: 14px 18px 16px;
+      border-top: 1px solid var(--eva-border-soft);
+      background: rgba(255, 255, 255, 0.92);
     }
 
     /* 密度模式只影响 tbody 的行高 */

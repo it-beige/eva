@@ -325,11 +325,12 @@ const EvalTaskListPage: React.FC = () => {
         </div>
       }
     >
-      <Card>
-        <div className={`eva-toolbar ${styles.toolbar}`}>
-          <div className="eva-toolbarGroup">
+      <div className="eva-filterBar">
+        <div className="eva-filterBarMain">
+          <div className="eva-filterField">
+            <span className="eva-filterFieldLabel">搜索</span>
             <Input
-              placeholder="按名称搜索"
+              placeholder="按名称搜索任务"
               prefix={<SearchOutlined />}
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
@@ -337,8 +338,11 @@ const EvalTaskListPage: React.FC = () => {
               className={styles.searchInput}
               allowClear
             />
+          </div>
+          <div className="eva-filterField">
+            <span className="eva-filterFieldLabel">评测集</span>
             <Select
-              placeholder="评测集"
+              placeholder="全部评测集"
               allowClear
               className={styles.evalSetSelect}
               value={selectedEvalSetId}
@@ -350,8 +354,11 @@ const EvalTaskListPage: React.FC = () => {
                 </Option>
               ))}
             </Select>
+          </div>
+          <div className="eva-filterField">
+            <span className="eva-filterFieldLabel">状态</span>
             <Select
-              placeholder="任务状态"
+              placeholder="全部状态"
               allowClear
               className={styles.statusSelect}
               value={selectedStatus}
@@ -363,24 +370,26 @@ const EvalTaskListPage: React.FC = () => {
                 </Option>
               ))}
             </Select>
-            <Button icon={<FilterOutlined />}>高级筛选</Button>
-          </div>
-
-          <div className="eva-toolbarGroup">
-            <Dropdown menu={{ items: batchMenuItems }}>
-              <Button>
-                批量操作 <DownOutlined />
-              </Button>
-            </Dropdown>
-            <Tooltip title="图表视图">
-              <Button icon={<BarChartOutlined />} />
-            </Tooltip>
-            <Link href="#">帮助文档</Link>
           </div>
         </div>
-      </Card>
 
-      <EnhancedTable<EvalTaskWithEvalSet>
+        <div className="eva-filterBarActions">
+          <Button icon={<FilterOutlined />}>高级筛选</Button>
+          <Dropdown menu={{ items: batchMenuItems }}>
+            <Button>
+              批量操作 <DownOutlined />
+            </Button>
+          </Dropdown>
+          <Tooltip title="图表视图">
+            <Button icon={<BarChartOutlined />} />
+          </Tooltip>
+          <Link href="#">帮助文档</Link>
+        </div>
+      </div>
+
+      <div className="eva-contentCard">
+        <div className="eva-contentCardBody">
+          <EnhancedTable<EvalTaskWithEvalSet>
         rowKey="id"
         rowSelection={rowSelection}
         columns={columns}
@@ -399,6 +408,8 @@ const EvalTaskListPage: React.FC = () => {
           },
         }}
       />
+        </div>
+      </div>
     </PageContainer>
   );
 };

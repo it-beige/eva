@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Card,
   Button,
   Input,
   Space,
@@ -283,36 +282,42 @@ const EvalSetListPage = () => {
         </>
       }
     >
-      <Card>
-        <div className="eva-toolbar">
-          <div className="eva-toolbarGroup">
+      <div className="eva-filterBar">
+        <div className="eva-filterBarMain">
+          <div className="eva-filterField">
+            <span className="eva-filterFieldLabel">搜索</span>
             <Input
-              placeholder="按名称搜索"
+              placeholder="按名称搜索评测集"
               prefix={<SearchOutlined />}
               value={keyword}
               onChange={(e) => handleSearch(e.target.value)}
               className={styles.searchInput}
               allowClear
             />
-            <Button icon={<FilterOutlined />}>筛选 (0)</Button>
-            {selectedRowKeys.length > 0 && (
-              <Popconfirm
-                title="确认批量删除"
-                description={`确定要删除选中的 ${selectedRowKeys.length} 个评测集吗？`}
-                onConfirm={handleBatchDelete}
-                okText="确认"
-                cancelText="取消"
-              >
-                <Button danger icon={<DeleteOutlined />}>
-                  删除 ({selectedRowKeys.length})
-                </Button>
-              </Popconfirm>
-            )}
           </div>
         </div>
-      </Card>
 
-      <EnhancedTable<EvalSet>
+        <div className="eva-filterBarActions">
+          <Button icon={<FilterOutlined />}>筛选 (0)</Button>
+          {selectedRowKeys.length > 0 && (
+            <Popconfirm
+              title="确认批量删除"
+              description={`确定要删除选中的 ${selectedRowKeys.length} 个评测集吗？`}
+              onConfirm={handleBatchDelete}
+              okText="确认"
+              cancelText="取消"
+            >
+              <Button danger icon={<DeleteOutlined />}>
+                删除 ({selectedRowKeys.length})
+              </Button>
+            </Popconfirm>
+          )}
+        </div>
+      </div>
+
+      <div className="eva-contentCard">
+        <div className="eva-contentCardBody">
+          <EnhancedTable<EvalSet>
         rowKey="id"
         dataSource={evalSets}
         columns={columns}
@@ -333,6 +338,8 @@ const EvalSetListPage = () => {
         }}
         scroll={{ x: 'max-content' }}
       />
+        </div>
+      </div>
 
       <CreateEvalSetModal
         open={createModalOpen}

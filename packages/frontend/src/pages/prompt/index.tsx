@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
-  Card,
   Input,
-  Dropdown,
   message,
   Popconfirm,
   Segmented,
+  Space,
   Tooltip,
 } from 'antd';
 import {
@@ -17,7 +16,6 @@ import {
   DeleteOutlined,
   BarChartOutlined,
   TableOutlined,
-  MoreOutlined,
   EditOutlined,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
@@ -135,38 +133,29 @@ const PromptListPage = () => {
     {
       title: '操作',
       key: 'action',
-      width: 80,
+      width: 160,
       render: (_: any, record: any) => (
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: 'edit',
-                icon: <EditOutlined />,
-                label: '编辑',
-                onClick: () => handleEdit(record),
-              },
-              {
-                key: 'delete',
-                icon: <DeleteOutlined />,
-                label: (
-                  <Popconfirm
-                    title="确认删除"
-                    description="删除后无法恢复，是否继续？"
-                    onConfirm={() => handleDelete(record.id)}
-                    okText="确认"
-                    cancelText="取消"
-                  >
-                    <span style={{ color: '#ff4d4f' }}>删除</span>
-                  </Popconfirm>
-                ),
-              },
-            ],
-          }}
-          trigger={['click']}
-        >
-          <Button type="text" icon={<MoreOutlined />} />
-        </Dropdown>
+        <Space size="small">
+          <Button
+            type="link"
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+          >
+            编辑
+          </Button>
+          <Popconfirm
+            title="确认删除"
+            description="删除后无法恢复，是否继续？"
+            onConfirm={() => handleDelete(record.id)}
+            okText="确认"
+            cancelText="取消"
+          >
+            <Button type="link" size="small" danger icon={<DeleteOutlined />}>
+              删除
+            </Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
@@ -196,11 +185,12 @@ const PromptListPage = () => {
         </>
       }
     >
-      <Card>
-        <div className="eva-toolbar">
-          <div className="eva-toolbarGroup">
+      <div className="eva-filterBar">
+        <div className="eva-filterBarMain">
+          <div className="eva-filterField">
+            <span className="eva-filterFieldLabel">搜索</span>
             <Input
-              placeholder="按名称搜索"
+              placeholder="按名称搜索 Prompt"
               prefix={<SearchOutlined />}
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
@@ -208,12 +198,16 @@ const PromptListPage = () => {
               className={styles.searchInput}
               allowClear
             />
-            <Button icon={<FilterOutlined />}>筛选 (0)</Button>
           </div>
         </div>
-      </Card>
+        <div className="eva-filterBarActions">
+          <Button icon={<FilterOutlined />}>筛选 (0)</Button>
+        </div>
+      </div>
 
-      <EnhancedTable
+      <div className="eva-contentCard">
+        <div className="eva-contentCardBody">
+          <EnhancedTable
         columns={columns}
         columnConfigs={columnConfigs}
         dataSource={prompts}
@@ -231,6 +225,8 @@ const PromptListPage = () => {
           },
         }}
       />
+        </div>
+      </div>
 
       <CreatePromptModal
         open={isModalOpen}

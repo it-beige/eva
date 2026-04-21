@@ -1,10 +1,9 @@
 import React, { useEffect, useCallback } from 'react';
 import {
-  Card,
   Button,
   Input,
   Tabs,
-  Dropdown,
+  Space,
   message,
   Popconfirm,
   Tooltip,
@@ -14,7 +13,7 @@ import {
   SearchOutlined,
   DeleteOutlined,
   BarChartOutlined,
-  MoreOutlined,
+  EditOutlined,
   ExportOutlined,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
@@ -34,7 +33,6 @@ import CreateMetricModal from './components/CreateMetricModal';
 import PageContainer from '../../components/page/PageContainer';
 import { MetricScope, MetricType, EvalMetric, METRIC_TYPE_LABELS } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
-import type { MenuProps } from 'antd';
 import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
 import { formatDateTime } from '../../utils/format';
 import styles from './EvalMetricPage.module.scss';
@@ -186,36 +184,30 @@ const EvalMetricListPage: React.FC = () => {
     {
       title: '操作',
       key: 'action',
-      width: 80,
+      width: 160,
       fixed: 'right',
-      render: (_, record: EvalMetric) => {
-        const items: MenuProps['items'] = [
-          {
-            key: 'edit',
-            label: '编辑',
-            onClick: () => handleEdit(record),
-          },
-          {
-            key: 'delete',
-            label: (
-              <Popconfirm
-                title="确定删除此指标?"
-                onConfirm={() => handleDelete(record.id)}
-                okText="确定"
-                cancelText="取消"
-              >
-                <span className={styles.dangerText}>删除</span>
-              </Popconfirm>
-            ),
-          },
-        ];
-
-        return (
-          <Dropdown menu={{ items }} placement="bottomRight">
-            <Button type="text" icon={<MoreOutlined />} />
-          </Dropdown>
-        );
-      },
+      render: (_, record: EvalMetric) => (
+        <Space size="small">
+          <Button
+            type="link"
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+          >
+            编辑
+          </Button>
+          <Popconfirm
+            title="确定删除此指标?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <Button type="link" size="small" danger icon={<DeleteOutlined />}>
+              删除
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
     },
   ];
 
@@ -256,42 +248,47 @@ const EvalMetricListPage: React.FC = () => {
         </>
       }
     >
-      <Card>
-        <Tabs
-          activeKey={currentScope}
-          onChange={handleTabChange}
-          items={[
-            { key: MetricScope.PERSONAL, label: '个人指标' },
-            { key: MetricScope.PUBLIC, label: '公共指标' },
-          ]}
-        />
+      <div className="eva-contentCard">
+        <div className="eva-contentCardBody">
+          <Tabs
+            activeKey={currentScope}
+            onChange={handleTabChange}
+            items={[
+              { key: MetricScope.PERSONAL, label: '个人指标' },
+              { key: MetricScope.PUBLIC, label: '公共指标' },
+            ]}
+          />
 
-        <div className="eva-toolbar">
-          <div className="eva-toolbarGroup">
-            <Input.Search
-              placeholder="按名称搜索"
-              allowClear
-              onSearch={handleSearch}
-              className={styles.searchInput}
-              prefix={<SearchOutlined />}
-            />
-            {selectedRowKeys.length > 0 && (
-              <Popconfirm
-                title={`确定删除选中的 ${selectedRowKeys.length} 个指标?`}
-                onConfirm={handleBatchDelete}
-                okText="确定"
-                cancelText="取消"
-              >
-                <Button danger icon={<DeleteOutlined />} loading={deleting}>
-                  删除 ({selectedRowKeys.length})
-                </Button>
-              </Popconfirm>
-            )}
+          <div className="eva-filterBar">
+            <div className="eva-filterBarMain">
+              <div className="eva-filterField">
+                <span className="eva-filterFieldLabel">搜索</span>
+                <Input.Search
+                  placeholder="按名称搜索指标"
+                  allowClear
+                  onSearch={handleSearch}
+                  className={styles.searchInput}
+                  prefix={<SearchOutlined />}
+                />
+              </div>
+            </div>
+            <div className="eva-filterBarActions">
+              {selectedRowKeys.length > 0 && (
+                <Popconfirm
+                  title={`确定删除选中的 ${selectedRowKeys.length} 个指标?`}
+                  onConfirm={handleBatchDelete}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <Button danger icon={<DeleteOutlined />} loading={deleting}>
+                    删除 ({selectedRowKeys.length})
+                  </Button>
+                </Popconfirm>
+              )}
+            </div>
           </div>
-        </div>
-      </Card>
 
-      <EnhancedTable<EvalMetric>
+          <EnhancedTable<EvalMetric>
         rowKey="id"
         columns={columns}
         columnConfigs={columnConfigs}
@@ -309,6 +306,8 @@ const EvalMetricListPage: React.FC = () => {
         }}
         scroll={{ x: 1200 }}
       />
+        </div>
+      </div>
 
       <CreateMetricModal
         visible={createModalVisible}

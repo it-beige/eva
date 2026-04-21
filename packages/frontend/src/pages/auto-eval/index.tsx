@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
-  Card,
   Button,
   Input,
   Tag,
-  Dropdown,
+  Popconfirm,
+  Space,
   Tooltip,
   Empty,
   Modal,
@@ -16,7 +16,6 @@ import {
   FilterOutlined,
   DeleteOutlined,
   BarChartOutlined,
-  MoreOutlined,
   EditOutlined,
   CopyOutlined,
 } from '@ant-design/icons';
@@ -70,18 +69,6 @@ const AutoEvalListPage = () => {
 
   const handleCreate = () => {
     navigate('/auto-eval/create');
-  };
-
-  const handleDelete = (record: AutoEval) => {
-    Modal.confirm({
-      title: '确认删除',
-      content: `确定要删除自动化评测规则 "${record.name}" 吗？`,
-      onOk: () => {
-        dispatch(deleteAutoEval(record.id)).then(() => {
-          message.success('删除成功');
-        });
-      },
-    });
   };
 
   const handleBatchDelete = () => {
@@ -158,36 +145,41 @@ const AutoEvalListPage = () => {
     {
       title: '操作',
       key: 'action',
-      width: 80,
+      width: 200,
       render: (_, record) => (
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: 'edit',
-                icon: <EditOutlined />,
-                label: '编辑',
-                onClick: () => navigate(`/auto-eval/${record.id}/edit`),
-              },
-              {
-                key: 'copy',
-                icon: <CopyOutlined />,
-                label: '复制',
-                onClick: () => message.info('复制功能开发中'),
-              },
-              {
-                key: 'delete',
-                icon: <DeleteOutlined />,
-                label: '删除',
-                danger: true,
-                onClick: () => handleDelete(record),
-              },
-            ],
-          }}
-          trigger={['click']}
-        >
-          <Button type="text" icon={<MoreOutlined />} />
-        </Dropdown>
+        <Space size="small">
+          <Button
+            type="link"
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => navigate(`/auto-eval/${record.id}/edit`)}
+          >
+            编辑
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            icon={<CopyOutlined />}
+            onClick={() => message.info('复制功能开发中')}
+          >
+            复制
+          </Button>
+          <Popconfirm
+            title="确认删除"
+            description={`确定要删除规则 "${record.name}" 吗？`}
+            onConfirm={() => {
+              dispatch(deleteAutoEval(record.id)).then(() => {
+                message.success('删除成功');
+              });
+            }}
+            okText="确认"
+            cancelText="取消"
+          >
+            <Button type="link" size="small" danger icon={<DeleteOutlined />}>
+              删除
+            </Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
@@ -215,11 +207,12 @@ const AutoEvalListPage = () => {
         </Button>
       }
     >
-      <Card>
-        <div className="eva-toolbar">
-          <div className="eva-toolbarGroup">
+      <div className="eva-filterBar">
+        <div className="eva-filterBarMain">
+          <div className="eva-filterField">
+            <span className="eva-filterFieldLabel">搜索</span>
             <Input
-              placeholder="按名称搜索"
+              placeholder="按名称搜索规则"
               prefix={<SearchOutlined />}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -227,25 +220,27 @@ const AutoEvalListPage = () => {
               className={styles.searchInput}
               allowClear
             />
-            <Button icon={<FilterOutlined />}>筛选 (0)</Button>
-          </div>
-          <div className="eva-toolbarGroup">
-            <Tooltip title="批量删除">
-              <Button
-                icon={<DeleteOutlined />}
-                disabled={selectedRowKeys.length === 0}
-                onClick={handleBatchDelete}
-                loading={deleting}
-              />
-            </Tooltip>
-            <Tooltip title="图表视图">
-              <Button icon={<BarChartOutlined />} />
-            </Tooltip>
           </div>
         </div>
-      </Card>
+        <div className="eva-filterBarActions">
+          <Button icon={<FilterOutlined />}>筛选 (0)</Button>
+          <Tooltip title="批量删除">
+            <Button
+              icon={<DeleteOutlined />}
+              disabled={selectedRowKeys.length === 0}
+              onClick={handleBatchDelete}
+              loading={deleting}
+            />
+          </Tooltip>
+          <Tooltip title="图表视图">
+            <Button icon={<BarChartOutlined />} />
+          </Tooltip>
+        </div>
+      </div>
 
-      <EnhancedTable<AutoEval>
+      <div className="eva-contentCard">
+        <div className="eva-contentCardBody">
+          <EnhancedTable<AutoEval>
         rowSelection={rowSelection}
         columns={columns}
         columnConfigs={columnConfigs}
@@ -275,6 +270,8 @@ const AutoEvalListPage = () => {
           ),
         }}
       />
+        </div>
+      </div>
     </PageContainer>
   );
 };
