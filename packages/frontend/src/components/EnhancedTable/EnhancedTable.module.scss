@@ -185,7 +185,8 @@
 
 /* ── Density Modes ─────────────────────────────────── */
 
-/* 紧凑模式 - 列内容一行展示，超出显示 tooltip */
+/* 紧凑模式 - 列内容一行展示，超出显示 tooltip
+   排除操作列（最后一列、fixed 列）避免按钮被截断 */
 .density-compact {
   :global() {
     .ant-table-tbody > tr > td {
@@ -195,6 +196,15 @@
         white-space: nowrap;
         max-width: 100%;
       }
+    }
+
+    /* 操作列不截断 — 通过 eva-col-action class / fixed 列排除 */
+    .ant-table-tbody > tr > td:global(.eva-col-action) .ant-table-cell,
+    .ant-table-tbody > tr > td.ant-table-cell-fix-right .ant-table-cell,
+    .ant-table-tbody > tr > td.ant-table-cell-fix-right-first .ant-table-cell {
+      overflow: visible;
+      text-overflow: unset;
+      white-space: normal;
     }
   }
 }

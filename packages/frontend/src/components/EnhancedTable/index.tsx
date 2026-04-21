@@ -29,6 +29,8 @@ export interface ColumnConfig {
 
 /** EnhancedTable 组件 Props */
 export interface EnhancedTableProps<T> extends Omit<TableProps<T>, 'columns' | 'size' | 'pagination'> {
+  /** 是否撑满父容器高度 */
+  fillHeight?: boolean;
   /** Ant Design Table 的 columns 配置 */
   columns: ColumnsType<T>;
   /** 列配置列表（用于列管理） */
@@ -69,6 +71,7 @@ function EnhancedTable<T extends object>({
   defaultDensity = 'compact',
   enableEllipsis = true,
   onTableChange,
+  fillHeight = true,
   ...tableProps
 }: EnhancedTableProps<T>) {
   // 密度模式状态
@@ -98,6 +101,13 @@ function EnhancedTable<T extends object>({
         return 'middle';
     }
   }, [density]);
+
+  /** 判断是否为操作列 */
+  const isActionColumn = useCallback((col: any): boolean => {
+    const key = String(col.key || col.dataIndex || '');
+    const title = typeof col.title === 'string' ? col.title : '';
+    return key === 'action' || title === '操作';
+  }, []);
 
   /** 判断列是否为不需要自动添加 ellipsis/tooltip 的类型 */
   const isSkippedColumn = useCallback((col: any): boolean => {
@@ -132,7 +142,16 @@ function EnhancedTable<T extends object>({
 
       return cols.map((col: any) => {
         // 跳过操作列、已有配置的列
-        if (isSkippedColumn(col)) return col;
+        if (isSkippedColumn(col)) {
+          // 给操作列添加 className 标识，便于 CSS 层面排除紧凑模式截断
+          if (isActionColumn(col)) {
+            return {
+              ...col,
+              className: [col.className, 'eva-col-action'].filter(Boolean).join(' '),
+            };
+          }
+          return col;
+        }
 
         const originalRender = col.render;
 
@@ -340,14 +359,15 @@ function EnhancedTable<T extends object>({
   };
 
   return (
-    <div className={styles.enhancedTableWrapper}>
+    <div className={`${styles.enhancedTableWrapper} ${fillHeight ? styles.fillHeight : ''}`}>
       {/* 工具栏 */}
       {renderToolbar()}
 
       {/* 表格容器 */}
-      <div className={`${styles.tableContainer} ${styles[`density-${density}`]}`}>
+      <div className={`${styles.tableContainer} ${styles[`density-${density}`]} ${fillHeight ? styles.tableContainerFill : ''}`}>
         <Table<T>
           {...tableProps}
+          sticky
           columns={visibleColumns}
           size={tableSize}
           pagination={pagination}
