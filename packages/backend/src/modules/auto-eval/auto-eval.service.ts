@@ -2,9 +2,10 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, In, DeepPartial } from 'typeorm';
+import { Repository, Like, In, DeepPartial, FindOptionsWhere } from 'typeorm';
 import { AutoEval } from '../../database/entities/auto-eval.entity';
 import { TraceLog } from '../../database/entities/trace-log.entity';
 import { CreateAutoEvalDto } from './dto/create-auto-eval.dto';
@@ -30,8 +31,46 @@ export interface DebugEvalResult {
   }>;
 }
 
+/**
+ * 允许在过滤条件中使用的字段白名单
+ *
+ * 防止 SQL 注入：动态字段名必须在白名单内才能拼入查询。
+ */
+const ALLOWED_FILTER_FIELDS = new Set([
+  'traceId',
+  'sessionId',
+  'appId',
+  'userId',
+  'status',
+  'input',
+  'output',
+  'sourceProject',
+  'inputTokens',
+  'outputTokens',
+  'ttft',
+]);
+
+/** 操作符到 SQL 片段的映射 */
+const OPERATOR_SQL_MAP: Record<string, string> = {
+  equals: '=',
+  gt: '>',
+  gte: '>=',
+  lt: '<',
+  lte: '<=',
+};
+
+/**
+ * 自动化评测服务
+ *
+ * 职责：
+ *  1. 自动化评测规则的 CRUD
+ *  2. 调试过滤（debugFilter）：根据时间范围 + 过滤条件 + 采样率筛选 Trace
+ *  3. 调试评测（debugEval）：对筛选出的 Trace 执行评测（当前为模拟）
+ */
 @Injectable()
 export class AutoEvalService {
+  private readonly logger = new Logger(AutoEvalService.name);
+
   constructor(
     @InjectRepository(AutoEval)
     private readonly autoEvalRepository: Repository<AutoEval>,
@@ -39,20 +78,18 @@ export class AutoEvalService {
     private readonly traceLogRepository: Repository<TraceLog>,
   ) {}
 
+  // ==================== CRUD ====================
+
+  /** 分页查询自动化评测规则 */
   async findAll(
     query: QueryAutoEvalDto,
   ): Promise<PaginatedResponseDto<AutoEval>> {
     const { page, pageSize, status, keyword } = query;
 
-    const where: any = {};
+    const where: FindOptionsWhere<AutoEval> = {};
 
-    if (status) {
-      where.status = status;
-    }
-
-    if (keyword) {
-      where.name = Like(`%${keyword}%`);
-    }
+    if (status) where.status = status;
+    if (keyword) where.name = Like(`%${keyword}%`);
 
     const [items, total] = await this.autoEvalRepository.findAndCount({
       where,
@@ -64,6 +101,7 @@ export class AutoEvalService {
     return PaginatedResponseDto.create(items, total, page, pageSize);
   }
 
+  /** 查询单个规则详情 */
   async findOne(id: string): Promise<AutoEval> {
     const autoEval = await this.autoEvalRepository.findOne({
       where: { id },
@@ -76,15 +114,13 @@ export class AutoEvalService {
     return autoEval;
   }
 
+  /** 创建自动化评测规则 */
   async create(
     createDto: CreateAutoEvalDto,
     userId?: string,
     userName?: string,
   ): Promise<AutoEval> {
-    // 验证采样率
-    if (createDto.sampleRate < 0 || createDto.sampleRate > 100) {
-      throw new BadRequestException('采样率必须在 0-100 之间');
-    }
+    this.validateSampleRate(createDto.sampleRate);
 
     const autoEval = this.autoEvalRepository.create({
       ...createDto,
@@ -97,6 +133,7 @@ export class AutoEvalService {
     return this.autoEvalRepository.save(autoEval);
   }
 
+  /** 更新自动化评测规则 */
   async update(
     id: string,
     updateDto: UpdateAutoEvalDto,
@@ -105,12 +142,8 @@ export class AutoEvalService {
   ): Promise<AutoEval> {
     const autoEval = await this.findOne(id);
 
-    // 验证采样率
-    if (
-      updateDto.sampleRate !== undefined &&
-      (updateDto.sampleRate < 0 || updateDto.sampleRate > 100)
-    ) {
-      throw new BadRequestException('采样率必须在 0-100 之间');
+    if (updateDto.sampleRate !== undefined) {
+      this.validateSampleRate(updateDto.sampleRate);
     }
 
     const updated = this.autoEvalRepository.merge(
@@ -130,15 +163,26 @@ export class AutoEvalService {
     return this.autoEvalRepository.save(updated);
   }
 
+  /** 删除单个规则 */
   async remove(id: string): Promise<void> {
     const autoEval = await this.findOne(id);
     await this.autoEvalRepository.remove(autoEval);
   }
 
+  /** 批量删除规则 */
   async removeMany(ids: string[]): Promise<void> {
+    if (!ids?.length) return;
     await this.autoEvalRepository.delete(ids);
   }
 
+  // ==================== 调试功能 ====================
+
+  /**
+   * 调试过滤
+   *
+   * 根据时间范围、过滤条件、采样率筛选 Trace 记录。
+   * 过滤条件中的字段名必须在白名单内，防止 SQL 注入。
+   */
   async debugFilter(
     debugDto: DebugFilterDto,
   ): Promise<DebugFilterResult[]> {
@@ -147,77 +191,61 @@ export class AutoEvalService {
     const start = new Date(startTime);
     const end = new Date(endTime);
 
-    // 构建基础查询
     const qb = this.traceLogRepository.createQueryBuilder('trace');
     qb.where('trace.calledAt BETWEEN :start AND :end', { start, end });
 
-    // 应用过滤规则
-    if (filterRules?.conditions && filterRules.conditions.length > 0) {
-      filterRules.conditions.forEach((condition, index) => {
-        const paramName = `value${index}`;
-        switch (condition.operator) {
-          case 'equals':
-            qb.andWhere(`trace.${condition.field} = :${paramName}`, {
-              [paramName]: condition.value,
-            });
-            break;
-          case 'contains':
-            qb.andWhere(`trace.${condition.field} LIKE :${paramName}`, {
-              [paramName]: `%${condition.value}%`,
-            });
-            break;
-          case 'startsWith':
-            qb.andWhere(`trace.${condition.field} LIKE :${paramName}`, {
-              [paramName]: `${condition.value}%`,
-            });
-            break;
-          case 'endsWith':
-            qb.andWhere(`trace.${condition.field} LIKE :${paramName}`, {
-              [paramName]: `%${condition.value}`,
-            });
-            break;
-          case 'gt':
-            qb.andWhere(`trace.${condition.field} > :${paramName}`, {
-              [paramName]: condition.value,
-            });
-            break;
-          case 'gte':
-            qb.andWhere(`trace.${condition.field} >= :${paramName}`, {
-              [paramName]: condition.value,
-            });
-            break;
-          case 'lt':
-            qb.andWhere(`trace.${condition.field} < :${paramName}`, {
-              [paramName]: condition.value,
-            });
-            break;
-          case 'lte':
-            qb.andWhere(`trace.${condition.field} <= :${paramName}`, {
-              [paramName]: condition.value,
-            });
-            break;
-          default:
-            break;
+    // 应用过滤规则（带字段白名单校验）
+    if (filterRules?.conditions?.length) {
+      for (const [index, condition] of filterRules.conditions.entries()) {
+        // ---- SQL 注入防护：字段名白名单校验 ----
+        if (!ALLOWED_FILTER_FIELDS.has(condition.field)) {
+          this.logger.warn(`过滤条件包含非法字段: ${condition.field}，已跳过`);
+          continue;
         }
-      });
+
+        const paramName = `value${index}`;
+        const fieldRef = `trace.${condition.field}`;
+
+        // LIKE 类操作符
+        if (condition.operator === 'contains') {
+          qb.andWhere(`${fieldRef} LIKE :${paramName}`, {
+            [paramName]: `%${condition.value}%`,
+          });
+        } else if (condition.operator === 'startsWith') {
+          qb.andWhere(`${fieldRef} LIKE :${paramName}`, {
+            [paramName]: `${condition.value}%`,
+          });
+        } else if (condition.operator === 'endsWith') {
+          qb.andWhere(`${fieldRef} LIKE :${paramName}`, {
+            [paramName]: `%${condition.value}`,
+          });
+        } else {
+          // 比较类操作符
+          const sqlOp = OPERATOR_SQL_MAP[condition.operator];
+          if (sqlOp) {
+            qb.andWhere(`${fieldRef} ${sqlOp} :${paramName}`, {
+              [paramName]: condition.value,
+            });
+          }
+        }
+      }
     }
 
-    // 应用采样率 - 使用随机采样
+    // 采样：使用随机排序
     if (sampleRate !== undefined && sampleRate < 100) {
       qb.orderBy('RANDOM()');
     } else {
       qb.orderBy('trace.calledAt', 'DESC');
     }
 
-    // 限制返回数量
     qb.take(50);
 
     const traces = await qb.getMany();
 
-    // 应用采样率过滤
+    // 按采样率截取结果
     let results = traces;
     if (sampleRate !== undefined && sampleRate < 100) {
-      const sampleCount = Math.ceil(traces.length * (sampleRate / 100));
+      const sampleCount = Math.max(1, Math.ceil(traces.length * (sampleRate / 100)));
       results = traces.slice(0, sampleCount);
     }
 
@@ -228,10 +256,15 @@ export class AutoEvalService {
     }));
   }
 
+  /**
+   * 调试评测
+   *
+   * TODO: 对接实际评测引擎，当前为模拟数据
+   */
   async debugEval(debugDto: DebugEvalDto): Promise<DebugEvalResult[]> {
     const { startTime, endTime, filterRules, sampleRate, traceId } = debugDto;
 
-    // 如果指定了 traceId，直接查询该 trace
+    // 指定 traceId 时直接查询
     if (traceId) {
       const trace = await this.traceLogRepository.findOne({
         where: { traceId },
@@ -241,7 +274,6 @@ export class AutoEvalService {
         throw new NotFoundException(`Trace ${traceId} 不存在`);
       }
 
-      // 模拟评测结果
       return [
         {
           input: trace.input || '',
@@ -254,7 +286,7 @@ export class AutoEvalService {
       ];
     }
 
-    // 否则先执行过滤，再对结果进行评测
+    // 先过滤，再评测
     const filterResults = await this.debugFilter({
       startTime,
       endTime,
@@ -266,13 +298,12 @@ export class AutoEvalService {
       return [];
     }
 
-    // 获取前5条进行评测演示
+    // 取前 5 条进行评测演示
     const traceIds = filterResults.slice(0, 5).map((r) => r.traceId);
     const traces = await this.traceLogRepository.find({
       where: { traceId: In(traceIds) },
     });
 
-    // 模拟评测结果
     return traces.map((trace) => ({
       input: trace.input || '',
       output: trace.output || '',
@@ -281,5 +312,14 @@ export class AutoEvalService {
         { metricId: 'mock-2', metricName: '相关性', score: Math.random() },
       ],
     }));
+  }
+
+  // ==================== 私有方法 ====================
+
+  /** 校验采样率合法性 */
+  private validateSampleRate(sampleRate: number): void {
+    if (sampleRate < 0 || sampleRate > 100) {
+      throw new BadRequestException('采样率必须在 0-100 之间');
+    }
   }
 }

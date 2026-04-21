@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository, Like } from 'typeorm';
+import { DataSource, Repository, Like, FindOptionsWhere } from 'typeorm';
 import { Prompt } from '../../database/entities/prompt.entity';
 import { PromptVersion } from '../../database/entities/prompt-version.entity';
 import { CreatePromptDto } from './dto/create-prompt.dto';
@@ -8,6 +8,13 @@ import { UpdatePromptDto } from './dto/update-prompt.dto';
 import { QueryPromptDto } from './dto/query-prompt.dto';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
 
+/**
+ * Prompt 管理服务
+ *
+ * 职责：
+ *  1. Prompt 的 CRUD 与分页查询
+ *  2. 版本管理（每次更新自动创建新版本，事务保证一致性）
+ */
 @Injectable()
 export class PromptService {
   constructor(
@@ -22,7 +29,7 @@ export class PromptService {
     const { page, pageSize, keyword } = query;
     const skip = (page - 1) * pageSize;
 
-    const where: any = {};
+    const where: FindOptionsWhere<Prompt> = {};
     if (keyword) {
       where.name = Like(`%${keyword}%`);
     }
@@ -44,7 +51,7 @@ export class PromptService {
     });
 
     if (!prompt) {
-      throw new NotFoundException(`Prompt with id "${id}" not found`);
+      throw new NotFoundException(`Prompt ${id} 不存在`);
     }
 
     return prompt;
@@ -81,7 +88,7 @@ export class PromptService {
       });
 
       if (!prompt) {
-        throw new NotFoundException(`Prompt with id "${id}" not found`);
+        throw new NotFoundException(`Prompt ${id} 不存在`);
       }
 
       const newVersion = prompt.version + 1;
@@ -114,7 +121,7 @@ export class PromptService {
     });
 
     if (!prompt) {
-      throw new NotFoundException(`Prompt with id "${id}" not found`);
+      throw new NotFoundException(`Prompt ${id} 不存在`);
     }
 
     await this.promptRepository.remove(prompt);
@@ -126,7 +133,7 @@ export class PromptService {
     });
 
     if (!prompt) {
-      throw new NotFoundException(`Prompt with id "${promptId}" not found`);
+      throw new NotFoundException(`Prompt ${promptId} 不存在`);
     }
 
     return this.promptVersionRepository.find({
@@ -144,7 +151,7 @@ export class PromptService {
     });
 
     if (!prompt) {
-      throw new NotFoundException(`Prompt with id "${promptId}" not found`);
+      throw new NotFoundException(`Prompt ${promptId} 不存在`);
     }
 
     const version = await this.promptVersionRepository.findOne({
@@ -153,7 +160,7 @@ export class PromptService {
 
     if (!version) {
       throw new NotFoundException(
-        `Version with id "${versionId}" not found for prompt "${promptId}"`,
+        `Prompt ${promptId} 下不存在版本 ${versionId}`,
       );
     }
 

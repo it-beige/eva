@@ -5,12 +5,23 @@ import {
   HttpCode,
   HttpStatus,
   Sse,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { PlaygroundService } from './playground.service';
 import { RunPlaygroundDto, PlaygroundStreamEvent, PlaygroundResult } from './dto/run-playground.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
+/**
+ * Playground 控制器
+ *
+ * 提供非流式和流式（SSE）两种模式的 Prompt 调试能力。
+ */
 @Controller('playground')
+@UseGuards(JwtAuthGuard)
+@ApiTags('Playground')
+@ApiBearerAuth('access-token')
 export class PlaygroundController {
   constructor(private readonly playgroundService: PlaygroundService) {}
 

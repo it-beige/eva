@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,8 +10,15 @@ import { CreateEvalSetItemDto } from './dto/create-eval-set-item.dto';
 import { UpdateEvalSetItemDto } from './dto/update-eval-set-item.dto';
 import { PaginationQueryDto, PaginatedResponseDto } from '../../common/dto/pagination.dto';
 
+/**
+ * 评测集数据项服务
+ *
+ * 职责：数据项的 CRUD、批量导入、导出，并同步维护评测集的 dataCount 计数器。
+ */
 @Injectable()
 export class EvalSetItemService {
+  private readonly logger = new Logger(EvalSetItemService.name);
+
   constructor(
     @InjectRepository(EvalSetItem)
     private readonly evalSetItemRepository: Repository<EvalSetItem>,
@@ -18,6 +26,9 @@ export class EvalSetItemService {
     private readonly evalSetRepository: Repository<EvalSet>,
   ) {}
 
+  /**
+   * 分页查询数据项
+   */
   async findAll(
     evalSetId: string,
     query: PaginationQueryDto,
@@ -25,14 +36,7 @@ export class EvalSetItemService {
     const { page, pageSize } = query;
     const skip = (page - 1) * pageSize;
 
-    // 验证评测集存在
-    const evalSet = await this.evalSetRepository.findOne({
-      where: { id: evalSetId },
-    });
-
-    if (!evalSet) {
-      throw new NotFoundException(`评测集 ${evalSetId} 不存在`);
-    }
+    await this.assertEvalSetExists(evalSetId);
 
     const [items, total] = await this.evalSetItemRepository.findAndCount({
       where: { evalSetId },
@@ -44,6 +48,9 @@ export class EvalSetItemService {
     return PaginatedResponseDto.create(items, total, page, pageSize);
   }
 
+  /**
+   * 查询单个数据项
+   */
   async findOne(id: string): Promise<EvalSetItem> {
     const item = await this.evalSetItemRepository.findOne({
       where: { id },
@@ -56,18 +63,14 @@ export class EvalSetItemService {
     return item;
   }
 
+  /**
+   * 创建数据项
+   */
   async create(
     evalSetId: string,
     dto: CreateEvalSetItemDto,
   ): Promise<EvalSetItem> {
-    // 验证评测集存在
-    const evalSet = await this.evalSetRepository.findOne({
-      where: { id: evalSetId },
-    });
-
-    if (!evalSet) {
-      throw new NotFoundException(`评测集 ${evalSetId} 不存在`);
-    }
+    await this.assertEvalSetExists(evalSetId);
 
     const item = this.evalSetItemRepository.create({
       ...dto,
@@ -76,12 +79,15 @@ export class EvalSetItemService {
 
     const saved = await this.evalSetItemRepository.save(item);
 
-    // 更新评测集数据计数
+    // 同步更新评测集数据计数
     await this.updateEvalSetDataCount(evalSetId);
 
     return saved;
   }
 
+  /**
+   * 更新数据项
+   */
   async update(id: string, dto: UpdateEvalSetItemDto): Promise<EvalSetItem> {
     await this.findOne(id);
 
@@ -90,32 +96,31 @@ export class EvalSetItemService {
     return this.findOne(id);
   }
 
+  /**
+   * 删除数据项
+   */
   async remove(id: string): Promise<void> {
     const item = await this.findOne(id);
     const evalSetId = item.evalSetId;
 
     await this.evalSetItemRepository.remove(item);
 
-    // 更新评测集数据计数
+    // 同步更新评测集数据计数
     await this.updateEvalSetDataCount(evalSetId);
   }
 
+  /**
+   * 批量导入数据项
+   *
+   * TODO: 对接实际的 CSV 解析逻辑，当前为模拟数据
+   */
   async batchImport(
     evalSetId: string,
     fileUrl: string,
   ): Promise<{ imported: number }> {
-    // 验证评测集存在
-    const evalSet = await this.evalSetRepository.findOne({
-      where: { id: evalSetId },
-    });
+    await this.assertEvalSetExists(evalSetId);
 
-    if (!evalSet) {
-      throw new NotFoundException(`评测集 ${evalSetId} 不存在`);
-    }
-
-    // 这里应该实现CSV解析逻辑
-    // 简化处理，实际应该读取文件并解析
-    console.log(`Batch importing for ${evalSetId}: ${fileUrl}`);
+    this.logger.log(`批量导入处理 [evalSetId=${evalSetId}, fileUrl=${fileUrl}]`);
 
     // 模拟导入数据
     const mockItems = [
@@ -136,36 +141,39 @@ export class EvalSetItemService {
     );
 
     await this.evalSetItemRepository.save(items);
-
-    // 更新评测集数据计数
     await this.updateEvalSetDataCount(evalSetId);
 
     return { imported: items.length };
   }
 
+  /**
+   * 导出数据项
+   *
+   * TODO: 对接实际的 CSV 导出逻辑，当前为模拟数据
+   */
   async export(evalSetId: string): Promise<{ fileUrl: string }> {
-    // 验证评测集存在
-    const evalSet = await this.evalSetRepository.findOne({
-      where: { id: evalSetId },
-    });
+    await this.assertEvalSetExists(evalSetId);
 
-    if (!evalSet) {
-      throw new NotFoundException(`评测集 ${evalSetId} 不存在`);
-    }
-
-    // 获取所有数据项
     const items = await this.evalSetItemRepository.find({
       where: { evalSetId },
     });
 
-    // 这里应该实现CSV导出逻辑
-    // 简化处理，实际应该生成CSV文件
-    console.log(`Exporting ${items.length} items for ${evalSetId}`);
+    this.logger.log(`导出处理 [evalSetId=${evalSetId}, count=${items.length}]`);
 
-    // 返回模拟的文件URL
     return { fileUrl: `/exports/eval-set-${evalSetId}.csv` };
   }
 
+  // ==================== 私有方法 ====================
+
+  /** 校验评测集是否存在 */
+  private async assertEvalSetExists(evalSetId: string): Promise<void> {
+    const exists = await this.evalSetRepository.exists({ where: { id: evalSetId } });
+    if (!exists) {
+      throw new NotFoundException(`评测集 ${evalSetId} 不存在`);
+    }
+  }
+
+  /** 同步更新评测集的数据计数 */
   private async updateEvalSetDataCount(evalSetId: string): Promise<void> {
     const count = await this.evalSetItemRepository.count({
       where: { evalSetId },

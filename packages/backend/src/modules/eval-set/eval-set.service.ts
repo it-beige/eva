@@ -2,9 +2,10 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, FindOptionsWhere } from 'typeorm';
 import { EvalSet, EvalSetItem } from '../../database/entities';
 import { EvalSetSourceType } from '@eva/shared';
 import { CreateEvalSetDto } from './dto/create-eval-set.dto';
@@ -12,8 +13,18 @@ import { UpdateEvalSetDto } from './dto/update-eval-set.dto';
 import { QueryEvalSetDto } from './dto/query-eval-set.dto';
 import { PaginatedResponseDto } from '../../common/dto/pagination.dto';
 
+/**
+ * 评测集服务
+ *
+ * 职责：
+ *  1. 评测集的 CRUD 与分页查询
+ *  2. 根据数据来源类型分发处理逻辑（本地上传、AI 生成、ODPS 导入、公共引用）
+ *  3. 标签管理
+ */
 @Injectable()
 export class EvalSetService {
+  private readonly logger = new Logger(EvalSetService.name);
+
   constructor(
     @InjectRepository(EvalSet)
     private readonly evalSetRepository: Repository<EvalSet>,
@@ -25,15 +36,10 @@ export class EvalSetService {
     const { page, pageSize, type, keyword } = query;
     const skip = (page - 1) * pageSize;
 
-    const where: Record<string, unknown> = {};
+    const where: FindOptionsWhere<EvalSet> = {};
 
-    if (type) {
-      where.type = type;
-    }
-
-    if (keyword) {
-      where.name = Like(`%${keyword}%`);
-    }
+    if (type) where.type = type;
+    if (keyword) where.name = Like(`%${keyword}%`);
 
     const [items, total] = await this.evalSetRepository.findAndCount({
       where,
@@ -129,17 +135,17 @@ export class EvalSetService {
     evalSetId: string,
     fileUrl: string,
   ): Promise<void> {
-    // 这里应该实现CSV解析逻辑
-    // 简化处理，实际应该读取文件并解析
-    console.log(`Processing local upload for ${evalSetId}: ${fileUrl}`);
+    // TODO: 对接实际的 CSV 解析逻辑
+    this.logger.log(`本地上传处理 [evalSetId=${evalSetId}, fileUrl=${fileUrl}]`);
   }
 
   private async processAIGenerate(
     evalSetId: string,
     dto: CreateEvalSetDto,
   ): Promise<void> {
-    console.log(
-      `Processing AI generate for ${evalSetId}: ${dto.aiModelId}, count: ${dto.aiGenerateCount}`,
+    // TODO: 对接 AI 生成服务
+    this.logger.log(
+      `AI 生成处理 [evalSetId=${evalSetId}, model=${dto.aiModelId}, count=${dto.aiGenerateCount}]`,
     );
   }
 
@@ -147,8 +153,9 @@ export class EvalSetService {
     evalSetId: string,
     dto: CreateEvalSetDto,
   ): Promise<void> {
-    console.log(
-      `Processing ODPS import for ${evalSetId}: ${dto.odpsTableName}`,
+    // TODO: 对接 ODPS 数据导入服务
+    this.logger.log(
+      `ODPS 导入处理 [evalSetId=${evalSetId}, table=${dto.odpsTableName}]`,
     );
   }
 
