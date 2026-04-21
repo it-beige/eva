@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Card, Alert } from 'antd';
-import { SaveOutlined } from '@ant-design/icons';
+import { Form, Input, Button } from 'antd';
+import {
+  SaveOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  EditOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
 import type { UpdateProjectRequest } from '@eva/shared';
 import {
   useGetProjectSettingsQuery,
@@ -8,6 +14,7 @@ import {
 } from '../../../services/settingsQueries';
 import { getQueryErrorMessage } from '../../../services/evaApi';
 import { formatDateTime } from '../../../utils/format';
+import styles from '../SettingsPage.module.scss';
 
 const { TextArea } = Input;
 
@@ -31,6 +38,13 @@ const ProjectSettings: React.FC = () => {
     }
   }, [project, form]);
 
+  // 自动清除反馈
+  useEffect(() => {
+    if (!feedback) return undefined;
+    const timer = setTimeout(() => setFeedback(null), 4000);
+    return () => clearTimeout(timer);
+  }, [feedback]);
+
   const handleSubmit = async (values: UpdateProjectRequest) => {
     try {
       await updateProjectSettings(values).unwrap();
@@ -43,70 +57,111 @@ const ProjectSettings: React.FC = () => {
     }
   };
 
-  return (
-    <Card title="项目设置" loading={projectLoading}>
-      {feedback?.type === 'success' && (
-        <Alert
-          message={feedback.message}
-          type="success"
-          showIcon
-          closable
-          className="mb-4"
-          onClose={() => setFeedback(null)}
-        />
-      )}
-      {feedback?.type === 'error' && (
-        <Alert
-          message={feedback.message}
-          type="error"
-          showIcon
-          closable
-          className="mb-4"
-          onClose={() => setFeedback(null)}
-        />
-      )}
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        style={{ maxWidth: 600 }}
-      >
-        <Form.Item
-          name="name"
-          label="项目名称"
-          rules={[{ required: true, message: '请输入项目名称' }]}
-        >
-          <Input placeholder="请输入项目名称" maxLength={100} showCount />
-        </Form.Item>
-
-        <Form.Item name="description" label="项目描述">
-          <TextArea
-            placeholder="请输入项目描述"
-            rows={4}
-            maxLength={500}
-            showCount
-          />
-        </Form.Item>
-
-        {project && (
-          <div className="mb-4 text-gray-400 text-sm">
-            <p>创建时间: {formatDateTime(project.createdAt)}</p>
-            <p>最后更新: {formatDateTime(project.updatedAt)}</p>
+  if (projectLoading) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitleGroup}>
+            <h3 className={styles.sectionTitle}>
+              <SettingOutlined className={styles.sectionTitleIcon} />
+              基本信息
+            </h3>
+            <p className={styles.sectionDescription}>配置项目的基本信息和描述</p>
           </div>
-        )}
+        </div>
+        <div className={styles.sectionBody}>
+          <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--eva-text-tertiary)' }}>
+            加载中...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            icon={<SaveOutlined />}
-            loading={projectSaving}
-          >
-            保存设置
-          </Button>
-        </Form.Item>
-      </Form>
-    </Card>
+  return (
+    <>
+      {/* 基本信息 */}
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitleGroup}>
+            <h3 className={styles.sectionTitle}>
+              <SettingOutlined className={styles.sectionTitleIcon} />
+              基本信息
+            </h3>
+            <p className={styles.sectionDescription}>配置项目的基本信息和描述</p>
+          </div>
+        </div>
+        <div className={styles.sectionBody}>
+          {feedback?.type === 'success' && (
+            <div className={styles.successBanner}>
+              <CheckCircleOutlined />
+              {feedback.message}
+            </div>
+          )}
+
+          {project && (
+            <div className={styles.metaInfo}>
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>
+                  <ClockCircleOutlined style={{ marginRight: 4 }} />
+                  创建时间
+                </span>
+                <span className={styles.metaValue}>{formatDateTime(project.createdAt)}</span>
+              </div>
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>
+                  <EditOutlined style={{ marginRight: 4 }} />
+                  最后更新
+                </span>
+                <span className={styles.metaValue}>{formatDateTime(project.updatedAt)}</span>
+              </div>
+            </div>
+          )}
+
+          <div className={styles.formContainer}>
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+            >
+              <Form.Item
+                name="name"
+                label="项目名称"
+                rules={[{ required: true, message: '请输入项目名称' }]}
+              >
+                <Input
+                  placeholder="请输入项目名称"
+                  maxLength={100}
+                  showCount
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item name="description" label="项目描述">
+                <TextArea
+                  placeholder="请输入项目描述，帮助团队成员了解项目用途"
+                  rows={4}
+                  maxLength={500}
+                  showCount
+                />
+              </Form.Item>
+
+              <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  icon={<SaveOutlined />}
+                  loading={projectSaving}
+                  size="large"
+                >
+                  保存设置
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

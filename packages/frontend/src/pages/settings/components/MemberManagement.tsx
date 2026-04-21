@@ -1,4 +1,3 @@
-import EnhancedTable from '../../../components/EnhancedTable';
 import React, { useState } from 'react';
 import {
   Button,
@@ -7,21 +6,19 @@ import {
   Input,
   Select,
   Tag,
-  Avatar,
   Popconfirm,
   Space,
   message,
   Tooltip,
-  Typography,
 } from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
   UserOutlined,
   CrownOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import type { AddMemberRequest, WorkspaceMember } from '@eva/shared';
+import type { AddMemberRequest } from '@eva/shared';
 import {
   useAddMemberMutation,
   useGetMembersQuery,
@@ -29,30 +26,45 @@ import {
 } from '../../../services/settingsQueries';
 import { getQueryErrorMessage } from '../../../services/evaApi';
 import { formatDate } from '../../../utils/format';
+import styles from '../SettingsPage.module.scss';
 
 const { Option } = Select;
-const { Text } = Typography;
 
-const ROLE_CONFIG = {
+const ROLE_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   owner: { label: '所有者', color: 'gold', icon: <CrownOutlined /> },
   admin: { label: '管理员', color: 'blue', icon: <UserOutlined /> },
   member: { label: '成员', color: 'default', icon: <UserOutlined /> },
 };
 
+const AVATAR_COLORS = [
+  '#5a63ff', '#34c759', '#ff6b6b', '#ffa940', '#36cfc9',
+  '#9254de', '#597ef7', '#f759ab', '#73d13d', '#40a9ff',
+];
+
+function getAvatarColor(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
 const MemberManagement: React.FC = () => {
   const [form] = Form.useForm();
-  const [modalVisible, setModalVisible] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
   const { data: members = [], isLoading: membersLoading } = useGetMembersQuery();
   const [addMember, { isLoading: isAddingMember }] = useAddMemberMutation();
-  const [removeMember, { isLoading: isRemovingMember }] =
-    useRemoveMemberMutation();
-  const memberActionLoading = isAddingMember || isRemovingMember;
+  const [removeMember, { isLoading: isRemovingMember }] = useRemoveMemberMutation();
+
+  const ownerCount = members.filter((m) => m.role === 'owner').length;
+  const adminCount = members.filter((m) => m.role === 'admin').length;
+  const memberCount = members.filter((m) => m.role === 'member').length;
 
   const handleAddMember = async (values: AddMemberRequest) => {
     try {
       await addMember(values).unwrap();
       message.success('成员添加成功');
-      setModalVisible(false);
+      setDrawerVisible(false);
       form.resetFields();
     } catch (error) {
       message.error(getQueryErrorMessage(error as any, '添加成员失败'));
@@ -68,116 +80,132 @@ const MemberManagement: React.FC = () => {
     }
   };
 
-  const columns: ColumnsType<WorkspaceMember> = [
-    {
-      title: '成员',
-      key: 'member',
-      width: 260,
-      ellipsis: { showTitle: false },
-      render: (_, record) => (
-        <Space>
-          <Avatar
-            style={{ backgroundColor: '#1890ff' }}
-            icon={<UserOutlined />}
-          >
-            {record.name[0]}
-          </Avatar>
-          <div>
-            <Tooltip title={record.name} placement="topLeft">
-              <Text strong className="eva-table-cell-text" style={{ display: 'block', maxWidth: 120 }}>
-                {record.name}
-              </Text>
-            </Tooltip>
-            <Tooltip title={record.email} placement="topLeft">
-              <Text type="secondary" className="eva-table-cell-text" style={{ display: 'block', fontSize: 12, maxWidth: 180 }}>
-                {record.email}
-              </Text>
-            </Tooltip>
-          </div>
-        </Space>
-      ),
-    },
-    {
-      title: '角色',
-      dataIndex: 'role',
-      key: 'role',
-      render: (role: keyof typeof ROLE_CONFIG) => {
-        const config = ROLE_CONFIG[role] || ROLE_CONFIG.member;
-        return (
-          <Tag color={config.color} icon={config.icon}>
-            {config.label}
-          </Tag>
-        );
-      },
-    },
-    {
-      title: '加入时间',
-      dataIndex: 'joinedAt',
-      key: 'joinedAt',
-      render: (time: string) => formatDate(time),
-    },
-    {
-      title: '操作',
-      key: 'action',
-      render: (_, record) => {
-        if (record.role === 'owner') {
-          return null;
-        }
-
-        return (
-          <Popconfirm
-            title="确定要移除该成员吗？"
-            onConfirm={() => handleRemoveMember(record.id)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button
-              type="text"
-              danger
-              icon={<DeleteOutlined />}
-              loading={memberActionLoading}
-            >
-              移除
-            </Button>
-          </Popconfirm>
-        );
-      },
-    },
-  ];
-
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Text type="secondary">共 {members.length} 位成员</Text>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setModalVisible(true)}
-        >
-          添加成员
-        </Button>
+    <>
+      {/* 统计概览 */}
+      <div className={styles.statsRow}>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>{members.length}</span>
+          <span className={styles.statLabel}>全部成员</span>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>{ownerCount + adminCount}</span>
+          <span className={styles.statLabel}>管理员</span>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>{memberCount}</span>
+          <span className={styles.statLabel}>普通成员</span>
+        </div>
       </div>
 
-      <EnhancedTable
-        columns={columns}
-        dataSource={members}
-        rowKey="id"
-        loading={membersLoading}
-        pagination={false}
-      />
+      {/* 成员列表 */}
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitleGroup}>
+            <h3 className={styles.sectionTitle}>
+              <TeamOutlined className={styles.sectionTitleIcon} />
+              团队成员
+            </h3>
+            <p className={styles.sectionDescription}>管理项目的团队成员与权限</p>
+          </div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setDrawerVisible(true)}
+          >
+            添加成员
+          </Button>
+        </div>
 
+        <div className={styles.sectionBodyCompact}>
+          {membersLoading ? (
+            <div style={{ padding: '60px 0', textAlign: 'center', color: 'var(--eva-text-tertiary)' }}>
+              加载中...
+            </div>
+          ) : members.length === 0 ? (
+            <div className={styles.emptyState}>
+              <TeamOutlined className={styles.emptyIcon} />
+              <span className={styles.emptyText}>暂无团队成员</span>
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => setDrawerVisible(true)}>
+                添加第一位成员
+              </Button>
+            </div>
+          ) : (
+            members.map((member) => {
+              const roleConfig = ROLE_CONFIG[member.role] || ROLE_CONFIG.member;
+              const avatarColor = getAvatarColor(member.name);
+
+              return (
+                <div key={member.id} className={styles.tokenCard}>
+                  <div className={styles.tokenInfo}>
+                    <div
+                      className={styles.memberAvatar}
+                      style={{ background: avatarColor }}
+                    >
+                      {member.name[0]?.toUpperCase()}
+                    </div>
+                    <div className={styles.memberInfo}>
+                      <span className={styles.memberName}>{member.name}</span>
+                      <Tooltip title={member.email}>
+                        <span className={styles.memberEmail}>{member.email}</span>
+                      </Tooltip>
+                    </div>
+                  </div>
+
+                  <div className={styles.tokenMeta}>
+                    <div className={styles.tokenMetaItem}>
+                      <span className={styles.tokenMetaLabel}>加入时间</span>
+                      <span className={styles.tokenMetaValue}>{formatDate(member.joinedAt)}</span>
+                    </div>
+                  </div>
+
+                  <Space size="middle">
+                    <Tag color={roleConfig.color} icon={roleConfig.icon}>
+                      {roleConfig.label}
+                    </Tag>
+                    {member.role !== 'owner' && (
+                      <Popconfirm
+                        title="确定要移除该成员吗？"
+                        description="移除后该成员将无法访问项目"
+                        onConfirm={() => handleRemoveMember(member.id)}
+                        okText="确定移除"
+                        cancelText="取消"
+                        okType="danger"
+                      >
+                        <Button
+                          type="text"
+                          danger
+                          size="small"
+                          icon={<DeleteOutlined />}
+                          loading={isRemovingMember}
+                        />
+                      </Popconfirm>
+                    )}
+                  </Space>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* 添加成员抽屉 */}
       <Drawer
         title="添加成员"
-        open={modalVisible}
+        open={drawerVisible}
         onClose={() => {
-          setModalVisible(false);
+          setDrawerVisible(false);
           form.resetFields();
         }}
         width={420}
         extra={
           <Space>
-            <Button onClick={() => { setModalVisible(false); form.resetFields(); }}>取消</Button>
-            <Button type="primary" onClick={() => form.submit()} loading={memberActionLoading}>添加</Button>
+            <Button onClick={() => { setDrawerVisible(false); form.resetFields(); }}>
+              取消
+            </Button>
+            <Button type="primary" onClick={() => form.submit()} loading={isAddingMember}>
+              添加
+            </Button>
           </Space>
         }
       >
@@ -190,7 +218,7 @@ const MemberManagement: React.FC = () => {
               { type: 'email', message: '请输入正确的邮箱格式' },
             ]}
           >
-            <Input placeholder="请输入邮箱地址" />
+            <Input placeholder="请输入成员邮箱地址" size="large" />
           </Form.Item>
 
           <Form.Item
@@ -199,14 +227,24 @@ const MemberManagement: React.FC = () => {
             rules={[{ required: true, message: '请选择角色' }]}
             initialValue="member"
           >
-            <Select>
-              <Option value="admin">管理员</Option>
-              <Option value="member">成员</Option>
+            <Select size="large">
+              <Option value="admin">
+                <Space>
+                  <UserOutlined />
+                  管理员 — 可管理项目设置和成员
+                </Space>
+              </Option>
+              <Option value="member">
+                <Space>
+                  <UserOutlined />
+                  成员 — 可查看和使用项目功能
+                </Space>
+              </Option>
             </Select>
           </Form.Item>
         </Form>
       </Drawer>
-    </div>
+    </>
   );
 };
 

@@ -1,0 +1,478 @@
+@use '../../styles/breakpoints' as *;
+
+/* ── 设置页整体布局 ─────────────────────────────────── */
+.settingsLayout {
+  display: flex;
+  gap: var(--eva-space-6);
+  min-height: calc(100vh - 200px);
+}
+
+/* ── 左侧导航面板 ───────────────────────────────────── */
+.sideNav {
+  width: 240px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+  align-self: flex-start;
+}
+
+.navCard {
+  border: 1px solid var(--eva-border);
+  border-radius: var(--eva-radius-lg);
+  background: var(--eva-surface);
+  box-shadow: var(--eva-shadow-sm);
+  overflow: hidden;
+  padding: var(--eva-space-2) 0;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--eva-space-3);
+  padding: var(--eva-space-3) var(--eva-space-5);
+  margin: 2px var(--eva-space-2);
+  border-radius: var(--eva-radius-md);
+  cursor: pointer;
+  color: var(--eva-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  &:hover {
+    color: var(--eva-primary);
+    background: var(--eva-primary-soft);
+  }
+}
+
+.navItemActive {
+  color: var(--eva-primary) !important;
+  background: var(--eva-primary-soft) !important;
+  font-weight: 600;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--eva-primary);
+  }
+}
+
+.navIcon {
+  font-size: 16px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navLabel {
+  flex: 1;
+}
+
+.navDivider {
+  height: 1px;
+  background: var(--eva-border-soft);
+  margin: var(--eva-space-2) var(--eva-space-4);
+}
+
+/* ── 右侧内容区域 ───────────────────────────────────── */
+.contentArea {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── 内容区段 ─────────────────────────────────────── */
+.section {
+  border: 1px solid var(--eva-border);
+  border-radius: var(--eva-radius-lg);
+  background: var(--eva-surface);
+  box-shadow: var(--eva-shadow-sm);
+  overflow: hidden;
+  transition: box-shadow 0.25s ease;
+
+  &:hover {
+    box-shadow: var(--eva-shadow);
+  }
+
+  & + & {
+    margin-top: var(--eva-space-5);
+  }
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--eva-space-5) var(--eva-space-6);
+  border-bottom: 1px solid var(--eva-border-soft);
+}
+
+.sectionTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--eva-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--eva-space-2);
+}
+
+.sectionTitleIcon {
+  font-size: 16px;
+  color: var(--eva-primary);
+}
+
+.sectionDescription {
+  font-size: 13px;
+  color: var(--eva-text-secondary);
+  margin: 0;
+}
+
+.sectionBody {
+  padding: var(--eva-space-6);
+}
+
+.sectionBodyCompact {
+  padding: 0;
+}
+
+/* ── 项目设置表单 ─────────────────────────────────── */
+.formContainer {
+  max-width: 560px;
+}
+
+.metaInfo {
+  display: flex;
+  gap: var(--eva-space-8);
+  padding: var(--eva-space-4) var(--eva-space-5);
+  border-radius: var(--eva-radius-md);
+  background: var(--eva-bg-subtle);
+  border: 1px solid var(--eva-border-soft);
+  margin-bottom: var(--eva-space-6);
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metaLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--eva-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metaValue {
+  font-size: 13px;
+  color: var(--eva-text-secondary);
+}
+
+/* ── 成员列表增强 ─────────────────────────────────── */
+.memberRow {
+  display: flex;
+  align-items: center;
+  gap: var(--eva-space-3);
+}
+
+.memberAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.memberInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.memberName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--eva-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memberEmail {
+  font-size: 12px;
+  color: var(--eva-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Token 卡片 ───────────────────────────────────── */
+.tokenCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--eva-space-4) var(--eva-space-5);
+  border-bottom: 1px solid var(--eva-border-soft);
+  transition: background 0.15s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--eva-bg-subtle);
+  }
+}
+
+.tokenInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--eva-space-4);
+  flex: 1;
+  min-width: 0;
+}
+
+.tokenIconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--eva-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.tokenIconDefault {
+  background: var(--eva-primary-soft);
+  color: var(--eva-primary);
+}
+
+.tokenIconExpired {
+  background: var(--eva-error-soft);
+  color: var(--eva-error);
+}
+
+.tokenIconWarning {
+  background: var(--eva-warning-soft);
+  color: var(--eva-warning);
+}
+
+.tokenDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.tokenName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--eva-text);
+}
+
+.tokenMasked {
+  font-size: 12px;
+  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+  color: var(--eva-text-tertiary);
+  background: var(--eva-bg-subtle);
+  padding: 1px 6px;
+  border-radius: var(--eva-radius-xs);
+  display: inline-block;
+  max-width: fit-content;
+}
+
+.tokenMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--eva-space-5);
+  flex-shrink: 0;
+  margin-right: var(--eva-space-4);
+}
+
+.tokenMetaItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.tokenMetaLabel {
+  font-size: 11px;
+  color: var(--eva-text-tertiary);
+  font-weight: 500;
+}
+
+.tokenMetaValue {
+  font-size: 12px;
+  color: var(--eva-text-secondary);
+}
+
+/* ── 统计概览 ─────────────────────────────────────── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--eva-space-4);
+  margin-bottom: var(--eva-space-5);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--eva-space-4) var(--eva-space-3);
+  border-radius: var(--eva-radius-md);
+  background: var(--eva-bg-subtle);
+  border: 1px solid var(--eva-border-soft);
+}
+
+.statNumber {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--eva-text);
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--eva-text-tertiary);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ── 空状态 ───────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--eva-space-12) var(--eva-space-6);
+  color: var(--eva-text-tertiary);
+}
+
+.emptyIcon {
+  font-size: 48px;
+  color: var(--eva-border);
+  margin-bottom: var(--eva-space-4);
+}
+
+.emptyText {
+  font-size: 14px;
+  color: var(--eva-text-tertiary);
+  margin-bottom: var(--eva-space-4);
+}
+
+/* ── Token 创建成功弹窗 ──────────────────────────── */
+.tokenDisplay {
+  padding: var(--eva-space-4) var(--eva-space-5);
+  border-radius: var(--eva-radius-md);
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  border: 1px solid var(--eva-primary-soft-strong);
+  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+  font-size: 13px;
+  word-break: break-all;
+  line-height: 1.6;
+  color: var(--eva-text);
+}
+
+.tokenWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--eva-space-3);
+  padding: var(--eva-space-3) var(--eva-space-4);
+  border-radius: var(--eva-radius-md);
+  background: var(--eva-warning-soft);
+  border: 1px solid rgba(250, 173, 20, 0.2);
+  margin-bottom: var(--eva-space-4);
+  font-size: 13px;
+  color: #8b6914;
+  line-height: 1.5;
+}
+
+/* ── 成功提示条 ──────────────────────────────────── */
+.successBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--eva-space-3);
+  padding: var(--eva-space-3) var(--eva-space-5);
+  border-radius: var(--eva-radius-md);
+  background: var(--eva-success-soft);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+  color: #1a7a3a;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: var(--eva-space-5);
+}
+
+/* ── 响应式适配 ──────────────────────────────────── */
+@include below(lg) {
+  .settingsLayout {
+    flex-direction: column;
+  }
+
+  .sideNav {
+    width: 100%;
+    position: static;
+  }
+
+  .navCard {
+    display: flex;
+    flex-direction: row;
+    padding: var(--eva-space-2) var(--eva-space-3);
+    gap: var(--eva-space-1);
+    overflow-x: auto;
+  }
+
+  .navItem {
+    white-space: nowrap;
+    margin: 0;
+    padding: var(--eva-space-2) var(--eva-space-4);
+  }
+
+  .navItemActive::before {
+    display: none;
+  }
+
+  .navDivider {
+    display: none;
+  }
+
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tokenMeta {
+    display: none;
+  }
+}
+
+@include below(sm) {
+  .metaInfo {
+    flex-direction: column;
+    gap: var(--eva-space-3);
+  }
+
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+}

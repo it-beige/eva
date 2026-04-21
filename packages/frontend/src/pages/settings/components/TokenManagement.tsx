@@ -1,4 +1,3 @@
-import EnhancedTable from '../../../components/EnhancedTable';
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -11,8 +10,6 @@ import {
   Popconfirm,
   Space,
   message,
-  Tooltip,
-  Typography,
 } from 'antd';
 import {
   PlusOutlined,
@@ -20,32 +17,36 @@ import {
   CopyOutlined,
   KeyOutlined,
   WarningOutlined,
+  CheckCircleOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import type { ApiTokenResponse, CreateTokenRequest } from '@eva/shared';
+import type { CreateTokenRequest } from '@eva/shared';
 import {
   useCreateTokenMutation,
   useDeleteTokenMutation,
   useGetTokensQuery,
 } from '../../../services/settingsQueries';
 import { getQueryErrorMessage } from '../../../services/evaApi';
-import { formatDate, formatDateTime } from '../../../utils/format';
-
-const { Text } = Typography;
+import { formatDate } from '../../../utils/format';
+import styles from '../SettingsPage.module.scss';
 
 const TokenManagement: React.FC = () => {
   const [form] = Form.useForm();
-  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [createDrawerVisible, setCreateDrawerVisible] = useState(false);
   const [tokenDisplayModal, setTokenDisplayModal] = useState(false);
   const [newlyCreatedToken, setNewlyCreatedToken] = useState<string | null>(null);
   const { data: tokens = [], isLoading: tokensLoading } = useGetTokensQuery();
   const [createToken, { isLoading: creatingToken }] = useCreateTokenMutation();
   const [deleteToken, { isLoading: deletingToken }] = useDeleteTokenMutation();
-  const tokenActionLoading = creatingToken || deletingToken;
+
+  const activeTokens = tokens.filter((t) => {
+    if (!t.expiresAt) return true;
+    return new Date(t.expiresAt) > new Date();
+  });
+  const expiredTokens = tokens.length - activeTokens.length;
 
   useEffect(() => {
     if (newlyCreatedToken) {
-      setCreateModalVisible(false);
+      setCreateDrawerVisible(false);
       setTokenDisplayModal(true);
       form.resetFields();
     }
@@ -76,153 +77,158 @@ const TokenManagement: React.FC = () => {
     });
   };
 
-  const columns: ColumnsType<ApiTokenResponse> = [
-    {
-      title: 'Token 名称',
-      dataIndex: 'name',
-      key: 'name',
-      width: 180,
-      ellipsis: { showTitle: false },
-      render: (name: string) => (
-        <Space>
-          <KeyOutlined style={{ color: '#a0a9b8' }} />
-          <Tooltip title={name} placement="topLeft">
-            <Text strong className="eva-table-cell-text" style={{ maxWidth: 140 }}>{name}</Text>
-          </Tooltip>
-        </Space>
-      ),
-    },
-    {
-      title: 'Token 值',
-      dataIndex: 'maskedToken',
-      key: 'maskedToken',
-      width: 200,
-      ellipsis: { showTitle: false },
-      render: (maskedToken: string) => (
-        <Tooltip title={maskedToken} placement="topLeft">
-          <code className="eva-table-cell-text" style={{ fontSize: 12, background: '#f5f7fa', padding: '2px 8px', borderRadius: 4, maxWidth: '100%' }}>
-            {maskedToken}
-          </code>
-        </Tooltip>
-      ),
-    },
-    {
-      title: '过期时间',
-      dataIndex: 'expiresAt',
-      key: 'expiresAt',
-      render: (expiresAt: string | null) => {
-        if (!expiresAt) {
-          return <Tag color="green">永不过期</Tag>;
-        }
+  const getTokenStatus = (expiresAt: string | null): { tag: React.ReactNode; iconClass: string } => {
+    if (!expiresAt) {
+      return {
+        tag: <Tag color="green">永不过期</Tag>,
+        iconClass: styles.tokenIconDefault,
+      };
+    }
+    const expDate = new Date(expiresAt);
+    const isExpired = expDate < new Date();
+    const isExpiringSoon = !isExpired && expDate.getTime() - Date.now() < 7 * 24 * 60 * 60 * 1000;
 
-        const expDate = new Date(expiresAt);
-        const isExpired = expDate < new Date();
-        const isExpiringSoon =
-          !isExpired &&
-          expDate.getTime() - Date.now() < 7 * 24 * 60 * 60 * 1000;
-
-        if (isExpired) {
-          return <Tag color="red">已过期</Tag>;
-        }
-
-        if (isExpiringSoon) {
-          return (
-            <Tooltip title={formatDateTime(expiresAt)}>
-              <Tag color="orange" icon={<WarningOutlined />}>
-                即将过期
-              </Tag>
-            </Tooltip>
-          );
-        }
-
-        return (
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            {formatDate(expiresAt)}
-          </Text>
-        );
-      },
-    },
-    {
-      title: '最后使用',
-      dataIndex: 'lastUsedAt',
-      key: 'lastUsedAt',
-      render: (lastUsedAt: string | null) =>
-        lastUsedAt ? (
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            {formatDateTime(lastUsedAt)}
-          </Text>
-        ) : (
-          <Text style={{ color: '#a0a9b8', fontSize: 12 }}>从未使用</Text>
-        ),
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (createdAt: string) => (
-        <Text type="secondary" style={{ fontSize: 12 }}>
-          {formatDate(createdAt)}
-        </Text>
-      ),
-    },
-    {
-      title: '操作',
-      key: 'action',
-      render: (_, record) => (
-        <Popconfirm
-          title="确定要删除该 Token 吗？"
-          description="删除后将无法恢复，请确认"
-          onConfirm={() => handleDeleteToken(record.id)}
-          okText="删除"
-          cancelText="取消"
-          okType="danger"
-        >
-          <Button
-            type="text"
-            danger
-            icon={<DeleteOutlined />}
-            loading={tokenActionLoading}
-          >
-            删除
-          </Button>
-        </Popconfirm>
-      ),
-    },
-  ];
+    if (isExpired) {
+      return {
+        tag: <Tag color="red">已过期</Tag>,
+        iconClass: styles.tokenIconExpired,
+      };
+    }
+    if (isExpiringSoon) {
+      return {
+        tag: <Tag color="orange" icon={<WarningOutlined />}>即将过期</Tag>,
+        iconClass: styles.tokenIconWarning,
+      };
+    }
+    return {
+      tag: <Tag color="green">{formatDate(expiresAt)} 到期</Tag>,
+      iconClass: styles.tokenIconDefault,
+    };
+  };
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Text type="secondary">共 {tokens.length} 个 Token</Text>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setCreateModalVisible(true)}
-        >
-          创建 Token
-        </Button>
+    <>
+      {/* 统计概览 */}
+      <div className={styles.statsRow}>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>{tokens.length}</span>
+          <span className={styles.statLabel}>全部 Token</span>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>{activeTokens.length}</span>
+          <span className={styles.statLabel}>有效</span>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>{expiredTokens}</span>
+          <span className={styles.statLabel}>已过期</span>
+        </div>
       </div>
 
-      <EnhancedTable
-        columns={columns}
-        dataSource={tokens}
-        rowKey="id"
-        loading={tokensLoading}
-        pagination={false}
-      />
+      {/* Token 列表 */}
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitleGroup}>
+            <h3 className={styles.sectionTitle}>
+              <KeyOutlined className={styles.sectionTitleIcon} />
+              API Token
+            </h3>
+            <p className={styles.sectionDescription}>用于 API 调用认证的访问凭证</p>
+          </div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setCreateDrawerVisible(true)}
+          >
+            创建 Token
+          </Button>
+        </div>
 
+        <div className={styles.sectionBodyCompact}>
+          {tokensLoading ? (
+            <div style={{ padding: '60px 0', textAlign: 'center', color: 'var(--eva-text-tertiary)' }}>
+              加载中...
+            </div>
+          ) : tokens.length === 0 ? (
+            <div className={styles.emptyState}>
+              <KeyOutlined className={styles.emptyIcon} />
+              <span className={styles.emptyText}>暂无 API Token</span>
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateDrawerVisible(true)}>
+                创建第一个 Token
+              </Button>
+            </div>
+          ) : (
+            tokens.map((token) => {
+              const { tag, iconClass } = getTokenStatus(token.expiresAt);
+
+              return (
+                <div key={token.id} className={styles.tokenCard}>
+                  <div className={styles.tokenInfo}>
+                    <div className={`${styles.tokenIconWrapper} ${iconClass}`}>
+                      <KeyOutlined />
+                    </div>
+                    <div className={styles.tokenDetails}>
+                      <span className={styles.tokenName}>{token.name}</span>
+                      <span className={styles.tokenMasked}>{token.maskedToken}</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.tokenMeta}>
+                    <div className={styles.tokenMetaItem}>
+                      <span className={styles.tokenMetaLabel}>状态</span>
+                      {tag}
+                    </div>
+                    <div className={styles.tokenMetaItem}>
+                      <span className={styles.tokenMetaLabel}>最后使用</span>
+                      <span className={styles.tokenMetaValue}>
+                        {token.lastUsedAt ? formatDate(token.lastUsedAt) : '从未使用'}
+                      </span>
+                    </div>
+                    <div className={styles.tokenMetaItem}>
+                      <span className={styles.tokenMetaLabel}>创建时间</span>
+                      <span className={styles.tokenMetaValue}>{formatDate(token.createdAt)}</span>
+                    </div>
+                  </div>
+
+                  <Popconfirm
+                    title="确定要删除该 Token 吗？"
+                    description="删除后将无法恢复，请确认"
+                    onConfirm={() => handleDeleteToken(token.id)}
+                    okText="删除"
+                    cancelText="取消"
+                    okType="danger"
+                  >
+                    <Button
+                      type="text"
+                      danger
+                      size="small"
+                      icon={<DeleteOutlined />}
+                      loading={deletingToken}
+                    />
+                  </Popconfirm>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* 创建 Token 抽屉 */}
       <Drawer
         title="创建 API Token"
-        open={createModalVisible}
+        open={createDrawerVisible}
         onClose={() => {
-          setCreateModalVisible(false);
+          setCreateDrawerVisible(false);
           form.resetFields();
         }}
         width={420}
         extra={
           <Space>
-            <Button onClick={() => { setCreateModalVisible(false); form.resetFields(); }}>取消</Button>
-            <Button type="primary" onClick={() => form.submit()} loading={tokenActionLoading}>创建</Button>
+            <Button onClick={() => { setCreateDrawerVisible(false); form.resetFields(); }}>
+              取消
+            </Button>
+            <Button type="primary" onClick={() => form.submit()} loading={creatingToken}>
+              创建
+            </Button>
           </Space>
         }
       >
@@ -232,24 +238,30 @@ const TokenManagement: React.FC = () => {
             label="Token 名称"
             rules={[{ required: true, message: '请输入 Token 名称' }]}
           >
-            <Input placeholder="例如：生产环境 Token" maxLength={50} />
+            <Input placeholder="例如：生产环境 Token" maxLength={50} size="large" />
           </Form.Item>
 
-          <Form.Item name="expiresIn" label="过期时间（天）">
+          <Form.Item
+            name="expiresIn"
+            label="过期时间（天）"
+            extra="留空表示永不过期，建议设置合理的过期时间以保障安全"
+          >
             <InputNumber
               placeholder="留空表示永不过期"
               min={1}
               max={365}
               style={{ width: '100%' }}
+              size="large"
             />
           </Form.Item>
         </Form>
       </Drawer>
 
+      {/* Token 创建成功弹窗 */}
       <Modal
         title={
           <Space>
-            <KeyOutlined />
+            <CheckCircleOutlined style={{ color: 'var(--eva-success)' }} />
             <span>Token 创建成功</span>
           </Space>
         }
@@ -278,16 +290,15 @@ const TokenManagement: React.FC = () => {
           </Button>,
         ]}
       >
-        <div style={{ marginBottom: 16 }}>
-          <Text type="warning">
-            请立即复制并保存此 Token，关闭后将无法再次查看完整内容。
-          </Text>
+        <div className={styles.tokenWarning}>
+          <WarningOutlined style={{ marginTop: 2, flexShrink: 0 }} />
+          <span>请立即复制并保存此 Token，关闭后将无法再次查看完整内容。</span>
         </div>
-        <div style={{ background: '#f5f7fa', padding: 16, borderRadius: 8, wordBreak: 'break-all' }}>
+        <div className={styles.tokenDisplay}>
           <code>{newlyCreatedToken}</code>
         </div>
       </Modal>
-    </div>
+    </>
   );
 };
 
