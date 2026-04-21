@@ -485,10 +485,8 @@ a {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: 100%;
-  min-height: 0;
+  min-height: 100%;
   padding: 24px 28px 24px;
-  overflow: hidden;
   background: transparent;
   border-radius: 0;
 }

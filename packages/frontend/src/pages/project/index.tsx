@@ -382,33 +382,41 @@ const ProjectListPage = () => {
           </div>
         </div>
 
-        {/* Search & Filter */}
-        <div className={styles.searchBar}>
-          <Input.Search
-            placeholder="搜索项目ID、pid、项目名称..."
-            allowClear
-            enterButton={<SearchOutlined />}
-            onSearch={handleSearch}
-            onChange={(e) => {
-              if (!e.target.value) handleSearch('');
-            }}
-            style={{ maxWidth: 400 }}
-          />
-          <Select
-            placeholder="项目来源"
-            allowClear
-            style={{ width: 160 }}
-            options={sourceOptions}
-            value={sourceFilter}
-            onChange={(v) => {
-              setSourceFilter(v);
-              dispatch(setPage(1));
-            }}
-          />
+        <div className="eva-filterBar">
+          <div className="eva-filterBarMain">
+            <div className="eva-filterField">
+              <span className="eva-filterFieldLabel">搜索</span>
+              <Input.Search
+                placeholder="搜索项目ID、pid、项目名称"
+                allowClear
+                enterButton={<SearchOutlined />}
+                onSearch={handleSearch}
+                onChange={(e) => {
+                  if (!e.target.value) handleSearch('');
+                }}
+                className={styles.projectSearchInput}
+              />
+            </div>
+            <div className="eva-filterField">
+              <span className="eva-filterFieldLabel">项目来源</span>
+              <Select
+                placeholder="全部来源"
+                allowClear
+                className={styles.projectSourceSelect}
+                options={sourceOptions}
+                value={sourceFilter}
+                onChange={(v) => {
+                  setSourceFilter(v);
+                  dispatch(setPage(1));
+                }}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Table */}
-        <EnhancedTable<ProjectItem>
+        <div className="eva-contentCard">
+          <div className="eva-contentCardBody">
+            <EnhancedTable<ProjectItem>
           rowKey="projectId"
           columns={columns}
           columnConfigs={columnConfigs}
@@ -426,6 +434,8 @@ const ProjectListPage = () => {
             style: { padding: '12px 16px', margin: 0 },
           }}
         />
+          </div>
+        </div>
       </div>
     </div>
   );

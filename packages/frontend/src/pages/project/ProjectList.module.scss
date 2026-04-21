@@ -188,32 +188,12 @@
 
 /* ── Search ────────────────────────────────────────────── */
 
-.searchBar {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  :global(.ant-input-search) {
-    max-width: min(460px, 100%);
-  }
+.projectSearchInput {
+  width: 420px;
 }
 
-.filterGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-}
-
-/* ── Table Container ───────────────────────────────────── */
-
-.tableContainer {
-  background: #ffffff;
-  border: 1px solid var(--eva-border);
-  border-radius: var(--eva-radius-lg);
-  overflow: hidden;
-  box-shadow: var(--eva-shadow);
+.projectSourceSelect {
+  width: 180px;
 }
 
 /* ── Tags ──────────────────────────────────────────────── */
@@ -365,5 +345,10 @@
 
   .statsRow {
     grid-template-columns: 1fr;
+  }
+
+  .projectSearchInput,
+  .projectSourceSelect {
+    width: 100%;
   }
 }
