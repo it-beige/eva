@@ -3,7 +3,7 @@ import { useState } from 'react';
 import {
   DatePicker,
   Button,
-
+  Tooltip,
   Empty,
   Spin,
   message,
@@ -61,7 +61,12 @@ const DebugFilterPanel = ({
       title: 'TraceID',
       dataIndex: 'traceId',
       key: 'traceId',
-      ellipsis: true,
+      ellipsis: { showTitle: false },
+      render: (traceId: string) => (
+        <Tooltip placement="topLeft" title={traceId}>
+          <span>{traceId}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '耗时 (ms)',

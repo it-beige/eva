@@ -99,18 +99,19 @@ function EnhancedTable<T extends object>({
     }
   }, [density]);
 
-  /** 判断列是否为不需要 ellipsis 的类型 */
+  /** 判断列是否为不需要自动添加 ellipsis/tooltip 的类型 */
   const isSkippedColumn = useCallback((col: any): boolean => {
-    const skipKeys = ['action', '操作'];
-    const key = col.key || col.dataIndex || '';
+    const skipKeys = ['action', '操作', 'status', '状态', 'rank', '排名'];
+    const key = String(col.key || col.dataIndex || '');
     const title = typeof col.title === 'string' ? col.title : '';
-    // 操作列、已有 ellipsis 配置的列、固定宽度的序号/排名列跳过
+    // 1. 已有 ellipsis 配置的列 — 说明业务层已自行处理
     if (col.ellipsis !== undefined) return true;
+    // 2. 操作列 / 状态列 / 排名列
     if (skipKeys.includes(key) || skipKeys.includes(title)) return true;
-    if (col.render && typeof col.render === 'function') {
-      // 如果render返回的是复杂组件（Tag, Button, Space等），不自动加tooltip
-      // 但如果是纯文本render，应该加tooltip
-    }
+    // 3. 固定列（fixed: 'left' | 'right'）通常是操作列或 ID 列
+    if (col.fixed) return true;
+    // 4. 对齐居中的列（通常是数值/图标/Tag）
+    if (col.align === 'center') return true;
     return false;
   }, []);
 

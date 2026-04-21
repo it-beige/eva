@@ -4,7 +4,7 @@ import { EyeOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../../../hooks/useRedux';
 import { setPage, setPageSize } from '../../../store/observabilitySlice';
 import type { TraceLog } from '../../../types/observability';
-import dayjs from 'dayjs';
+import { formatDateTime } from '../../../utils/format';
 import styles from './TraceTable.module.scss';
 
 const { Text } = Typography;
@@ -12,12 +12,6 @@ const { Text } = Typography;
 interface TraceTableProps {
   onViewDetail: (id: string) => void;
 }
-
-const truncateText = (text: string | null, maxLength: number = 30): string => {
-  if (!text) return '-';
-  if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength) + '...';
-};
 
 const getStatusColor = (status: string | null): string => {
   switch (status) {
@@ -70,7 +64,7 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       key: 'calledAt',
       width: 170,
       render: (calledAt: string) => (
-        <Text>{dayjs(calledAt).format('YYYY-MM-DD HH:mm:ss')}</Text>
+        <Text>{formatDateTime(calledAt)}</Text>
       ),
     },
     {
@@ -78,8 +72,11 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       dataIndex: 'sourceProject',
       key: 'sourceProject',
       width: 140,
+      ellipsis: { showTitle: false },
       render: (sourceProject: string | null) => (
-        <Text>{sourceProject || '-'}</Text>
+        <Tooltip placement="topLeft" title={sourceProject || '-'}>
+          <Text>{sourceProject || '-'}</Text>
+        </Tooltip>
       ),
     },
     {
@@ -87,13 +84,11 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       dataIndex: 'traceId',
       key: 'traceId',
       width: 220,
-      ellipsis: {
-        showTitle: false,
-      },
+      ellipsis: { showTitle: false },
       render: (traceId: string) => (
         <Tooltip placement="topLeft" title={traceId}>
           <Text copyable={{ text: traceId }} className={styles.traceIdText}>
-            {truncateText(traceId, 25)}
+            {traceId}
           </Text>
         </Tooltip>
       ),
@@ -103,9 +98,10 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       dataIndex: 'sessionId',
       key: 'sessionId',
       width: 180,
+      ellipsis: { showTitle: false },
       render: (sessionId: string | null) => (
-        <Tooltip title={sessionId || ''}>
-          <Text>{truncateText(sessionId, 20)}</Text>
+        <Tooltip placement="topLeft" title={sessionId || '-'}>
+          <Text>{sessionId || '-'}</Text>
         </Tooltip>
       ),
     },
@@ -114,8 +110,11 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       dataIndex: 'userId',
       key: 'userId',
       width: 120,
+      ellipsis: { showTitle: false },
       render: (userId: string | null) => (
-        <Text>{userId || '-'}</Text>
+        <Tooltip placement="topLeft" title={userId || '-'}>
+          <Text>{userId || '-'}</Text>
+        </Tooltip>
       ),
     },
     {
@@ -150,12 +149,10 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       dataIndex: 'input',
       key: 'input',
       width: 200,
-      ellipsis: {
-        showTitle: false,
-      },
+      ellipsis: { showTitle: false },
       render: (input: string | null) => (
-        <Tooltip placement="topLeft" title={input || ''}>
-          <Text>{truncateText(input, 25)}</Text>
+        <Tooltip placement="topLeft" title={input || '-'}>
+          <Text>{input || '-'}</Text>
         </Tooltip>
       ),
     },
@@ -164,12 +161,10 @@ const TraceTable = ({ onViewDetail }: TraceTableProps) => {
       dataIndex: 'output',
       key: 'output',
       width: 200,
-      ellipsis: {
-        showTitle: false,
-      },
+      ellipsis: { showTitle: false },
       render: (output: string | null) => (
-        <Tooltip placement="topLeft" title={output || ''}>
-          <Text>{truncateText(output, 25)}</Text>
+        <Tooltip placement="topLeft" title={output || '-'}>
+          <Text>{output || '-'}</Text>
         </Tooltip>
       ),
     },

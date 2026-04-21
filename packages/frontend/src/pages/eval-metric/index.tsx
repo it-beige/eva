@@ -36,6 +36,7 @@ import { MetricScope, MetricType, EvalMetric, METRIC_TYPE_LABELS } from '@eva/sh
 import type { ColumnsType } from 'antd/es/table';
 import type { MenuProps } from 'antd';
 import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
+import { formatDateTime } from '../../utils/format';
 import styles from './EvalMetricPage.module.scss';
 
 const EvalMetricListPage: React.FC = () => {
@@ -111,17 +112,6 @@ const EvalMetricListPage: React.FC = () => {
     }
   };
 
-  const formatDate = (dateStr: string | Date) => {
-    const date = new Date(dateStr);
-    return date.toLocaleString('zh-CN', {
-      year: '2-digit',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   const columns: ColumnsType<EvalMetric> = [
     {
       title: '名称',
@@ -172,7 +162,7 @@ const EvalMetricListPage: React.FC = () => {
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       width: 160,
-      render: (date: string) => formatDate(date),
+      render: (date: string) => formatDateTime(date),
     },
     {
       title: '创建人',
@@ -191,7 +181,7 @@ const EvalMetricListPage: React.FC = () => {
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 160,
-      render: (date: string) => formatDate(date),
+      render: (date: string) => formatDateTime(date),
     },
     {
       title: '操作',

@@ -13,6 +13,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { fetchPrompt, fetchVersions } from '../../store/promptSlice';
 import VersionCompare from './components/VersionCompare';
+import { formatDateTime } from '../../utils/format';
 import styles from './Prompt.module.scss';
 
 const PromptDetailPage = () => {
@@ -84,10 +85,10 @@ const PromptDetailPage = () => {
             {currentPrompt.createdBy || '-'}
           </Descriptions.Item>
           <Descriptions.Item label="创建时间">
-            {new Date(currentPrompt.createdAt).toLocaleString()}
+            {formatDateTime(currentPrompt.createdAt)}
           </Descriptions.Item>
           <Descriptions.Item label="更新时间">
-            {new Date(currentPrompt.updatedAt).toLocaleString()}
+            {formatDateTime(currentPrompt.updatedAt)}
           </Descriptions.Item>
         </Descriptions>
       </Card>

@@ -28,6 +28,7 @@ import { fetchProjects, deleteProject, selectProject, setPage, setPageSize } fro
 import type { ProjectItem } from '../../services/projectApi';
 import { clearSession, getCurrentUser } from '../../auth/session';
 import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
+import { formatDateTime } from '../../utils/format';
 import styles from './ProjectList.module.scss';
 
 const { Title, Text } = Typography;
@@ -155,18 +156,20 @@ const ProjectListPage = () => {
       dataIndex: 'projectName',
       key: 'projectName',
       width: 200,
-      ellipsis: true,
+      ellipsis: { showTitle: false },
       render: (name: string, record: ProjectItem) => (
-        <Space direction="vertical" size={0}>
-          <a
-            className={styles.projectIdLink}
-            style={{ background: 'none', padding: 0, fontFamily: 'inherit', fontSize: 14, fontWeight: 500 }}
-            onClick={() => handleEnterProject(record)}
-          >
-            {name}
-          </a>
-          <Text type="secondary" style={{ fontSize: 12 }}>{record.pid}</Text>
-        </Space>
+        <Tooltip title={name} placement="topLeft">
+          <Space direction="vertical" size={0}>
+            <a
+              className={styles.projectIdLink}
+              style={{ background: 'none', padding: 0, fontFamily: 'inherit', fontSize: 14, fontWeight: 500 }}
+              onClick={() => handleEnterProject(record)}
+            >
+              {name}
+            </a>
+            <Text type="secondary" style={{ fontSize: 12 }}>{record.pid}</Text>
+          </Space>
+        </Tooltip>
       ),
     },
     {
@@ -191,8 +194,12 @@ const ProjectListPage = () => {
       dataIndex: 'description',
       key: 'description',
       width: 220,
-      ellipsis: true,
-      render: (v: string | null) => v || <Text type="secondary">-</Text>,
+      ellipsis: { showTitle: false },
+      render: (v: string | null) => (
+        <Tooltip title={v || '-'} placement="topLeft">
+          <span>{v || <Text type="secondary">-</Text>}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '管理员',
@@ -224,13 +231,7 @@ const ProjectListPage = () => {
         if (!v) return '-';
         return (
           <Text style={{ fontSize: 13, color: 'var(--eva-text-secondary)' }}>
-            {new Date(v).toLocaleString('zh-CN', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            {formatDateTime(v)}
           </Text>
         );
       },

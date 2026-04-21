@@ -29,6 +29,7 @@ import {
   useGetTokensQuery,
 } from '../../../services/settingsQueries';
 import { getQueryErrorMessage } from '../../../services/evaApi';
+import { formatDate, formatDateTime } from '../../../utils/format';
 
 const { Text } = Typography;
 
@@ -86,7 +87,7 @@ const TokenManagement: React.FC = () => {
         <Space>
           <KeyOutlined style={{ color: '#a0a9b8' }} />
           <Tooltip title={name} placement="topLeft">
-            <Text strong style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block' }}>{name}</Text>
+            <Text strong className="eva-table-cell-text" style={{ maxWidth: 140 }}>{name}</Text>
           </Tooltip>
         </Space>
       ),
@@ -99,7 +100,7 @@ const TokenManagement: React.FC = () => {
       ellipsis: { showTitle: false },
       render: (maskedToken: string) => (
         <Tooltip title={maskedToken} placement="topLeft">
-          <code style={{ fontSize: 12, background: '#f5f7fa', padding: '2px 8px', borderRadius: 4, display: 'inline-block', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <code className="eva-table-cell-text" style={{ fontSize: 12, background: '#f5f7fa', padding: '2px 8px', borderRadius: 4, maxWidth: '100%' }}>
             {maskedToken}
           </code>
         </Tooltip>
@@ -126,7 +127,7 @@ const TokenManagement: React.FC = () => {
 
         if (isExpiringSoon) {
           return (
-            <Tooltip title={expDate.toLocaleString('zh-CN')}>
+            <Tooltip title={formatDateTime(expiresAt)}>
               <Tag color="orange" icon={<WarningOutlined />}>
                 即将过期
               </Tag>
@@ -136,7 +137,7 @@ const TokenManagement: React.FC = () => {
 
         return (
           <Text type="secondary" style={{ fontSize: 12 }}>
-            {expDate.toLocaleDateString('zh-CN')}
+            {formatDate(expiresAt)}
           </Text>
         );
       },
@@ -148,7 +149,7 @@ const TokenManagement: React.FC = () => {
       render: (lastUsedAt: string | null) =>
         lastUsedAt ? (
           <Text type="secondary" style={{ fontSize: 12 }}>
-            {new Date(lastUsedAt).toLocaleString('zh-CN')}
+            {formatDateTime(lastUsedAt)}
           </Text>
         ) : (
           <Text style={{ color: '#a0a9b8', fontSize: 12 }}>从未使用</Text>
@@ -160,7 +161,7 @@ const TokenManagement: React.FC = () => {
       key: 'createdAt',
       render: (createdAt: string) => (
         <Text type="secondary" style={{ fontSize: 12 }}>
-          {new Date(createdAt).toLocaleDateString('zh-CN')}
+          {formatDate(createdAt)}
         </Text>
       ),
     },

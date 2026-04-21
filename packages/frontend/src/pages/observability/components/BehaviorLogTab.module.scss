@@ -1,3 +1,13 @@
+.traceIdText {
+  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+  font-size: 12px;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .emptyState {
   padding: 40px 0;
   text-align: center;

@@ -36,6 +36,7 @@ import PageContainer from '../../components/page/PageContainer';
 import { EvalSet, EvalSetType } from '@eva/shared';
 import { ColumnsType } from 'antd/es/table';
 import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
+import { formatDateTime } from '../../utils/format';
 import styles from './EvalSetPage.module.scss';
 
 const EVAL_SET_TYPE_COLORS: Record<string, string> = {
@@ -179,14 +180,14 @@ const EvalSetListPage = () => {
       key: 'lastEvalTime',
       width: 160,
       render: (time: string | null) =>
-        time ? new Date(time).toLocaleString() : '-',
+        time ? formatDateTime(time) : '-',
     },
     {
       title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 160,
-      render: (date: string) => new Date(date).toLocaleString(),
+      render: (date: string) => formatDateTime(date),
     },
     {
       title: '创建人',

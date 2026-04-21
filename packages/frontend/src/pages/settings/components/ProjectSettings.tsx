@@ -7,6 +7,7 @@ import {
   useUpdateProjectSettingsMutation,
 } from '../../../services/settingsQueries';
 import { getQueryErrorMessage } from '../../../services/evaApi';
+import { formatDateTime } from '../../../utils/format';
 
 const { TextArea } = Input;
 
@@ -89,8 +90,8 @@ const ProjectSettings: React.FC = () => {
 
         {project && (
           <div className="mb-4 text-gray-400 text-sm">
-            <p>创建时间: {new Date(project.createdAt).toLocaleString('zh-CN')}</p>
-            <p>最后更新: {new Date(project.updatedAt).toLocaleString('zh-CN')}</p>
+            <p>创建时间: {formatDateTime(project.createdAt)}</p>
+            <p>最后更新: {formatDateTime(project.updatedAt)}</p>
           </div>
         )}
 

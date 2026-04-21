@@ -28,7 +28,8 @@ import {
 } from '../../store/promptSlice';
 import CreatePromptModal from './components/CreatePromptModal';
 import PageContainer from '../../components/page/PageContainer';
-import EnhancedTable from '../../components/EnhancedTable';
+import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
+import { formatDateTime } from '../../utils/format';
 import styles from './Prompt.module.scss';
 
 const PromptListPage = () => {
@@ -129,7 +130,7 @@ const PromptListPage = () => {
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       width: 180,
-      render: (date: string) => new Date(date).toLocaleString(),
+      render: (date: string) => formatDateTime(date),
     },
     {
       title: '操作',
@@ -170,6 +171,13 @@ const PromptListPage = () => {
     },
   ];
 
+  const columnConfigs: ColumnConfig[] = columns
+    .filter((col: any) => col.key)
+    .map((col: any) => ({
+      key: col.key as string,
+      title: typeof col.title === 'string' ? col.title : String(col.key),
+    }));
+
   return (
     <PageContainer
       extra={
@@ -207,6 +215,7 @@ const PromptListPage = () => {
 
       <EnhancedTable
         columns={columns}
+        columnConfigs={columnConfigs}
         dataSource={prompts}
         rowKey="id"
         loading={loading}

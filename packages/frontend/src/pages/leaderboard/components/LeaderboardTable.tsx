@@ -9,6 +9,7 @@ import {
   CalendarOutlined,
 } from '@ant-design/icons';
 import { LeaderboardItem } from '../../../services/leaderboardApi';
+import { formatDateTime } from '../../../utils/format';
 import styles from './LeaderboardTable.module.scss';
 
 interface LeaderboardTableProps {
@@ -70,7 +71,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       ellipsis: { showTitle: false },
       render: (name: string) => (
         <Tooltip title={name} placement="topLeft">
-          <Tag color="blue">{name}</Tag>
+          <Tag color="blue" style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</Tag>
         </Tooltip>
       ),
     },
@@ -82,7 +83,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       ellipsis: { showTitle: false },
       render: (name: string) => (
         <Tooltip title={name} placement="topLeft">
-          <Tag color="green">{name}</Tag>
+          <Tag color="green" style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</Tag>
         </Tooltip>
       ),
     },
@@ -122,7 +123,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       render: (time: string) => (
         <span className={styles.timeCell}>
           <CalendarOutlined className={styles.timeIcon} />
-          {new Date(time).toLocaleString('zh-CN')}
+          {formatDateTime(time)}
         </span>
       ),
     },

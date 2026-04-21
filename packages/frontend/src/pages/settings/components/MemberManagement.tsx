@@ -28,6 +28,7 @@ import {
   useRemoveMemberMutation,
 } from '../../../services/settingsQueries';
 import { getQueryErrorMessage } from '../../../services/evaApi';
+import { formatDate } from '../../../utils/format';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -83,12 +84,12 @@ const MemberManagement: React.FC = () => {
           </Avatar>
           <div>
             <Tooltip title={record.name} placement="topLeft">
-              <Text strong style={{ display: 'inline-block', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <Text strong className="eva-table-cell-text" style={{ display: 'block', maxWidth: 120 }}>
                 {record.name}
               </Text>
             </Tooltip>
             <Tooltip title={record.email} placement="topLeft">
-              <Text type="secondary" style={{ display: 'block', fontSize: 12, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <Text type="secondary" className="eva-table-cell-text" style={{ display: 'block', fontSize: 12, maxWidth: 180 }}>
                 {record.email}
               </Text>
             </Tooltip>
@@ -113,7 +114,7 @@ const MemberManagement: React.FC = () => {
       title: '加入时间',
       dataIndex: 'joinedAt',
       key: 'joinedAt',
-      render: (time: string) => new Date(time).toLocaleDateString('zh-CN'),
+      render: (time: string) => formatDate(time),
     },
     {
       title: '操作',

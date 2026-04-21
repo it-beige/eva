@@ -36,6 +36,7 @@ import { AutoEvalStatus } from '@eva/shared';
 import type { AutoEval } from '@eva/shared';
 import type { ColumnsType } from 'antd/es/table';
 import EnhancedTable, { type ColumnConfig } from '../../components/EnhancedTable';
+import { formatDateTime } from '../../utils/format';
 import styles from './AutoEvalListPage.module.scss';
 
 const statusMap: Record<AutoEvalStatus, { color: string; text: string }> = {
@@ -117,7 +118,7 @@ const AutoEvalListPage = () => {
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       width: 160,
-      render: (value: string) => new Date(value).toLocaleString(),
+      render: (value: string) => formatDateTime(value),
     },
     {
       title: '创建人',
@@ -136,7 +137,7 @@ const AutoEvalListPage = () => {
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 160,
-      render: (value: string) => new Date(value).toLocaleString(),
+      render: (value: string) => formatDateTime(value),
     },
     {
       title: '采样率',

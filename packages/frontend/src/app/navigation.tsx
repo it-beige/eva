@@ -49,16 +49,10 @@ export const topNavItems = [
 ] as const;
 
 export const evaluationMenuItems: ShellMenuItem[] = [
-  {
-    type: 'group',
-    label: '评测体系',
-    children: [
-      { key: '/eval/tasks', icon: <CheckCircleOutlined />, label: '评测任务' },
-      { key: '/eval/datasets', icon: <DatabaseOutlined />, label: '评测集' },
-      { key: '/eval/metrics', icon: <BarChartOutlined />, label: '评估指标' },
-      { key: '/eval/auto-eval', icon: <PlayCircleOutlined />, label: '自动化评测' },
-    ],
-  },
+  { type: 'item', key: '/eval/tasks', icon: <CheckCircleOutlined />, label: '评测任务' },
+  { type: 'item', key: '/eval/datasets', icon: <DatabaseOutlined />, label: '评测集' },
+  { type: 'item', key: '/eval/metrics', icon: <BarChartOutlined />, label: '评估指标' },
+  { type: 'item', key: '/eval/auto-eval', icon: <PlayCircleOutlined />, label: '自动化评测' },
   {
     type: 'item',
     key: '/eval/prompts',

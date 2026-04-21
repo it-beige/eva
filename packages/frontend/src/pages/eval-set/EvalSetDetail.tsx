@@ -45,6 +45,7 @@ import { TagManager } from './components/TagManager';
 import { EvalSetItem } from '@eva/shared';
 import TagClusterIcon from '../../components/icons/TagClusterIcon';
 import PageContainer from '../../components/page/PageContainer';
+import { formatDateTime } from '../../utils/format';
 import styles from './components/TagManager.module.scss';
 
 const { Title, Text } = Typography;
@@ -240,7 +241,7 @@ const EvalSetDetailPage = () => {
                 <Text type="secondary">
                   创建时间:{' '}
                   {currentEvalSet?.createdAt
-                    ? new Date(currentEvalSet.createdAt).toLocaleString()
+                    ? formatDateTime(currentEvalSet.createdAt)
                     : '-'}
                 </Text>
               </Space>

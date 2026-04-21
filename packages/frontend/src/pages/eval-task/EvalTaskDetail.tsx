@@ -33,6 +33,7 @@ import {
 } from '../../store/evalTaskSlice';
 import TaskStatusTag from './components/TaskStatusTag';
 import { EvalTaskStatus, EVAL_TYPE_LABELS } from '@eva/shared';
+import { formatDateTime } from '../../utils/format';
 import styles from './EvalTaskDetail.module.scss';
 
 const { Title, Text } = Typography;
@@ -169,16 +170,20 @@ const EvalTaskDetailPage: React.FC = () => {
                   {(currentTask as any).evalSet?.name || '-'}
                 </Descriptions.Item>
                 <Descriptions.Item label="任务组">
-                  {currentTask.taskGroupId || '-'}
+                  <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
+                    {currentTask.taskGroupId || '-'}
+                  </Typography.Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="评估模型">
-                  {currentTask.evalModelId || '-'}
+                  <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
+                    {currentTask.evalModelId || '-'}
+                  </Typography.Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="创建时间">
-                  {new Date(currentTask.createdAt).toLocaleString()}
+                  {formatDateTime(currentTask.createdAt)}
                 </Descriptions.Item>
                 <Descriptions.Item label="更新时间">
-                  {new Date(currentTask.updatedAt).toLocaleString()}
+                  {formatDateTime(currentTask.updatedAt)}
                 </Descriptions.Item>
               </Descriptions>
 
@@ -246,7 +251,9 @@ const EvalTaskDetailPage: React.FC = () => {
             <Card title="配置信息">
               <Descriptions column={1} size="small">
                 <Descriptions.Item label="AI应用">
-                  {currentTask.appId || '-'}
+                  <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
+                    {currentTask.appId || '-'}
+                  </Typography.Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="版本">
                   {currentTask.appVersion || '-'}

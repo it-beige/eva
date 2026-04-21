@@ -1,19 +1,13 @@
-import { Tag, Typography } from 'antd';
+import { Tag, Tooltip, Typography } from 'antd';
 import EnhancedTable from '../../../components/EnhancedTable';
 import { useAppSelector } from '../../../hooks/useRedux';
-import dayjs from 'dayjs';
+import { formatDateTime } from '../../../utils/format';
 import styles from './BehaviorLogTab.module.scss';
 
 const { Text } = Typography;
 
 const BehaviorLogTab = () => {
   const { behaviorLogs, logsLoading } = useAppSelector((state) => state.observability);
-
-  const truncateText = (text: string | null, maxLength: number = 50): string => {
-    if (!text) return '-';
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  };
 
   const getStatusColor = (status: string | null): string => {
     switch (status) {
@@ -52,7 +46,7 @@ const BehaviorLogTab = () => {
       key: 'calledAt',
       width: 170,
       render: (calledAt: string) => (
-        <Text>{dayjs(calledAt).format('YYYY-MM-DD HH:mm:ss')}</Text>
+        <Text>{formatDateTime(calledAt)}</Text>
       ),
     },
     {
@@ -60,8 +54,13 @@ const BehaviorLogTab = () => {
       dataIndex: 'traceId',
       key: 'traceId',
       width: 220,
+      ellipsis: { showTitle: false },
       render: (traceId: string) => (
-        <Text copyable={{ text: traceId }}>{truncateText(traceId, 30)}</Text>
+        <Tooltip placement="topLeft" title={traceId}>
+          <Text copyable={{ text: traceId }} className={styles.traceIdText}>
+            {traceId}
+          </Text>
+        </Tooltip>
       ),
     },
     {
@@ -69,14 +68,24 @@ const BehaviorLogTab = () => {
       dataIndex: 'sessionId',
       key: 'sessionId',
       width: 180,
-      render: (sessionId: string | null) => truncateText(sessionId, 25),
+      ellipsis: { showTitle: false },
+      render: (sessionId: string | null) => (
+        <Tooltip placement="topLeft" title={sessionId || '-'}>
+          <span>{sessionId || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '用户ID',
       dataIndex: 'userId',
       key: 'userId',
       width: 120,
-      render: (userId: string | null) => userId || '-',
+      ellipsis: { showTitle: false },
+      render: (userId: string | null) => (
+        <Tooltip placement="topLeft" title={userId || '-'}>
+          <span>{userId || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '状态',
@@ -92,6 +101,7 @@ const BehaviorLogTab = () => {
       dataIndex: 'inputTokens',
       key: 'inputTokens',
       width: 110,
+      align: 'center' as const,
       render: (inputTokens: number | null) => inputTokens ?? '-',
     },
     {
@@ -99,21 +109,32 @@ const BehaviorLogTab = () => {
       dataIndex: 'outputTokens',
       key: 'outputTokens',
       width: 110,
+      align: 'center' as const,
       render: (outputTokens: number | null) => outputTokens ?? '-',
     },
     {
       title: '输入内容',
       dataIndex: 'input',
       key: 'input',
-      ellipsis: true,
-      render: (input: string | null) => truncateText(input, 40),
+      width: 200,
+      ellipsis: { showTitle: false },
+      render: (input: string | null) => (
+        <Tooltip placement="topLeft" title={input || '-'}>
+          <span>{input || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '输出内容',
       dataIndex: 'output',
       key: 'output',
-      ellipsis: true,
-      render: (output: string | null) => truncateText(output, 40),
+      width: 200,
+      ellipsis: { showTitle: false },
+      render: (output: string | null) => (
+        <Tooltip placement="topLeft" title={output || '-'}>
+          <span>{output || '-'}</span>
+        </Tooltip>
+      ),
     },
   ];
 

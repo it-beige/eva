@@ -1,7 +1,7 @@
 import EnhancedTable from '../../../components/EnhancedTable';
 import {
   Button,
-
+  Tooltip,
   Empty,
   Spin,
   message,
@@ -55,24 +55,24 @@ const DebugEvalPanel = ({ filterRules, sampleRate, dateRange }: DebugEvalPanelPr
       title: 'input',
       dataIndex: 'input',
       key: 'input',
-      ellipsis: true,
       width: '40%',
+      ellipsis: { showTitle: false },
       render: (text: string) => (
-        <div className={styles.preview}>
-          {text || '-'}
-        </div>
+        <Tooltip placement="topLeft" title={text || '-'}>
+          <span>{text || '-'}</span>
+        </Tooltip>
       ),
     },
     {
       title: 'output',
       dataIndex: 'output',
       key: 'output',
-      ellipsis: true,
       width: '40%',
+      ellipsis: { showTitle: false },
       render: (text: string) => (
-        <div className={styles.preview}>
-          {text || '-'}
-        </div>
+        <Tooltip placement="topLeft" title={text || '-'}>
+          <span>{text || '-'}</span>
+        </Tooltip>
       ),
     },
     {

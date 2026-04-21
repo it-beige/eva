@@ -1,16 +1,17 @@
 import EnhancedTable from '../../../components/EnhancedTable';
 import { useState } from 'react';
 import {
-
   Space,
   Button,
   Popconfirm,
   Tag,
   Image,
+  Tooltip,
   Typography,
 } from 'antd';
 import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { EvalSetItem } from '@eva/shared';
+import { formatDateTime } from '../../../utils/format';
 
 const { Text } = Typography;
 
@@ -68,41 +69,48 @@ export const EvalSetItemTable: React.FC<EvalSetItemTableProps> = ({
       // 检测是否为URL
       if (/^https?:\/\//.test(value)) {
         return (
-          <a href={value} target="_blank" rel="noopener noreferrer">
-            {value.length > 50 ? `${value.slice(0, 50)}...` : value}
-          </a>
+          <Tooltip title={value} placement="topLeft">
+            <a href={value} target="_blank" rel="noopener noreferrer">
+              {value.length > 50 ? `${value.slice(0, 50)}...` : value}
+            </a>
+          </Tooltip>
         );
       }
       return (
-        <div
-          style={{
-            maxWidth: 300,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical' as const,
-          }}
-          title={value}
-        >
-          {value}
-        </div>
+        <Tooltip title={value} placement="topLeft">
+          <span
+            style={{
+              display: 'inline-block',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              verticalAlign: 'middle',
+            }}
+          >
+            {value}
+          </span>
+        </Tooltip>
       );
     }
 
     if (typeof value === 'object') {
+      const jsonStr = JSON.stringify(value, null, 2);
       return (
-        <pre
-          style={{
-            maxWidth: 300,
-            maxHeight: 100,
-            overflow: 'auto',
-            margin: 0,
-            fontSize: 12,
-          }}
-        >
-          {JSON.stringify(value, null, 2)}
-        </pre>
+        <Tooltip title={<pre style={{ margin: 0, maxHeight: 300, overflow: 'auto', fontSize: 12 }}>{jsonStr}</pre>} placement="topLeft" overlayStyle={{ maxWidth: 420 }}>
+          <pre
+            style={{
+              maxWidth: 300,
+              maxHeight: 100,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              margin: 0,
+              fontSize: 12,
+            }}
+          >
+            {jsonStr}
+          </pre>
+        </Tooltip>
       );
     }
 
@@ -152,7 +160,7 @@ export const EvalSetItemTable: React.FC<EvalSetItemTableProps> = ({
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 160,
-      render: (date: string) => new Date(date).toLocaleString(),
+      render: (date: string) => formatDateTime(date),
     },
     {
       title: '操作',
