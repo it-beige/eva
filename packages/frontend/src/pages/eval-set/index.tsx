@@ -130,13 +130,16 @@ const EvalSetListPage = () => {
       dataIndex: 'name',
       key: 'name',
       width: 200,
+      ellipsis: { showTitle: false },
       render: (name: string, record: EvalSet) => (
-        <a
-          className={styles.nameLink}
-          onClick={() => navigate(`/eval/datasets/${record.id}`)}
-        >
-          {name}
-        </a>
+        <Tooltip title={name} placement="topLeft">
+          <a
+            className={styles.nameLink}
+            onClick={() => navigate(`/eval/datasets/${record.id}`)}
+          >
+            {name}
+          </a>
+        </Tooltip>
       ),
     },
     {
@@ -155,8 +158,12 @@ const EvalSetListPage = () => {
       dataIndex: 'description',
       key: 'description',
       width: 250,
-      ellipsis: true,
-      render: (desc: string | null) => desc || '-',
+      ellipsis: { showTitle: false },
+      render: (desc: string | null) => (
+        <Tooltip title={desc || '-'} placement="topLeft">
+          <span>{desc || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '数据项',
@@ -186,7 +193,12 @@ const EvalSetListPage = () => {
       dataIndex: 'createdBy',
       key: 'createdBy',
       width: 120,
-      render: (creator: string | null) => creator || '-',
+      ellipsis: { showTitle: false },
+      render: (creator: string | null) => (
+        <Tooltip title={creator || '-'} placement="topLeft">
+          <span>{creator || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '操作',

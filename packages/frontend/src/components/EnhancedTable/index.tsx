@@ -41,7 +41,7 @@ export interface EnhancedTableProps<T> extends Omit<TableProps<T>, 'columns' | '
   defaultSortOrder?: 'asc' | 'desc';
   /** 默认密度模式 */
   defaultDensity?: TableDensity;
-  /** 是否启用列的 ellipsis 功能（省略号+tooltip） */
+  /** 是否启用列的 ellipsis 功能（省略号+tooltip），默认开启 */
   enableEllipsis?: boolean;
   /** 表格变化回调 */
   onTableChange?: (
@@ -67,7 +67,7 @@ function EnhancedTable<T extends object>({
   defaultSortBy,
   defaultSortOrder = 'desc',
   defaultDensity = 'compact',
-  enableEllipsis = false,
+  enableEllipsis = true,
   onTableChange,
   ...tableProps
 }: EnhancedTableProps<T>) {
@@ -99,44 +99,88 @@ function EnhancedTable<T extends object>({
     }
   }, [density]);
 
+  /** 判断列是否为不需要 ellipsis 的类型 */
+  const isSkippedColumn = useCallback((col: any): boolean => {
+    const skipKeys = ['action', '操作'];
+    const key = col.key || col.dataIndex || '';
+    const title = typeof col.title === 'string' ? col.title : '';
+    // 操作列、已有 ellipsis 配置的列、固定宽度的序号/排名列跳过
+    if (col.ellipsis !== undefined) return true;
+    if (skipKeys.includes(key) || skipKeys.includes(title)) return true;
+    if (col.render && typeof col.render === 'function') {
+      // 如果render返回的是复杂组件（Tag, Button, Space等），不自动加tooltip
+      // 但如果是纯文本render，应该加tooltip
+    }
+    return false;
+  }, []);
+
+  /** 提取 render 结果的文本内容用于 tooltip */
+  const extractTextContent = useCallback((content: any): string | null => {
+    if (content === null || content === undefined) return null;
+    if (typeof content === 'string') return content;
+    if (typeof content === 'number') return String(content);
+    // ReactNode 不提取
+    return null;
+  }, []);
+
   /** 处理ellipsis和tooltip */
   const processColumns = useCallback(
     (cols: ColumnsType<T>): ColumnsType<T> => {
-      // 紧凑模式下为列添加 ellipsis + tooltip
       const shouldAddEllipsis = density === 'compact' || enableEllipsis;
       if (!shouldAddEllipsis) return cols;
 
-      return cols.map((col) => {
-        // 如果列已经有 ellipsis 配置，跳过
-        if (col.ellipsis !== undefined) return col;
+      return cols.map((col: any) => {
+        // 跳过操作列、已有配置的列
+        if (isSkippedColumn(col)) return col;
 
-        // 为文本列添加 ellipsis
+        const originalRender = col.render;
+
+        // 如果列有 render 函数，包裹 tooltip
+        if (originalRender && typeof originalRender === 'function') {
+          return {
+            ...col,
+            ellipsis: {
+              showTitle: false,
+            },
+            render: (text: any, record: T, index: number) => {
+              const content = originalRender(text, record, index);
+              const textContent = extractTextContent(content);
+              
+              // 只有纯文本内容才加 tooltip
+              if (textContent !== null && textContent !== '-' && textContent !== '') {
+                return (
+                  <Tooltip title={textContent} placement="topLeft">
+                    <span className="eva-table-cell-text">{content}</span>
+                  </Tooltip>
+                );
+              }
+              return content;
+            },
+          };
+        }
+
+        // 没有 render 函数，直接添加 ellipsis + tooltip
         return {
           ...col,
           ellipsis: {
             showTitle: false,
           },
-          render: (text: any, record: T, index: number) => {
-            // 调用原始 render 函数（如果有）
-            const originalRender = (col as any).render;
-            const content = originalRender ? originalRender(text, record, index) : text;
-
-            // 如果是字符串或数字，添加 tooltip
-            if (typeof content === 'string' || typeof content === 'number') {
+          render: (text: any) => {
+            if (text === null || text === undefined) return '-';
+            const textContent = extractTextContent(text);
+            if (textContent !== null) {
               return (
-                <Tooltip title={String(content)}>
-                  <span>{content}</span>
+                <Tooltip title={textContent} placement="topLeft">
+                  <span className="eva-table-cell-text">{text}</span>
                 </Tooltip>
               );
             }
-
-            // 其他类型（如 JSX）直接返回
-            return content;
+            return text;
           },
         };
       });
     },
-    [density, enableEllipsis],
+    [density, enableEllipsis, isSkippedColumn, extractTextContent],
   );
 
   /** 过滤可见列 */

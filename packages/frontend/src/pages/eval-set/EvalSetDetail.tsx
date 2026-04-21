@@ -1,8 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Card,
-  Breadcrumb,
   Button,
   Space,
   Tag,
@@ -15,7 +14,6 @@ import {
   Form,
   Input,
   Pagination,
-
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -46,6 +44,7 @@ import { ColumnManager } from './components/ColumnManager';
 import { TagManager } from './components/TagManager';
 import { EvalSetItem } from '@eva/shared';
 import TagClusterIcon from '../../components/icons/TagClusterIcon';
+import PageContainer from '../../components/page/PageContainer';
 import styles from './components/TagManager.module.scss';
 
 const { Title, Text } = Typography;
@@ -215,15 +214,9 @@ const EvalSetDetailPage = () => {
   }
 
   return (
-    <div style={{ padding: 24 }}>
-      <Breadcrumb style={{ marginBottom: 16 }}>
-        <Breadcrumb.Item>
-          <Link to="/eval/datasets">评测集</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>{currentEvalSet?.name || '加载中...'}</Breadcrumb.Item>
-        <Breadcrumb.Item>Items</Breadcrumb.Item>
-      </Breadcrumb>
-
+    <PageContainer
+      description={`管理评测集「${currentEvalSet?.name || '加载中...'}」的数据项，支持编辑、筛选和导出操作。`}
+    >
       <Card loading={detailLoading} bordered={false}>
         <div style={{ marginBottom: 24 }}>
           <Space align="center" style={{ marginBottom: 16 }}>
@@ -378,7 +371,7 @@ const EvalSetDetailPage = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </PageContainer>
   );
 };
 

@@ -104,38 +104,52 @@ const AutoEvalListPage = () => {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
+      width: 200,
+      ellipsis: { showTitle: false },
       render: (text: string, record: AutoEval) => (
-        <a onClick={() => navigate(`/auto-eval/${record.id}`)}>{text}</a>
+        <Tooltip title={text} placement="topLeft">
+          <a onClick={() => navigate(`/auto-eval/${record.id}`)}>{text}</a>
+        </Tooltip>
       ),
     },
     {
       title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
+      width: 160,
       render: (value: string) => new Date(value).toLocaleString(),
     },
     {
       title: '创建人',
       dataIndex: 'createdBy',
       key: 'createdBy',
-      render: (value: string | null) => value || '-',
+      width: 120,
+      ellipsis: { showTitle: false },
+      render: (value: string | null) => (
+        <Tooltip title={value || '-'} placement="topLeft">
+          <span>{value || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      width: 160,
       render: (value: string) => new Date(value).toLocaleString(),
     },
     {
       title: '采样率',
       dataIndex: 'sampleRate',
       key: 'sampleRate',
+      width: 100,
       render: (value: number) => `${value}%`,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
+      width: 100,
       render: (status: AutoEvalStatus) => (
         <Tag color={statusMap[status].color}>{statusMap[status].text}</Tag>
       ),

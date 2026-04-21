@@ -51,24 +51,40 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       title: '应用名称',
       dataIndex: 'appName',
       key: 'appName',
+      width: 180,
+      ellipsis: { showTitle: false },
       render: (name: string, record) => (
-        <div>
-          <div className={styles.appName}>{name}</div>
-          <div className={styles.appVersion}>{record.appVersion}</div>
-        </div>
+        <Tooltip title={`${name} ${record.appVersion}`} placement="topLeft">
+          <div>
+            <div className={styles.appName}>{name}</div>
+            <div className={styles.appVersion}>{record.appVersion}</div>
+          </div>
+        </Tooltip>
       ),
     },
     {
       title: '评测集',
       dataIndex: 'evalSetName',
       key: 'evalSetName',
-      render: (name: string) => <Tag color="blue">{name}</Tag>,
+      width: 140,
+      ellipsis: { showTitle: false },
+      render: (name: string) => (
+        <Tooltip title={name} placement="topLeft">
+          <Tag color="blue">{name}</Tag>
+        </Tooltip>
+      ),
     },
     {
       title: '指标',
       dataIndex: 'metricName',
       key: 'metricName',
-      render: (name: string) => <Tag color="green">{name}</Tag>,
+      width: 140,
+      ellipsis: { showTitle: false },
+      render: (name: string) => (
+        <Tooltip title={name} placement="topLeft">
+          <Tag color="green">{name}</Tag>
+        </Tooltip>
+      ),
     },
     {
       title: '得分',

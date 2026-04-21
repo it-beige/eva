@@ -1,7 +1,6 @@
 import EnhancedTable from '../../../components/EnhancedTable';
 import React, { useEffect, useState } from 'react';
 import {
-
   Button,
   Drawer,
   Modal,
@@ -13,6 +12,7 @@ import {
   Space,
   message,
   Tooltip,
+  Typography,
 } from 'antd';
 import {
   PlusOutlined,
@@ -29,6 +29,8 @@ import {
   useGetTokensQuery,
 } from '../../../services/settingsQueries';
 import { getQueryErrorMessage } from '../../../services/evaApi';
+
+const { Text } = Typography;
 
 const TokenManagement: React.FC = () => {
   const [form] = Form.useForm();
@@ -78,10 +80,14 @@ const TokenManagement: React.FC = () => {
       title: 'Token 名称',
       dataIndex: 'name',
       key: 'name',
+      width: 180,
+      ellipsis: { showTitle: false },
       render: (name: string) => (
         <Space>
-          <KeyOutlined className="text-gray-400" />
-          <span className="font-medium">{name}</span>
+          <KeyOutlined style={{ color: '#a0a9b8' }} />
+          <Tooltip title={name} placement="topLeft">
+            <Text strong style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block' }}>{name}</Text>
+          </Tooltip>
         </Space>
       ),
     },
@@ -89,8 +95,14 @@ const TokenManagement: React.FC = () => {
       title: 'Token 值',
       dataIndex: 'maskedToken',
       key: 'maskedToken',
+      width: 200,
+      ellipsis: { showTitle: false },
       render: (maskedToken: string) => (
-        <code className="text-sm bg-gray-100 px-2 py-1 rounded">{maskedToken}</code>
+        <Tooltip title={maskedToken} placement="topLeft">
+          <code style={{ fontSize: 12, background: '#f5f7fa', padding: '2px 8px', borderRadius: 4, display: 'inline-block', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {maskedToken}
+          </code>
+        </Tooltip>
       ),
     },
     {
@@ -123,9 +135,9 @@ const TokenManagement: React.FC = () => {
         }
 
         return (
-          <span className="text-gray-500 text-sm">
+          <Text type="secondary" style={{ fontSize: 12 }}>
             {expDate.toLocaleDateString('zh-CN')}
-          </span>
+          </Text>
         );
       },
     },
@@ -135,11 +147,11 @@ const TokenManagement: React.FC = () => {
       key: 'lastUsedAt',
       render: (lastUsedAt: string | null) =>
         lastUsedAt ? (
-          <span className="text-gray-500 text-sm">
+          <Text type="secondary" style={{ fontSize: 12 }}>
             {new Date(lastUsedAt).toLocaleString('zh-CN')}
-          </span>
+          </Text>
         ) : (
-          <span className="text-gray-400">从未使用</span>
+          <Text style={{ color: '#a0a9b8', fontSize: 12 }}>从未使用</Text>
         ),
     },
     {
@@ -147,9 +159,9 @@ const TokenManagement: React.FC = () => {
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (createdAt: string) => (
-        <span className="text-gray-500 text-sm">
+        <Text type="secondary" style={{ fontSize: 12 }}>
           {new Date(createdAt).toLocaleDateString('zh-CN')}
-        </span>
+        </Text>
       ),
     },
     {
@@ -179,8 +191,8 @@ const TokenManagement: React.FC = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-gray-600">共 {tokens.length} 个 Token</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <Text type="secondary">共 {tokens.length} 个 Token</Text>
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -265,11 +277,13 @@ const TokenManagement: React.FC = () => {
           </Button>,
         ]}
       >
-        <p className="mb-4 text-orange-500">
-          请立即复制并保存此 Token，关闭后将无法再次查看完整内容。
-        </p>
-        <div className="bg-gray-100 p-4 rounded">
-          <code className="break-all">{newlyCreatedToken}</code>
+        <div style={{ marginBottom: 16 }}>
+          <Text type="warning">
+            请立即复制并保存此 Token，关闭后将无法再次查看完整内容。
+          </Text>
+        </div>
+        <div style={{ background: '#f5f7fa', padding: 16, borderRadius: 8, wordBreak: 'break-all' }}>
+          <code>{newlyCreatedToken}</code>
         </div>
       </Modal>
     </div>

@@ -8,6 +8,7 @@ import {
   message,
   Popconfirm,
   Segmented,
+  Tooltip,
 } from 'antd';
 import {
   PlusOutlined,
@@ -94,18 +95,27 @@ const PromptListPage = () => {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
+      width: 200,
+      ellipsis: { showTitle: false },
       render: (text: string, record: any) => (
-        <a onClick={() => handleNameClick(record)} className={styles.nameLink}>
-          {text}
-        </a>
+        <Tooltip title={text} placement="topLeft">
+          <a onClick={() => handleNameClick(record)} className={styles.nameLink}>
+            {text}
+          </a>
+        </Tooltip>
       ),
     },
     {
       title: '描述',
       dataIndex: 'description',
       key: 'description',
-      ellipsis: true,
-      render: (text: string | null) => text || '-',
+      width: 300,
+      ellipsis: { showTitle: false },
+      render: (text: string | null) => (
+        <Tooltip title={text || '-'} placement="topLeft">
+          <span>{text || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '版本号',

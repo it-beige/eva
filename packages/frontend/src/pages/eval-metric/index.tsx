@@ -127,18 +127,26 @@ const EvalMetricListPage: React.FC = () => {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
+      width: 180,
+      ellipsis: { showTitle: false },
       render: (text: string, record: EvalMetric) => (
-        <a className={styles.nameLink} onClick={() => handleEdit(record)}>
-          {text}
-        </a>
+        <Tooltip title={text} placement="topLeft">
+          <a className={styles.nameLink} onClick={() => handleEdit(record)}>
+            {text}
+          </a>
+        </Tooltip>
       ),
     },
     {
       title: '描述',
       dataIndex: 'description',
       key: 'description',
-      ellipsis: true,
-      render: (text: string) => text || '-',
+      ellipsis: { showTitle: false },
+      render: (text: string) => (
+        <Tooltip title={text || '-'} placement="topLeft">
+          <span>{text || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '类型',
@@ -151,28 +159,38 @@ const EvalMetricListPage: React.FC = () => {
       title: '更新人',
       dataIndex: 'updatedBy',
       key: 'updatedBy',
-      width: 120,
-      render: (text: string) => text || '-',
+      width: 100,
+      ellipsis: { showTitle: false },
+      render: (text: string) => (
+        <Tooltip title={text || '-'} placement="topLeft">
+          <span>{text || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
-      width: 150,
+      width: 160,
       render: (date: string) => formatDate(date),
     },
     {
       title: '创建人',
       dataIndex: 'createdBy',
       key: 'createdBy',
-      width: 120,
-      render: (text: string) => text || '-',
+      width: 100,
+      ellipsis: { showTitle: false },
+      render: (text: string) => (
+        <Tooltip title={text || '-'} placement="topLeft">
+          <span>{text || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      width: 150,
+      width: 160,
       render: (date: string) => formatDate(date),
     },
     {

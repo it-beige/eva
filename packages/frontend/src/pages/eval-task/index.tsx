@@ -131,8 +131,12 @@ const EvalTaskListPage: React.FC = () => {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
+      width: 200,
+      ellipsis: { showTitle: false },
       render: (text: string, record) => (
-        <Link onClick={() => navigate(`/eval/tasks/${record.id}`)}>{text}</Link>
+        <Tooltip title={text} placement="topLeft">
+          <Link onClick={() => navigate(`/eval/tasks/${record.id}`)}>{text}</Link>
+        </Tooltip>
       ),
     },
     {
@@ -160,29 +164,48 @@ const EvalTaskListPage: React.FC = () => {
       title: '评测集',
       dataIndex: 'evalSet',
       key: 'evalSet',
-      render: (evalSet: { name: string; type: string } | null | undefined) => (
-        <Space>
-          <span>{evalSet?.name || '-'}</span>
-          {evalSet?.type === 'code' && (
-            <Badge
-              count="Code"
-              className={styles.codeBadge}
-            />
-          )}
-        </Space>
-      ),
+      width: 180,
+      ellipsis: { showTitle: false },
+      render: (evalSet: { name: string; type: string } | null | undefined) => {
+        const name = evalSet?.name || '-';
+        return (
+          <Space>
+            <Tooltip title={name} placement="topLeft">
+              <span>{name}</span>
+            </Tooltip>
+            {evalSet?.type === 'code' && (
+              <Badge
+                count="Code"
+                className={styles.codeBadge}
+              />
+            )}
+          </Space>
+        );
+      },
     },
     {
       title: '任务组',
       dataIndex: 'taskGroupId',
       key: 'taskGroupId',
-      render: (text: string | null) => text || '-',
+      width: 160,
+      ellipsis: { showTitle: false },
+      render: (text: string | null) => (
+        <Tooltip title={text || '-'} placement="topLeft">
+          <span>{text || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '评估模型',
       dataIndex: 'evalModelId',
       key: 'evalModelId',
-      render: (text: string | null) => text || '-',
+      width: 160,
+      ellipsis: { showTitle: false },
+      render: (text: string | null) => (
+        <Tooltip title={text || '-'} placement="topLeft">
+          <span>{text || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '操作',

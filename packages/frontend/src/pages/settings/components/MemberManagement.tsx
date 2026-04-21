@@ -1,7 +1,6 @@
 import EnhancedTable from '../../../components/EnhancedTable';
 import React, { useState } from 'react';
 import {
-
   Button,
   Drawer,
   Form,
@@ -12,6 +11,8 @@ import {
   Popconfirm,
   Space,
   message,
+  Tooltip,
+  Typography,
 } from 'antd';
 import {
   PlusOutlined,
@@ -29,6 +30,7 @@ import {
 import { getQueryErrorMessage } from '../../../services/evaApi';
 
 const { Option } = Select;
+const { Text } = Typography;
 
 const ROLE_CONFIG = {
   owner: { label: '所有者', color: 'gold', icon: <CrownOutlined /> },
@@ -69,6 +71,8 @@ const MemberManagement: React.FC = () => {
     {
       title: '成员',
       key: 'member',
+      width: 260,
+      ellipsis: { showTitle: false },
       render: (_, record) => (
         <Space>
           <Avatar
@@ -78,8 +82,16 @@ const MemberManagement: React.FC = () => {
             {record.name[0]}
           </Avatar>
           <div>
-            <div className="font-medium">{record.name}</div>
-            <div className="text-xs text-gray-400">{record.email}</div>
+            <Tooltip title={record.name} placement="topLeft">
+              <Text strong style={{ display: 'inline-block', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {record.name}
+              </Text>
+            </Tooltip>
+            <Tooltip title={record.email} placement="topLeft">
+              <Text type="secondary" style={{ display: 'block', fontSize: 12, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {record.email}
+              </Text>
+            </Tooltip>
           </div>
         </Space>
       ),
@@ -134,8 +146,8 @@ const MemberManagement: React.FC = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-gray-600">共 {members.length} 位成员</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <Text type="secondary">共 {members.length} 位成员</Text>
         <Button
           type="primary"
           icon={<PlusOutlined />}

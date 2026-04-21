@@ -244,6 +244,16 @@ a {
   font-size: 13px;
 }
 
+/* 表格单元格省略号 + tooltip 全局样式 */
+.eva-table-cell-text {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
 .ant-table-thead > tr > th,
 .ant-table-thead > tr > td {
   color: var(--eva-text-secondary) !important;
@@ -472,6 +482,20 @@ a {
   background: var(--eva-content-bg);
   min-height: calc(100vh - 56px);
   border-radius: 0;
+}
+
+/* 统一搜索框宽度 */
+.eva-searchInput {
+  width: 280px;
+}
+
+/* 统一 Select 宽度 */
+.eva-filterSelect {
+  width: 160px;
+}
+
+.eva-wideFilterSelect {
+  width: 200px;
 }
 
 .eva-pageHeader {
